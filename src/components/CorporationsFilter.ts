@@ -1,6 +1,6 @@
 import Vue from "vue";
 
-import { ALL_VENUS_CORPORATIONS, ALL_PRELUDE_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS, ALL_CORP_ERA_CORPORATION_CARDS } from '../Dealer';
+import { ALL_VENUS_CORPORATIONS, ALL_PRELUDE_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS, ALL_CORP_ERA_CORPORATION_CARDS, FAN_BASIC_CORPORATION_CARDS } from '../Dealer';
 import { CardName } from "../CardName";
 
 const allItems: Array<CardName> = [
@@ -10,7 +10,8 @@ const allItems: Array<CardName> = [
     ...ALL_VENUS_CORPORATIONS.map((cf) => cf.cardName),
     ...ALL_COLONIES_CORPORATIONS.map((cf) => cf.cardName),
     ...ALL_TURMOIL_CORPORATIONS.map((cf) => cf.cardName),
-    ...ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName)
+    ...ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName),
+    ...FAN_BASIC_CORPORATION_CARDS.map((cf) => cf.cardName),
 ];
 
 export const CorporationsFilter = Vue.component("corporations-filter", {
@@ -24,7 +25,8 @@ export const CorporationsFilter = Vue.component("corporations-filter", {
                 {"title": "Venus Next", "items": ALL_VENUS_CORPORATIONS.map((cf) => cf.cardName)},
                 {"title": "Colonies", "items": ALL_COLONIES_CORPORATIONS.map((cf) => cf.cardName)},
                 {"title": "Turmoil", "items": ALL_TURMOIL_CORPORATIONS.map((cf) => cf.cardName)},
-                {"title": "Promo", "items": ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName)}
+                {"title": "Promo", "items": ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName)},
+                {"title": "FanMade", "items": FAN_BASIC_CORPORATION_CARDS.map((cf) => cf.cardName) },
             ]
         }
     },

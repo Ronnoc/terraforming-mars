@@ -7510,5 +7510,44 @@ export const HTML_DATA: Map<string, string> =
             (Add 1 floater here for every Earth tag you have, including this.)
         </div>
     </div>
-`]
+`],
+[CardName.ARCELOR_MITTAL, `
+    <div class="tag tag1 tag-building"></div>
+    <div class="corporationLabel">CORPORATION</div>
+    <div class="contentCorporation">
+      <div class="corporationEffectBox">
+        <div class="corporationEffectBoxLabel">EFFECT</div>
+        <div class="resource steel"></div> : +
+        <div class="resource money">1</div>
+        <div class="description" style="text-align:center;margin-top:0px;">
+          (Effect: Your steel resources are each worth 1 MC extra.)
+        </div>
+      </div>
+      <span style="font-size:16px;
+                      margin-left:15px;
+                      color:red;
+                      line-height:40px;
+                      background: #ffffff;
+                      padding-left:5px;
+                      padding-right:5px;
+                      border:1px solid #444;
+                      border-radius:10px;
+                      font-family: 'Times New Roman';
+                      display:inline-block;
+                      -webkit-transform:scale(1.2,1); /* Safari and Chrome */
+                      -moz-transform:scale(1.2,1); /* Firefox */
+                      -ms-transform:scale(1.2,1); /* IE 9 */
+                      -o-transform:scale(1.2,1); /* Opera */
+                      transform:scale(1.2,1); /* W3C */
+                      box-shadow:  6px 6px 5px  grey;">
+                  ArcelorMittal
+              </span><br><br>
+      <div class="resource money" style="margin-left:45px;">24</div>
+      13<div class="resource steel"></div>
+      <div class="description" style="text-align:center;">
+        (You start with 13 steel and 24 MC.)
+      </div>
+    </div>
+`],
+
 ]);

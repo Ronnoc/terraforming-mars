@@ -440,5 +440,8 @@ export enum CardName {
     VOTE_OF_NO_CONFIDENCE = "Vote Of No Confidence",
     LAW_SUIT = "Law Suit",
     STANFORD_TORUS = "Stanford Torus",
-    SATURN_SURFING = "Saturn Surfing"
+    SATURN_SURFING = "Saturn Surfing",
+
+    // Fan Made Cards
+    ARCELOR_MITTAL = "Arcelor Mittal",
 }

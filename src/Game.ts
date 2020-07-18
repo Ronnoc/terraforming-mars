@@ -1,5 +1,5 @@
 import { Player, PlayerId } from "./Player";
-import {Dealer, ALL_VENUS_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_CORP_ERA_CORPORATION_CARDS, ALL_PRELUDE_CORPORATIONS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS} from "./Dealer";
+import { Dealer, ALL_VENUS_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_CORP_ERA_CORPORATION_CARDS, ALL_PRELUDE_CORPORATIONS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS, FAN_BASIC_CORPORATION_CARDS} from "./Dealer";
 import {ISpace} from "./ISpace";
 import {SpaceType} from "./SpaceType";
 import {TileType} from "./TileType";
@@ -249,7 +249,12 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.turmoilExtension) {
         this.turmoil = new Turmoil(this);
         corporationCards.push(...ALL_TURMOIL_CORPORATIONS.map((cf) => new cf.factory()));
-      }  
+      }
+
+      // Add Fan Made corporation
+      if (this.fanMadeOption) {
+        corporationCards.push(...FAN_BASIC_CORPORATION_CARDS.map((cf) => new cf.factory()));
+      }
 
       // Setup custom corporation list
       const minCorpsRequired = players.length * this.startingCorporations;
@@ -263,6 +268,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         corporationCards.push(...ALL_COLONIES_CORPORATIONS.map((cf) => new cf.factory()));
         corporationCards.push(...ALL_TURMOIL_CORPORATIONS.map((cf) => new cf.factory()));
         corporationCards.push(...ALL_PROMO_CORPORATIONS.map((cf) => new cf.factory()));
+        corporationCards.push(...FAN_BASIC_CORPORATION_CARDS.map((cf) => new cf.factory()));
 
         corporationCards = corporationCards.filter(
           (corpCard) => gameOptions !== undefined && gameOptions.customCorporationsList.includes(corpCard.name)

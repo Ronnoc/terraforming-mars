@@ -415,6 +415,9 @@ import { StanfordTorus } from "./cards/promo/StanfordTorus";
 import { SaturnSurfing } from "./cards/promo/SaturnSurfing";
 import { SelfReplicatingRobots } from "./cards/promo/SelfReplicatingRobots";
 
+// Fan Made Cards
+import { ArcelorMittal } from "./cards/fanmade/ArcelorMittal"
+
 
 import { ILoadable } from "./ILoadable";
 import { CardName } from "./CardName";
@@ -951,6 +954,10 @@ export const ALL_CORP_ERA_PROJECT_CARDS: Array<ICardFactory<IProjectCard>> = [
     { cardName: CardName.VESTA_SHIPYARD, factory: VestaShipyard },
     { cardName: CardName.VIRAL_ENHANCERS, factory: ViralEnhancers },
     { cardName: CardName.VIRUS, factory: Virus },
+]
+
+export const FAN_BASIC_CORPORATION_CARDS: Array<ICardFactory<CorporationCard>> = [
+    { cardName: CardName.ARCELOR_MITTAL, factory: ArcelorMittal },
 ]
 
 // Function to return a card object by its name
