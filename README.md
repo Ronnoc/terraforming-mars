@@ -1,5 +1,7 @@
 # Changelog
 
+you can try the change in http://158.247.194.238:9853/;
+
 - Merge Chinese branch
 - add FanMade Option
     - Add Awards
@@ -7,6 +9,8 @@
         - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
     - Add Corporation
         - 
+- add Shuffle Map Option
+    - Only Support Orignal Board Now
 
 # TODO LIST
 

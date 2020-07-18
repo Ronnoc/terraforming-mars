@@ -68,6 +68,8 @@ export interface GameOptions {
   showOtherPlayersVP: boolean;
   customCorporationsList: Array<CardName>;
   solarPhaseOption: boolean;
+  shuffleMapOption: boolean;
+  fanMadeOption: boolean;
   promoCardsOption: boolean;
   undoOption: boolean;
   includeVenusMA: boolean;
@@ -116,6 +118,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public boardName: BoardName;
     public showOtherPlayersVP: boolean;
     private solarPhaseOption: boolean;
+    public shuffleMapOption: boolean;
+    public fanMadeOption: boolean;
     public turmoil: Turmoil | undefined;
     private promoCardsOption: boolean;
     public undoOption: boolean;
@@ -127,6 +131,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public someoneHasRemovedOtherPlayersPlants: boolean = false;
     public initialDraftRounds: number = 4;
     public randomMA: boolean = false;
+    public seed: number = Math.random();
 
     constructor(
       public id: string,
@@ -152,6 +157,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
           showOtherPlayersVP: false,
           customCorporationsList: [],
           solarPhaseOption: false,
+          shuffleMapOption: false,
+          fanMadeOption: false,
           promoCardsOption: false,
           undoOption: false,
           startingCorporations: 2,
@@ -160,7 +167,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           clonedGamedId: undefined
         } as GameOptions
       }
-
+      this.shuffleMapOption = gameOptions.shuffleMapOption;
       this.board = this.boardConstructor(gameOptions.boardName, gameOptions.randomMA, gameOptions.venusNextExtension && gameOptions.includeVenusMA);
 
       this.activePlayer = first.id;
@@ -178,6 +185,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.dealer = new Dealer(this.corporateEra, this.preludeExtension, this.venusNextExtension, this.coloniesExtension, this.promoCardsOption, this.turmoilExtension, Math.random());
       this.showOtherPlayersVP = gameOptions.showOtherPlayersVP;
       this.solarPhaseOption = gameOptions.solarPhaseOption;
+      this.fanMadeOption = gameOptions.fanMadeOption;
       this.soloTR = gameOptions.soloTR;
       this.initialDraft = gameOptions.initialDraftVariant;
       this.initialDraftRounds = gameOptions.initialDraftRounds || 4;
@@ -363,7 +371,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           this.awards.push(...ORIGINAL_AWARDS);
         }
 
-        return new OriginalBoard();
+        return new OriginalBoard(this.shuffleMapOption, this.seed);
       }
     }
 
@@ -378,6 +386,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
       let availableAwards = ELYSIUM_AWARDS.concat(HELLAS_AWARDS, ORIGINAL_AWARDS);
       if (hasVenus) availableAwards = availableAwards.concat(VENUS_AWARDS);
+      if (this.fanMadeOption) availableAwards = availableAwards.concat(FAN_AWARDS);
 
       availableAwards = availableAwards.filter((award) => !this.awards.includes(award));
 
@@ -440,6 +449,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
           game.board = gameToRebuild.board;
           game.showOtherPlayersVP = gameToRebuild.showOtherPlayersVP;
           game.solarPhaseOption = gameToRebuild.solarPhaseOption;
+          game.shuffleMapOption = gameToRebuild.shuffleMapOption;
+          game.fanMadeOption = gameToRebuild.fanMadeOption;
           game.promoCardsOption = gameToRebuild.promoCardsOption;
           game.undoOption = gameToRebuild.undoOption;
           game.startingCorporations = gameToRebuild.startingCorporations;
@@ -1668,7 +1679,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       } else if (d.boardName === BoardName.HELLAS) {
         this.board = new HellasBoard();
       } else {        
-        this.board = new OriginalBoard();
+        this.board = new OriginalBoard(this.shuffleMapOption, this.seed);
       }  
 
       this.milestones = [];

@@ -27,6 +27,8 @@ interface CreateGameModel {
     board: BoardName | "random";
     seed: number;
     solarPhaseOption: boolean;
+    shuffleMapOption: boolean;
+    fanMadeOption: boolean;
     promoCardsOption: boolean;
     undoOption: boolean;
     includeVenusMA: boolean;
@@ -81,6 +83,8 @@ export const CreateGameForm = Vue.component("create-game-form", {
             seed: Math.random(),
             seededGame: false,
             solarPhaseOption: false,
+            shuffleMapOption: false,
+            fanMadeOption: true,
             promoCardsOption: false,
             undoOption: false,
             includeVenusMA: true,
@@ -185,6 +189,8 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const colonies = component.colonies;
             const turmoil = component.turmoil;
             const solarPhaseOption = this.solarPhaseOption;
+            const shuffleMapOption = this.shuffleMapOption;
+            const fanMadeOption = this.fanMadeOption;
             const customCorporationsList = component.customCorporationsList;
             const board =  component.board;
             const seed = component.seed;
@@ -226,7 +232,9 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 clonedGamedId,
                 initialDraft,
                 initialDraftRounds,
-                randomMA
+                randomMA,
+                fanMadeOption,
+                shuffleMapOption,
             });
 
             const onSucces = (response: any) => {
@@ -317,6 +325,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <i class="form-icon"></i> <span v-i18n>Promos</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#promo-cards" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
+                            <label class="form-switch">
+                                <input type="checkbox" v-model="fanMadeOption">
+                                <i class="form-icon"></i> <span v-i18n>Use Fan Made Card Option</span>
+                            </label>
+                            
                         </div>
 
                         <div class="create-game-options-block col3 col-sm-6">
@@ -370,6 +383,10 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             <label class="form-switch">
                                 <input type="checkbox" v-model="undoOption">
                                 <i class="form-icon"></i> <span v-i18n>Allow undo</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#allow-undo" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+                            <label class="form-switch">
+                                <input type="checkbox" v-model="shuffleMapOption">
+                                <i class="form-icon"></i> <span v-i18n>Shuffle map icons Option</span>
                             </label>
 
                             <label class="form-switch" v-if="venusNext && playersCount > 1">
