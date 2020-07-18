@@ -69,6 +69,7 @@ export interface GameOptions {
   customCorporationsList: Array<CardName>;
   solarPhaseOption: boolean;
   shuffleMapOption: boolean;
+  morePreludeOption: boolean;
   fanMadeOption: boolean;
   promoCardsOption: boolean;
   undoOption: boolean;
@@ -119,6 +120,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public showOtherPlayersVP: boolean;
     private solarPhaseOption: boolean;
     public shuffleMapOption: boolean;
+    public morePreludeOption: boolean;
     public fanMadeOption: boolean;
     public turmoil: Turmoil | undefined;
     private promoCardsOption: boolean;
@@ -158,6 +160,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           customCorporationsList: [],
           solarPhaseOption: false,
           shuffleMapOption: false,
+          morePreludeOption: false,
           fanMadeOption: false,
           promoCardsOption: false,
           undoOption: false,
@@ -186,6 +189,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.showOtherPlayersVP = gameOptions.showOtherPlayersVP;
       this.solarPhaseOption = gameOptions.solarPhaseOption;
       this.fanMadeOption = gameOptions.fanMadeOption;
+      this.morePreludeOption = gameOptions.morePreludeOption;
       this.soloTR = gameOptions.soloTR;
       this.initialDraft = gameOptions.initialDraftVariant;
       this.initialDraftRounds = gameOptions.initialDraftRounds || 4;
@@ -290,7 +294,10 @@ export class Game implements ILoadable<SerializedGame, Game> {
             player.dealtProjectCards.push(this.dealer.dealCard());
           }
           if (this.preludeExtension) {
-            for (let i = 0; i < 4; i++) {
+            let preludeCount = 4;
+            if(this.morePreludeOption)
+              preludeCount = 5;
+            for (let i = 0; i < preludeCount; i++) {
               player.dealtPreludeCards.push(this.dealer.dealPreludeCard());
             }
           }
@@ -450,6 +457,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           game.showOtherPlayersVP = gameToRebuild.showOtherPlayersVP;
           game.solarPhaseOption = gameToRebuild.solarPhaseOption;
           game.shuffleMapOption = gameToRebuild.shuffleMapOption;
+          game.morePreludeOption = gameToRebuild.morePreludeOption;
           game.fanMadeOption = gameToRebuild.fanMadeOption;
           game.promoCardsOption = gameToRebuild.promoCardsOption;
           game.undoOption = gameToRebuild.undoOption;
@@ -787,14 +795,17 @@ export class Game implements ILoadable<SerializedGame, Game> {
       );
 
       if (this.preludeExtension) {
-
+        let preludeCount = 2;
+        if (this.morePreludeOption) 
+          preludeCount = 3;
         result.options.push(
           new SelectCard(
-            "Select 2 Prelude cards", player.dealtPreludeCards,
+            "Select " + String(preludeCount) + " Prelude cards", player.dealtPreludeCards,
             (preludeCards: Array<IProjectCard>) => {
-              player.preludeCardsInHand.push(preludeCards[0], preludeCards[1]);
+              for (let i = 0; i < preludeCount ; ++ i)
+                player.preludeCardsInHand.push(preludeCards[i]);
               return undefined;
-            }, 2, 2
+            }, preludeCount, preludeCount
           )
         );
       }

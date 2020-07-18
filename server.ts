@@ -382,6 +382,7 @@ function createGame(req: http.IncomingMessage, res: http.ServerResponse): void {
         randomMA: gameReq.randomMA,
         fanMadeOption: gameReq.fanMadeOption,
         shuffleMapOption: gameReq.shuffleMapOption,
+        morePreludeOption: gameReq.morePreludeOption,
       } as GameOptions;
     
       const game = new Game(gameId, players, firstPlayer, gameOptions);

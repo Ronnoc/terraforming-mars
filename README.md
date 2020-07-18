@@ -3,14 +3,14 @@
 you can try the change in http://158.247.194.238:9853/;
 
 - Merge Chinese branch
-- add FanMade Option
+- add FanMade Option to use FanMade Cards
     - Add Awards
         - Voyager: Having the most Jovian/Earth/Venus tags in play
         - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
     - Add Corporation
         - 
-- add Shuffle Map Option
-    - Only Support Orignal Board Now
+- add Shuffle Map Option : Only Support Orignal Board Now
+- add More Prelude Option : Select 3/5 instead of 2/4 for prelude
 
 # TODO LIST
 
