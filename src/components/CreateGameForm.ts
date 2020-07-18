@@ -331,7 +331,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
 
                             <label class="form-switch">
                                 <input type="checkbox" v-model="fanMadeOption">
-                                <i class="form-icon"></i> <span v-i18n>Use Fan Made Card Option</span>
+                                <i class="form-icon"></i> <span v-i18n>Fan Made</span>
                             </label>
                             
                         </div>
@@ -395,7 +395,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </label>
                             <label class="form-switch">
                                 <input type="checkbox" v-model="shuffleMapOption">
-                                <i class="form-icon"></i> <span v-i18n>Shuffle map icons Option</span>
+                                <i class="form-icon"></i> <span v-i18n>Shuffle Map</span>
                             </label>
 
                             <label class="form-switch" v-if="venusNext && playersCount > 1">
