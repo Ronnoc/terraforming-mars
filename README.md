@@ -1,3 +1,24 @@
+# Changelog
+
+- Merge Chinese branch
+- add FanMade Option
+    - Add Awards
+        - Voyager: Having the most Jovian/Earth/Venus tags in play
+        - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
+    - Add Corporation
+        - 
+
+# TODO LIST
+
+- More FanMade Card
+    - Corporation
+    - Prelude
+    - Project
+    - Awards
+    - Milestone
+    - Map
+    - Rule
+
 # terraforming-mars
 
 Terraforming Mars Boardgame
