@@ -75,6 +75,19 @@ export class OriginalBoard extends Board {
         if (shuffleMapOption) {
             this.shuffleArray(is_ocean);
             this.shuffleArray(bonus);
+            while(true){
+                let satisfy = true;
+                let land_list = [SpaceName.NOCTIS_CITY, SpaceName.THARSIS_THOLUS, SpaceName.ASCRAEUS_MONS, SpaceName.ARSIA_MONS, SpaceName.PAVONIS_MONS];
+                for(let land of land_list){
+                    let land_id = Number(land) - 3;
+                    while(is_ocean[land_id]){
+                        satisfy = false;
+                        let idx = Math.floor(this.myRandom() * (land_list.length + 1));
+                        [is_ocean[land_id], is_ocean[idx]] = [is_ocean[idx], is_ocean[land_id]];
+                    }
+                }
+                if (satisfy) break;
+            }
         }
 
         let pos_x = 4, pos_y = 0;
