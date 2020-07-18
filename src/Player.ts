@@ -2072,7 +2072,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         }
         
         this.setWaitingFor(this.playPreludeCard(game), () => {
-            if (this.preludeCardsInHand.length === 1) {
+            if (this.preludeCardsInHand.length >= 1) {
                 this.takeAction(game);
             } else {
                 game.playerIsFinishedTakingActions();
