@@ -994,10 +994,6 @@ export function getProjectCardByName(cardName: string): IProjectCard | undefined
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
-    cardFactory = FAN_BASIC_CORPORATION_CARDS.find((cf) => cf.cardName === cardName);
-    if (cardFactory !== undefined) {
-        return new cardFactory.factory();
-    }
     return undefined;
 }
 
@@ -1031,6 +1027,10 @@ export function getCorporationCardByName(cardName: string): CorporationCard | un
         return new cardFactory.factory();
     }
     cardFactory = ALL_TURMOIL_CORPORATIONS.find((cf) => cf.cardName === cardName);
+    if (cardFactory !== undefined) {
+        return new cardFactory.factory();
+    }
+    cardFactory = FAN_BASIC_CORPORATION_CARDS.find((cf) => cf.cardName === cardName);
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
