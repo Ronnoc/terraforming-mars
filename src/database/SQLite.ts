@@ -79,7 +79,13 @@ export class SQLite implements IDatabase {
             let gameToRestore = JSON.parse(row.game);
 
             // Rebuild each objects
-            game.loadFromJSON(gameToRestore);
+            try {
+                game.loadFromJSON(gameToRestore);
+            } catch (e) {
+                console.log(gameToRestore);
+                cb(e);
+                return;
+            }
 
             return cb(err);
         });
