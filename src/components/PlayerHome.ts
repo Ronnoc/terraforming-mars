@@ -34,7 +34,7 @@ export const PlayerHome = Vue.component("player-home", {
         "turmoil": Turmoil
     },
     data: function () {
-        return {}
+        return { soundtip: false }
     },
     mixins: [PlayerMixin],
     methods: {
@@ -58,10 +58,18 @@ export const PlayerHome = Vue.component("player-home", {
                 fleetsRange.push(i);
             }
             return fleetsRange
+        },
+        updateTips: function () {
+            if (window.localStorage) {
+                window.localStorage.setItem("soundtip", this.soundtip ? "1" : "0");
+            }
         }
     },
     mounted: function () {
         dialogPolyfill.default.registerDialog(document.getElementById("dialog-default"));
+        if (window.localStorage) {
+            this.soundtip = window.localStorage.getItem("soundtip") === "1";
+        }
     },
     template: `
         <div id="player-home">
@@ -148,8 +156,12 @@ export const PlayerHome = Vue.component("player-home", {
 
                 <div class="player_home_block player_home_block--actions nofloat">
                     <a name="actions" class="player_home_anchor"></a>
-                    <h2 :class="'player_color_'+ player.color" v-i18n>Actions</h2>
-                    <waiting-for v-if="player.phase !== 'end'" :players="player.players" :player="player" :waitingfor="player.waitingFor"></waiting-for>
+                    <h2 :class="'player_color_'+ player.color" style="display: inline-block;" v-i18n>Actions</h2>
+                    <label class="form-switch" style="margin-left: 20px;display: inline-block;">
+                        <input type="checkbox" name="soundtip" v-model="soundtip" v-on:change="updateTips" >
+                        <i class="form-icon"></i> <span v-i18n>Sound Tip</span>
+                    </label>
+                    <waiting-for v-if="player.phase !== 'end'" :players="player.players" :player="player" :soundtip="soundtip" :waitingfor="player.waitingFor"></waiting-for>
                 </div>
 
                 <div class="player_home_block player_home_block--hand" v-if="player.draftedCards.length > 0">
