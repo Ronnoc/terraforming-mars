@@ -127,7 +127,7 @@
     "Raise your terraforming rating 2 steps and temperature 1 step. Increase your Plant production 1 step, or 4 steps if you have 3 Plant tags.": "提升你的改造度(TR)2,提升火星温度1级。提升你的植物产能1级,如果你有至少3个植物标记,则提升4级",
     
     "Rover Construction": "漫游者建设",
-    "Effect: When any City tile is placed, gain 2 MC.": "效果: когда любой игрок строит город, вы получаете 2 MC.",
+    "Effect: When any City tile is placed, gain 2 MC.": "效果: When any City tile is placed, gain 2 MC.",
 
     "Deimos Down": "火卫二陨落",
     "Raise temperature 3 steps and gain 4 steel. Remove up to 8 Plants from any player.": "提升火星温度3级并获得4个钢铁资源。移除任一玩家最多8个植物资源",
@@ -181,7 +181,7 @@
     "Decrease any Plant production 1 step. 1 VP per 2 Animals on this card.": "降低任一玩家的植物产能1级。本卡上每有2个动物资源,获得1分",
 
     "Kelp Farming": "养殖海藻",
-    "Requires 6 ocean tiles. Increase your MC production 2 steps and your Plant production 3 steps. Gain 2 Plants.": "Необходимо 6 тайлов океана. Получите 2 растения, повысьте своё производство растений на 3, а свой доход на 2.",
+    "Requires 6 ocean tiles. Increase your MC production 2 steps and your Plant production 3 steps. Gain 2 Plants.": "Requires 6 ocean tiles. Increase your MC production 2 steps and your Plant production 3 steps. Gain 2 Plants.",
 
     "Mine": "采矿",
     "Increase your steel production 1 step.": "增加你的钢铁产能1级",
@@ -522,7 +522,7 @@
   "Magnetic Field Generators": "磁力发动机",
   "Decrease your Energy production 4 steps and increase your Plant production 2 steps. Raise your TR 3 steps.": "电力产量-4 植物产量+2 改造度+3",
 
-  "Shuttles": "Воздушный транспорт",
+  "Shuttles": "Shuttles",
   "Requires 5% oxygen. Decrease your Energy production 1 step and increase your MC production 2 steps.": "（需求：氧气浓度≥5％）电力产量-1 金钱产量+2",
 
   "Import of Advanced GHG": "输入高级温室气体",
