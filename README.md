@@ -11,6 +11,7 @@ you can try the change in http://158.247.194.238:9853/;
         - ArcelorMittal: steal value + 1
 - add Shuffle Map Option : Only Support Orignal Board Now
 - add More Prelude Option : Select 3/5 instead of 2/4 for prelude
+- add ex Solo Option: more card / colony draw
 
 # TODO LIST
 
@@ -22,6 +23,8 @@ you can try the change in http://158.247.194.238:9853/;
     - Milestone
     - Map
     - Rule
+        - prelude drafting
+        - card auction
 
 # terraforming-mars
 

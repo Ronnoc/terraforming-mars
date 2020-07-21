@@ -69,6 +69,7 @@ export interface GameOptions {
   customCorporationsList: Array<CardName>;
   solarPhaseOption: boolean;
   shuffleMapOption: boolean;
+  exSoloOption: boolean;
   morePreludeOption: boolean;
   fanMadeOption: boolean;
   promoCardsOption: boolean;
@@ -119,6 +120,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public boardName: BoardName;
     public showOtherPlayersVP: boolean;
     private solarPhaseOption: boolean;
+    public exSoloOption: boolean;
     public shuffleMapOption: boolean;
     public morePreludeOption: boolean;
     public fanMadeOption: boolean;
@@ -160,6 +162,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           customCorporationsList: [],
           solarPhaseOption: false,
           shuffleMapOption: true,
+          exSoloOption: false,
           morePreludeOption: false,
           fanMadeOption: true,
           promoCardsOption: true,
@@ -190,6 +193,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.solarPhaseOption = gameOptions.solarPhaseOption;
       this.fanMadeOption = gameOptions.fanMadeOption;
       this.morePreludeOption = gameOptions.morePreludeOption;
+      this.exSoloOption = gameOptions.exSoloOption;
       this.soloTR = gameOptions.soloTR;
       this.initialDraft = gameOptions.initialDraftVariant;
       this.initialDraftRounds = gameOptions.initialDraftRounds || 4;
@@ -238,7 +242,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.coloniesExtension) {
         corporationCards.push(...ALL_COLONIES_CORPORATIONS.map((cf) => new cf.factory()));
         this.colonyDealer = new ColonyDealer();
-        this.colonies = this.colonyDealer.drawColonies(players.length);
+        let colonies_modify = 0;
+        if (this.exSoloOption) colonies_modify = 5;
+        this.colonies = this.colonyDealer.drawColonies(players.length + colonies_modify);
         if (this.players.length === 1) {
           players[0].setProduction(Resources.MEGACREDITS, -2);
           this.addInterrupt(new SelectRemoveColony(players[0], this));
@@ -295,8 +301,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
               throw new Error("No corporation card dealt for player");
             }
           }
-
-          for (let i = 0; i < 10; i++) {
+          let initDealtCards = 10;
+          if (this.exSoloOption) initDealtCards = 15;
+          for (let i = 0; i < initDealtCards; i++) {
             player.dealtProjectCards.push(this.dealer.dealCard());
           }
           if (this.preludeExtension) {
@@ -464,6 +471,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           game.solarPhaseOption = gameToRebuild.solarPhaseOption;
           game.shuffleMapOption = gameToRebuild.shuffleMapOption;
           game.morePreludeOption = gameToRebuild.morePreludeOption;
+          game.exSoloOption = gameToRebuild.exSoloOption;
           game.fanMadeOption = gameToRebuild.fanMadeOption;
           game.promoCardsOption = gameToRebuild.promoCardsOption;
           game.undoOption = gameToRebuild.undoOption;

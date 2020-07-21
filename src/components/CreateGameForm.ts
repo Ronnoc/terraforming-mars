@@ -30,6 +30,7 @@ interface CreateGameModel {
     shuffleMapOption: boolean;
     morePreludeOption: boolean;
     fanMadeOption: boolean;
+    exSoloOption: boolean;
     promoCardsOption: boolean;
     undoOption: boolean;
     includeVenusMA: boolean;
@@ -84,6 +85,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             seed: Math.random(),
             seededGame: false,
             solarPhaseOption: false,
+            exSoloOption: false,
             shuffleMapOption: true,
             morePreludeOption: false,
             fanMadeOption: true,
@@ -191,6 +193,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const colonies = component.colonies;
             const turmoil = component.turmoil;
             const solarPhaseOption = this.solarPhaseOption;
+            const exSoloOption = this.exSoloOption;
             const shuffleMapOption = this.shuffleMapOption;
             const morePreludeOption = this.morePreludeOption;
             const fanMadeOption = this.fanMadeOption;
@@ -239,6 +242,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 fanMadeOption,
                 shuffleMapOption,
                 morePreludeOption,
+                exSoloOption,
             });
 
             const onSucces = (response: any) => {
@@ -387,6 +391,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             <label class="form-switch">
                                 <input type="checkbox" v-model="solarPhaseOption">
                                 <i class="form-icon"></i> <span v-i18n>Use Solar Phase</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#solar-phase" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <label class="form-switch">
+                                <input type="checkbox" v-model="exSoloOption">
+                                <i class="form-icon"></i> <span v-i18n>Extend Solo</span>
                             </label>
 
                             <label class="form-switch">

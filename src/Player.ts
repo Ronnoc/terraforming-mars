@@ -983,12 +983,11 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     public runResearchPhase(game: Game, draftVariant: boolean): void {
       let dealtCards: Array<IProjectCard> = [];
       if (!draftVariant) {
-        dealtCards.push(
-          game.dealer.dealCard(true),
-          game.dealer.dealCard(true),
-          game.dealer.dealCard(true),
-          game.dealer.dealCard(true)
-        );
+        let dealCardCount = 4;
+        if (game.exSoloOption) dealCardCount = 6;
+        for (let i = 0; i< dealCardCount; ++i){
+          dealtCards.push(game.dealer.dealCard(true));
+        }
       } else {
         dealtCards = this.draftedCards;
         this.draftedCards = [];
