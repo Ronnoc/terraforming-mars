@@ -984,7 +984,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let dealtCards: Array<IProjectCard> = [];
       if (!draftVariant) {
         let dealCardCount = 4;
-        if (game.exSoloOption) dealCardCount = 6;
+        if (game.soloMode && game.exSoloOption) dealCardCount = 6;
         for (let i = 0; i< dealCardCount; ++i){
           dealtCards.push(game.dealer.dealCard(true));
         }

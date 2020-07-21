@@ -393,7 +393,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <i class="form-icon"></i> <span v-i18n>Use Solar Phase</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#solar-phase" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
-                            <label class="form-switch">
+                            <label class="form-switch" v-if="playersCount < 2">
                                 <input type="checkbox" v-model="exSoloOption">
                                 <i class="form-icon"></i> <span v-i18n>Extend Solo</span>
                             </label>
