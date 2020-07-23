@@ -29,10 +29,15 @@ you can try the change in http://158.247.194.238:9853/;
   - Milestone
   - Map
   - Rule
-    - prelude drafting
+    - (WIP)prelude drafting
+    - (WIP)prelude 1 by 1
     - card auction
-    - Solo can claim milestone for 2TR
     - 7 heat to increase temp
+  - Solo varients
+    - (WIP)Solo can claim milestone for 2TR
+    - (WIP)change more card to Pseudo-draft for solo (look 4, draw 1, discard, look 3, draw 1, discard, etc.)
+    - Solo Levels https://boardgamegeek.com/thread/2274004/solo-variant-20-more-difficulty-levels
+  - Look at https://boardgamegeek.com/thread/2076825/tfm-variants-index-catalogue
 
 ## Demo
 
