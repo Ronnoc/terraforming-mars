@@ -1,3 +1,9 @@
+# terraforming-mars
+
+Terraforming Mars Boardgame
+
+The board game is great, this repository highly recommends purchasing [it](https://www.amazon.com/Stronghold-Games-6005SG-Terraforming-Board/dp/B01GSYA4K2) for personal use. If you want to play with people online, you can use this tool.
+
 ## Changelog
 
 you can try the change in http://158.247.194.238:9853/;
@@ -8,8 +14,8 @@ you can try the change in http://158.247.194.238:9853/;
     - Voyager: Having the most Jovian/Earth/Venus tags in play
     - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
   - Add Corporation
-    - ArcelorMittal: steal value + 1
-- add Shuffle Map Option : Only Support Orignal Board Now
+    - ArcelorMittal: 24MC, 13 steel; steel value + 1
+- add Shuffle Map Option : (merged in forked repo)
 - add More Prelude Option : Select 3/5 instead of 2/4 for prelude
 - add ex Solo Option: more card / colony draw
 
@@ -25,12 +31,8 @@ you can try the change in http://158.247.194.238:9853/;
   - Rule
     - prelude drafting
     - card auction
-
-## terraforming-mars
-
-Terraforming Mars Boardgame
-
-The board game is great, this repository highly recommends purchasing [it](https://www.amazon.com/Stronghold-Games-6005SG-Terraforming-Board/dp/B01GSYA4K2) for personal use. If you want to play with people online, you can use this tool.
+    - Solo can claim milestone for 2TR
+    - 7 heat to increase temp
 
 ## Demo
 
