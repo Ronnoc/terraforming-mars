@@ -1815,7 +1815,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     }
 
     private passOption(game: Game): PlayerInput {
-      return new SelectOption("Pass", () => {
+      return new SelectOption("Pass for this generation", () => {
         game.playerHasPassed(this);
         game.log(
           LogMessageType.DEFAULT,
