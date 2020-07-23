@@ -38,7 +38,7 @@ export const CorporationsFilter = Vue.component("corporations-filter", {
                 {"title": CorporationGroup.COLONIES, "items": ALL_COLONIES_CORPORATIONS.map((cf) => cf.cardName)},
                 {"title": CorporationGroup.TURMOIL, "items": ALL_TURMOIL_CORPORATIONS.map((cf) => cf.cardName)},
                 {"title": CorporationGroup.PROMO, "items": ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.FANMADE, "items": ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName)},
+                {"title": CorporationGroup.FANMADE, "items": FAN_BASIC_CORPORATION_CARDS.map((cf) => cf.cardName)},
             ]
         }
     },
