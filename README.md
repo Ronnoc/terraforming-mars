@@ -1,32 +1,32 @@
-# Changelog
+## Changelog
 
 you can try the change in http://158.247.194.238:9853/;
 
 - Merge Chinese branch
 - add FanMade Option to use FanMade Cards
-    - Add Awards
-        - Voyager: Having the most Jovian/Earth/Venus tags in play
-        - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
-    - Add Corporation
-        - ArcelorMittal: steal value + 1
+  - Add Awards
+    - Voyager: Having the most Jovian/Earth/Venus tags in play
+    - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
+  - Add Corporation
+    - ArcelorMittal: steal value + 1
 - add Shuffle Map Option : Only Support Orignal Board Now
 - add More Prelude Option : Select 3/5 instead of 2/4 for prelude
 - add ex Solo Option: more card / colony draw
 
-# TODO LIST
+## TODO LIST
 
-- More FanMade Card
-    - Corporation
-    - Prelude
-    - Project
-    - Awards
-    - Milestone
-    - Map
-    - Rule
-        - prelude drafting
-        - card auction
+- More FanMade
+  - Corporation
+  - Prelude
+  - Project
+  - Awards
+  - Milestone
+  - Map
+  - Rule
+    - prelude drafting
+    - card auction
 
-# terraforming-mars
+## terraforming-mars
 
 Terraforming Mars Boardgame
 
@@ -40,7 +40,7 @@ You can try online [here](https://terraforming-mars.herokuapp.com/). Please post
 
 You can run the game server locally if you have `npm` and `node`. To start the game server run the `start` script.
 
-```
+```bash
 npm install
 npm run start
 ```
