@@ -113,9 +113,9 @@ export const PlayerHome = Vue.component("player-home", {
 
                     <turmoil v-if="player.turmoil" :turmoil="player.turmoil"></turmoil>
 
-                    <div v-if="player.players.length > 1" class="player_home_block--milestones-and-awards">
+                    <div  class="player_home_block--milestones-and-awards">
                         <milestone :milestones_list="player.milestones" />
-                        <award :awards_list="player.awards" />
+                        <award v-if="player.players.length > 1" :awards_list="player.awards" />
                     </div>
                 </div>
 
@@ -171,7 +171,7 @@ export const PlayerHome = Vue.component("player-home", {
                     </div>
                 </div>
 
-                <div class="player_home_block player_home_block--log nofloat" v-if="player.players.length > 1 && player.gameLog.length > 0">
+                <div class="player_home_block player_home_block--log nofloat" v-if="player.gameLog.length > 0">
                     <h2 :class="'player_color_'+ player.color" v-i18n>Last Actions</h2>
                     <log-panel :messages="player.gameLog" :players="player.players"></log-panel>
                 </div>
@@ -232,9 +232,9 @@ export const PlayerHome = Vue.component("player-home", {
 
                 <h2 :class="'player_color_'+ player.color" v-i18n>Game details</h2>
 
-                <div class="player_home_block" v-if="player.players.length > 1">
+                <div class="player_home_block">
                     <milestone :milestones_list="player.milestones" />
-                    <award :awards_list="player.awards" />
+                    <award v-if="player.players.length > 1" :awards_list="player.awards" />
                 </div>
 
                 <div class="player_home_block player_home_block--turnorder nofloat" v-if="player.players.length>1">

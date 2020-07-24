@@ -219,6 +219,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
         this.draftVariant = false;
         this.setupSolo();
       }
+      else{
+        this.exSoloOption=false;
+      }
 
       let corporationCards = ALL_CORPORATION_CARDS.map((cf) => new cf.factory());
 
@@ -242,9 +245,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.coloniesExtension) {
         corporationCards.push(...ALL_COLONIES_CORPORATIONS.map((cf) => new cf.factory()));
         this.colonyDealer = new ColonyDealer();
-        let colonies_modify = 0;
-        if (this.soloMode && this.exSoloOption) colonies_modify = 5;
-        this.colonies = this.colonyDealer.drawColonies(players.length + colonies_modify);
+        this.colonies = this.colonyDealer.drawColonies(players.length);
         if (this.players.length === 1) {
           players[0].setProduction(Resources.MEGACREDITS, -2);
           this.addInterrupt(new SelectRemoveColony(players[0], this));
@@ -302,7 +303,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
             }
           }
           let initDealtCards = 10;
-          if (this.soloMode && this.exSoloOption) initDealtCards = 15;
+          if (this.exSoloOption) initDealtCards = 15;
           for (let i = 0; i < initDealtCards; i++) {
             player.dealtProjectCards.push(this.dealer.dealCard());
           }
@@ -731,7 +732,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
     public allMilestonesClaimed(): boolean {
       // Milestones are disabled for 1 player games
-      if (this.players.length === 1) return true;
+      if (this.players.length === 1 && !this.exSoloOption) return true;
 
       return this.claimedMilestones.length > 2;
     }

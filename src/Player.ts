@@ -984,7 +984,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let dealtCards: Array<IProjectCard> = [];
       if (!draftVariant) {
         let dealCardCount = 4;
-        if (game.soloMode && game.exSoloOption) dealCardCount = 6;
+        if (game.exSoloOption) dealCardCount = 6;
         for (let i = 0; i< dealCardCount; ++i){
           dealtCards.push(game.dealer.dealCard(true));
         }
@@ -1697,6 +1697,9 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         });
         this.heat -= heat;
         this.megaCredits -= megaCredits;
+        if(game.exSoloOption){
+          this.megaCreditProduction += 2;
+        }
         game.log(
           LogMessageType.DEFAULT,
           "${0} claimed ${1} milestone",
@@ -2082,11 +2085,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         }
         
         this.setWaitingFor(this.playPreludeCard(game), () => {
-            if (this.preludeCardsInHand.length >= 1) {
-                this.takeAction(game);
-            } else {
-                game.playerIsFinishedTakingActions();
-            }
+            game.playerIsFinishedTakingActions();
         });
         return;
       } else {
