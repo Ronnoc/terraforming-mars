@@ -17,7 +17,7 @@ you can try the change in http://158.247.194.238:9853/;
     - ArcelorMittal: 24MC, 13 steel; steel value + 1
 - add Shuffle Map Option : (merged in forked repo)
 - add More Prelude Option : Select 3/5 instead of 2/4 for prelude
-- add ex Solo Option: more card / colony draw
+- add ex Solo Option: more card(init 15; research 4); claim milestone for +2MC Production; 
 
 ## TODO LIST
 
@@ -29,14 +29,7 @@ you can try the change in http://158.247.194.238:9853/;
   - Milestone
   - Map
   - Rule
-    - (WIP)prelude drafting
-    - (WIP)prelude 1 by 1
-    - card auction
     - 7 heat to increase temp
-  - Solo varients
-    - (WIP)Solo can claim milestone for 2TR
-    - (WIP)change more card to Pseudo-draft for solo (look 4, draw 1, discard, look 3, draw 1, discard, etc.)
-    - Solo Levels https://boardgamegeek.com/thread/2274004/solo-variant-20-more-difficulty-levels
   - Look at https://boardgamegeek.com/thread/2076825/tfm-variants-index-catalogue
 
 ## Demo

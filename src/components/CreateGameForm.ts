@@ -378,7 +378,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <i class="form-icon"></i> <span v-i18n>Prelude 3/5</span>
                             </label>
 
-                            <label class="form-switch" v-if="playersCount > 1">
+                            <label class="form-switch">
                                 <input type="checkbox" name="randomMA" v-model="randomMA">
                                 <i class="form-icon"></i> <span v-i18n>Random Milestones/Awards</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#random-milestones-and-awards" class="tooltip" target="_blank">&#9432;</a>
                             </label>
@@ -399,17 +399,12 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </label>
 
                             <label class="form-switch">
-                                <input type="checkbox" v-model="undoOption">
+                                <input type="checkbox" v-model="undoOption" >
                                 <i class="form-icon"></i> <span v-i18n>Allow undo</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#allow-undo" class="tooltip" target="_blank">&#9432;</a>
                             </label>
                             <label class="form-switch">
                                 <input type="checkbox" v-model="shuffleMapOption">
                                 <i class="form-icon"></i> <span v-i18n>Randomize board tiles</span>
-                            </label>
-
-                            <label class="form-switch" v-if="venusNext && playersCount > 1">
-                                <input type="checkbox" v-model="includeVenusMA">
-                                <i class="form-icon"></i> <span v-i18n>Venus Milestone/Award</span>
                             </label>
 
                             <label class="form-label">
