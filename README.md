@@ -33,7 +33,7 @@ you can try the change in http://158.247.194.238:9853/;
   - Turmoil Events
   - Rule
     - 7 heat to increase temp
-    - Standard project?
+    - Standard project to Research
   - Solo
   - Look at https://boardgamegeek.com/thread/2076825/tfm-variants-index-catalogue
 
