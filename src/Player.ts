@@ -984,9 +984,35 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let dealtCards: Array<IProjectCard> = [];
       if (!draftVariant) {
         let dealCardCount = 4;
-        if (game.exSoloOption) dealCardCount = 6;
-        for (let i = 0; i< dealCardCount; ++i){
-          dealtCards.push(game.dealer.dealCard(true));
+        if (game.exSoloOption) {
+          let dif = dealCardCount - this.draftedCards.length;
+          if (dif >1 ){
+            let cards: Array<IProjectCard> = [];
+            for(let i=0;i<dif;++i){
+              cards.push(game.dealer.dealCard(true));
+            }
+            this.setWaitingFor(
+              new SelectCard(
+                "Select a card",
+                cards,
+                (foundCards: Array<IProjectCard>) => {
+                  this.draftedCards.push(foundCards[0]);
+                  this.runResearchPhase(game, draftVariant);
+                  return undefined;
+                }, 1, 1
+              ), () => { }
+            );
+            return undefined;
+          }else{
+            dealtCards = this.draftedCards;
+            this.draftedCards = [];
+            dealtCards.push(game.dealer.dealCard(true));
+          }
+        }
+        else{
+          for (let i = 0; i< dealCardCount; ++i){
+            dealtCards.push(game.dealer.dealCard(true));
+          }
         }
       } else {
         dealtCards = this.draftedCards;

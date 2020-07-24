@@ -17,21 +17,24 @@ you can try the change in http://158.247.194.238:9853/;
     - ArcelorMittal: 24MC, 13 steel; steel value + 1
 - add Shuffle Map Option : (merged in forked repo)
 - add More Prelude Option : Select 3/5 instead of 2/4 for prelude
-- add ex Solo Option: more card(init 15; research 4); claim milestone for +2MC Production;
+- add ex Solo Option: init 15 card; research (1/4+1/3+1/2+1/1); claim milestone for +2MC Production;
 
 ## TODO LIST
 
 - More FanMade
-  - Board
-  - Awards
-  - Milestone
-  - Corporation
-  - Prelude
-  - Project
+  - Board (shuffle is enough now)
+  - Awards (WIP)
+  - Milestone (WIP)
+  - Corporation (balance is hard or enhance some corporation?)
+    - sell card with 2 MC
+  - Prelude (maybe prelude for venus/colony/turmoil is good idea)
+  - Project (less impact)
   - Colony
-  - Events
+  - Turmoil Events
   - Rule
     - 7 heat to increase temp
+    - Standard project?
+  - Solo
   - Look at https://boardgamegeek.com/thread/2076825/tfm-variants-index-catalogue
 
 ## Demo
