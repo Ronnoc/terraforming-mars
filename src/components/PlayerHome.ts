@@ -142,12 +142,21 @@ export const PlayerHome = Vue.component("player-home", {
                         <tag-count v-if="tag.count > 0" :tag="tag.tag" :count="tag.count"> </tag-count>
                     </div>
                 </div>
+
                 <div class="tag-display tags_item_cont" :class="player.tags.length > 0 ? 'tag-display-vp': ''">
                     <div>
                         <div class="tag-display">
                             <div class="tag-count icon-vp">{{player.victoryPointsBreakdown.total}}</div>
                         </div>
                     </div>
+                </div>
+
+                <div class="tag-display tags_item_cont" :class="'tag-display-vp'">
+                    <div>
+                        <div class="resource card" style="margin-left: -5px; transform: scale(0.8);top: -15px"></div>
+                        <div class="resource card" style="margin: 0px 0px 0px -30px; transform: scale(0.8);box-sizing: content-box;top: -15px"></div>
+                    </div>
+                    <div class="deck-len">{{player.deckSize}}</div>
                 </div>
 
                 <div class="player_home_block player_home_block--resources nofloat">
@@ -181,6 +190,20 @@ export const PlayerHome = Vue.component("player-home", {
                     <h2 :class="'player_color_'+ player.color" v-i18n>Cards In Hand</h2>
                     <div v-for="card in player.cardsInHand" :key="card.name" class="cardbox">
                         <card :card="card"></card>
+                    </div>
+                </div>
+
+                <div v-if="player.colonies.length > 0" class="player_home_block">
+                    <h2 :class="'player_color_'+ player.color" v-i18n>Colonies</h2>
+                    <div class="colonies-fleets-cont" v-if="player.corporationCard">
+                        <div class="colonies-player-fleets" v-for="colonyPlayer in player.players">
+                            <div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)"></div>
+                        </div>
+                    </div>
+                    <div class="player_home_colony_cont">
+                        <div class="player_home_colony" v-for="colony in player.colonies" :key="colony.name">
+                            <colony :colony="colony"></colony>
+                        </div>
                     </div>
                 </div>
 
@@ -263,19 +286,6 @@ export const PlayerHome = Vue.component("player-home", {
                 </details>
             </div>
 
-            <div v-if="player.colonies.length > 0" class="player_home_block">
-                <h2 :class="'player_color_'+ player.color" v-i18n>Colonies</h2>
-                <div class="colonies-fleets-cont" v-if="player.corporationCard">
-                    <div class="colonies-player-fleets" v-for="colonyPlayer in player.players">
-                        <div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)"></div>
-                    </div>
-                </div>
-                <div class="player_home_colony_cont">
-                    <div class="player_home_colony" v-for="colony in player.colonies" :key="colony.name">
-                        <colony :colony="colony"></colony>
-                    </div>
-                </div>
-            </div>
         </div>
     `
 });
