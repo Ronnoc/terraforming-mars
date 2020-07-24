@@ -2220,18 +2220,6 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         if (remainingMilestones.options.length >= 1) action.options.push(remainingMilestones);
       }
 
-      // If you can pay to send some in the Ara
-      if (game.turmoilExtension) {
-        if (game.turmoil?.lobby.has(this.id)) {
-          const selectParty = new SelectParty(this, game, "Send a delegate in an area (from lobby)");
-          action.options.push(selectParty.playerInput);
-        }
-        else if (this.canAfford(5) && game.turmoil!.getDelegates(this.id) > 0){
-          const selectParty = new SelectParty(this, game, "Send a delegate in an area (5MC)", 1, undefined, 5, false);
-          action.options.push(selectParty.playerInput);
-        }
-      }
-
       action.options.sort((a, b) => {
         if (a.title > b.title) {
           return 1;
@@ -2264,6 +2252,18 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         action.options.push(standardProjects);
       } else if (standardProjects.options.length === 1) {
         action.options.push(standardProjects.options[0]);
+      }
+
+      // If you can pay to send some in the Ara
+      if (game.turmoilExtension) {
+        if (game.turmoil?.lobby.has(this.id)) {
+          const selectParty = new SelectParty(this, game, "Send a delegate in an area (from lobby)");
+          action.options.push(selectParty.playerInput);
+        }
+        else if (this.canAfford(5) && game.turmoil!.getDelegates(this.id) > 0) {
+          const selectParty = new SelectParty(this, game, "Send a delegate in an area (5MC)", 1, undefined, 5, false);
+          action.options.push(selectParty.playerInput);
+        }
       }
 
       action.options.push(
