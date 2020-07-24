@@ -143,7 +143,7 @@
     "Not your turn to take any actions": "还没到你的回合,暂无法行动",
     "Please Login with right user": "请登录该用户以继续操作",
     "Undoing, Please refresh or wait seconds": "撤回中，请等待几秒或手动刷新页面",
-    "Pass": "结束本时代",
+    "Pass for this generation": "结束本时代",
     "Pay for a Standard Project": "执行标准行动",
     "Play project card": "打出项目卡",
     "Sell patents": "贩卖专利",
