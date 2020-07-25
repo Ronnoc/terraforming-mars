@@ -215,7 +215,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
         this.soloMode = true;
         this.draftVariant = false;
         this.initialDraft = false;
-        this.randomMA = false;
         this.draftVariant = false;
         this.setupSolo();
       }
@@ -732,7 +731,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
     public allMilestonesClaimed(): boolean {
       // Milestones are disabled for 1 player games
-      if (this.players.length === 1 && !this.exSoloOption) return true;
+      if (this.exSoloOption) return false;
+      if (this.players.length === 1) return true;
 
       return this.claimedMilestones.length > 2;
     }
