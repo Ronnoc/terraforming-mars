@@ -34,6 +34,9 @@ you can try the change in http://158.247.194.238:9853/;
   - Rule
     - 7 heat to increase temp
     - Standard project to Research 8 MC 3 choose 1
+  - enhance 
+    - reorder robot action
+  - ex Solo
   - bug
 
 ## Demo
