@@ -23,7 +23,7 @@ you can try the change in http://158.247.194.238:9853/;
 
 - More FanMade
   - Board (shuffle is enough now)
-  - Awards (WIP)
+  - Awards
   - Milestone (WIP)
   - Corporation (balance is hard or enhance some corporation?)
     - sell card with 2 MC
@@ -34,9 +34,18 @@ you can try the change in http://158.247.194.238:9853/;
   - Rule
     - 7 heat to increase temp
     - Standard project to Research 8 MC 3 choose 1
-  - enhance 
+    - always enable 16+1TR for solo game
+  - Hard Feature
+    - open afk / stop afk
+    - give up game
+    - random AI player
+  - enhance
     - reorder robot action
+    - tweek victor corporation
   - ex Solo
+    - unlimit milestone count
+    - allow undo every time
+    - more colony (must have pluto,luna)
   - bug
 
 ## Demo
