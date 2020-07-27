@@ -66,8 +66,26 @@ export class ColonyDealer {
         let tempDeck = this.shuffle(ALL_COLONIES_TILES.map((cf) => new cf.factory()));
         for (let i = 0; i < count; i++) {
             this.coloniesDeck.push(tempDeck.pop());
-        }    
-        this.discardedColonies.push(...tempDeck);
+        }
+        if(players == 1){
+            let hasPluto = false;
+            for( let colony of this.coloniesDeck ){
+                if(colony.name == ColonyName.PLUTO)
+                    hasPluto = true;
+            }
+            if(hasPluto)this.coloniesDeck.push(tempDeck.pop());
+            else{
+                for(let colony of tempDeck){
+                    if(colony.name == ColonyName.PLUTO)
+                        this.coloniesDeck.push(colony);
+                    else
+                        this.discardedColonies.push(colony);
+                }
+            }
+        }
+        else this.discardedColonies.push(...tempDeck);
+
+        
         this.discardedColonies.sort((a,b) => (a.name > b.name) ? 1 : -1);
         this.coloniesDeck.sort((a,b) => (a.name > b.name) ? 1 : -1);
 

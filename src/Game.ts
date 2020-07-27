@@ -244,9 +244,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.coloniesExtension) {
         corporationCards.push(...ALL_COLONIES_CORPORATIONS.map((cf) => new cf.factory()));
         this.colonyDealer = new ColonyDealer();
-        let length_modify=0;
-        if(this.exSoloOption)length_modify=8;
-        this.colonies = this.colonyDealer.drawColonies(players.length + length_modify);
+        this.colonies = this.colonyDealer.drawColonies(players.length);
         if (this.players.length === 1) {
           players[0].setProduction(Resources.MEGACREDITS, -2);
           if(!this.exSoloOption)
