@@ -151,14 +151,6 @@ export const PlayerHome = Vue.component("player-home", {
                     </div>
                 </div>
 
-                <div class="tag-display tags_item_cont" :class="'tag-display-vp'">
-                    <div>
-                        <div class="resource card" style="margin-left: -5px; transform: scale(0.8);top: -15px"></div>
-                        <div class="resource card" style="margin: 0px 0px 0px -30px; transform: scale(0.8);box-sizing: content-box;top: -15px"></div>
-                    </div>
-                    <div class="deck-len">{{player.deckSize}}</div>
-                </div>
-
                 <div class="player_home_block player_home_block--resources nofloat">
                     <player-resources :player="player" v-trim-whitespace></player-resources>
                 </div>
