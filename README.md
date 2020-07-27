@@ -23,29 +23,25 @@ you can try the change in http://158.247.194.238:9853/;
 
 - More FanMade
   - Board (shuffle is enough now)
-  - Awards
+  - Awards (2 more is enough now)
   - Milestone (WIP)
   - Corporation (balance is hard or enhance some corporation?)
     - sell card with 2 MC
-  - Prelude (maybe prelude for venus/colony/turmoil is good idea)
+  - Prelude (WIP maybe prelude for venus/colony/turmoil is good idea)
   - Project (less impact)
-  - Colony
-  - Turmoil Events
+  - Colony (WIP)
+  - Turmoil Events (WIP)
   - Rule
     - 7 heat to increase temp
     - Standard project to Research 8 MC 3 choose 1
-    - always enable 16+1TR for solo game
   - Hard Feature
     - open afk / stop afk
     - give up game
     - random AI player
   - enhance
-    - reorder robot action
-    - tweek victor corporation
+    - game end if WGT finish terrforming MARS
+    - prelude drafting
   - ex Solo
-    - unlimit milestone count
-    - allow undo every time
-    - more colony (must have pluto,luna)
   - bug
 
 ## Demo
