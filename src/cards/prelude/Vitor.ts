@@ -24,6 +24,7 @@ export class Vitor implements CorporationCard {
     public initialAction(player: Player, game: Game) {
         // Awards are disabled for 1 player games
         if (game.soloMode) {
+            player.megaCredits += 8;
             return;
         }
         const freeAward = new OrOptions();
