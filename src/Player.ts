@@ -1992,12 +1992,6 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
 
       const redsAreRuling = PartyHooks.shouldApplyPolicy(game, PartyName.REDS);
 
-      if (this.canAfford(this.powerPlantCost)) {
-        standardProjects.options.push(
-            this.buildPowerPlant(game)
-        );
-      }
-
       let asteroidCost = constants.ASTEROID_COST
       if (redsAreRuling) asteroidCost += REDS_RULING_POLICY_COST;
       
@@ -2022,6 +2016,12 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       if (this.canAfford(greeneryCost) && game.board.getAvailableSpacesForGreenery(this).length > 0) {
         standardProjects.options.push(
             this.addGreenery(game)
+        );
+      }
+
+      if (this.canAfford(this.powerPlantCost)) {
+        standardProjects.options.push(
+          this.buildPowerPlant(game)
         );
       }
 
