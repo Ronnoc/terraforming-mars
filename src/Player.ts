@@ -1299,6 +1299,24 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         } 
 
         this.addPlayedCard(game, selectedCard);
+        if (game.exSoloOption){
+          let sortValue = (card: IProjectCard) =>
+            (card.cardType === CardType.ACTIVE ? -300 : 0) +
+            (card.cardType === CardType.AUTOMATED ? -200 : 0) +
+            (card.cardType === CardType.EVENT ? -100 : 0) +
+            (card.cost) +
+            0;
+
+          this.cardsInHand = this.cardsInHand.sort(
+            (c1, c2) => {
+              let n1 = sortValue(c1);
+              let n2 = sortValue(c2);
+              if (n1 > n2) return 1;
+              if (n1 < n2) return -1;
+              return 0;
+            }
+          );
+        }
 
         for (const playedCard of this.playedCards) {
             if (playedCard.onCardPlayed !== undefined) {
