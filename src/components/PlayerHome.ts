@@ -207,6 +207,15 @@ export const PlayerHome = Vue.component("player-home", {
                     </div>
                 </div>
 
+                <div v-if="player.selfReplicatingRobotsCards.length > 0" class="player_home_block">
+                    <h2 :class="'player_color_'+ player.color" v-i18n>Self-Replicating Robots cards</h2>
+                    <div>
+                        <div v-for="card in getCardsByType(player.selfReplicatingRobotsCards, [getActiveCardType()])" :key="card.name" class="cardbox">
+                            <card :card="card"></card>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="player_home_block player_home_block--cards">
                     <h2 :class="'player_color_'+ player.color" v-i18n>Played Cards</h2>
 
@@ -219,15 +228,6 @@ export const PlayerHome = Vue.component("player-home", {
 
                     <stacked-cards :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
                     <stacked-cards :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>
-                </div>
-
-                <div v-if="player.selfReplicatingRobotsCards.length > 0" class="player_home_block">
-                    <h2 :class="'player_color_'+ player.color" v-i18n>Self-Replicating Robots cards</h2>
-                    <div>
-                        <div v-for="card in getCardsByType(player.selfReplicatingRobotsCards, [getActiveCardType()])" :key="card.name" class="cardbox">
-                            <card :card="card"></card>
-                        </div>
-                    </div>
                 </div>
 
             </div>
