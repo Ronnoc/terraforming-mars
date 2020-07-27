@@ -2059,7 +2059,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let bufferGasCost = constants.BUFFER_GAS_COST
       if (redsAreRuling) bufferGasCost += REDS_RULING_POLICY_COST;
 
-      if (game.soloTR && this.canAfford(bufferGasCost)) {
+      if ((game.soloTR || game.exSoloOption) && this.canAfford(bufferGasCost)) {
         standardProjects.options.push(
             this.bufferGas(game)
         );
