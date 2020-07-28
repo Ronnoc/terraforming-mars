@@ -218,8 +218,8 @@ export const PlayerHome = Vue.component("player-home", {
                         <card :card="card" :actionUsed="isCardActivated(card, player)"> </card>
                     </div>
 
-                    <stacked-cards :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
-                    <stacked-cards :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>
+                    <stacked-cards class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getAutomatedCardType(), getPreludeCardType()])" ></stacked-cards>
+                    <stacked-cards class="player_home_block--non_blue_cards" :cards="getCardsByType(player.playedCards, [getEventCardType()])" ></stacked-cards>                    
                 </div>
 
             </div>
