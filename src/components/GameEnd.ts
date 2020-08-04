@@ -47,7 +47,7 @@ export const GameEnd = Vue.component("game-end", {
                             <ul class="game_end_list">
                                 <li v-i18n>Try to win with expansions enabled</li>
                                 <li v-i18n>Try to win before the last generation comes</li>
-                                <li v-i18n>Can you get 90+ Victory Points?</li>
+                                <li><span v-i18n>Can you get</span> {{ player.victoryPointsBreakdown.total + 10 }}<span v-i18n>+ Victory Points?</span></li>
                             </ul>
                         </div>
                     </div>
@@ -56,16 +56,24 @@ export const GameEnd = Vue.component("game-end", {
                             <h2 v-i18n>Sorry, you lose.</h2>
                             <div class="game_end_notice" v-i18n>
                                 Next time you will get more luck!<br>
-                                Also, take into count these small hints to win:
+                                Also, take into account these small hints to win:
                             </div>
                             <ul class="game_end_list" v-i18n>
                                 <li>Concentrate more on Global parameters, not on Victory Points</li>
                                 <li>Don't be greedy on cards selection</li>
-                                <li>Try to increase Heating production, not Megacredits</li>
+                                <li>Try to increase Heat production, not Megacredits</li>
                                 <li>Try to start with Beginner corporation</li>
                             </ul>
                         </div>
                     </div>
+                </div>
+                <div class="game_end_go_home">
+                    <a href="/" v-i18n>
+                        <button class="btn btn-primary btn-action btn-lg">
+                            <i class="icon icon-back"></i>
+                        </button>
+                        Go to main page
+                    </a>
                 </div>
                 <div class="game_end_victory_points">
                     <h2 v-i18n>Victory points breakdown after<span> {{player.generation}} </span>generations</h2>

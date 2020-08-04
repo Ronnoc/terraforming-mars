@@ -1,4 +1,3 @@
-
 import { expect } from "chai";
 import { Color } from "../src/Color";
 import { OriginalBoard } from "../src/OriginalBoard";
@@ -35,5 +34,10 @@ describe("Board", function () {
         board.spaces[7].tile = { tileType: TileType.GREENERY };
         const availableSpaces = board.getAvailableSpacesForGreenery(player1);
         expect(availableSpaces.length).to.eq(1);
+    });
+    it("doesnt block node process when bug with getRandomCitySpace", function () {
+        const board = new OriginalBoard();
+        (board as any).canPlaceTile = function () { return false; };
+        expect(function () { board.getRandomCitySpace(0); }).to.throw("space not found for getRandomCitySpace");
     });
 });

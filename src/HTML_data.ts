@@ -3100,7 +3100,9 @@ export const HTML_DATA: Map<string, string> =
               <div class="description ">
                   (Action: Spend 2 MC to draw a card.)
               </div><br>
-              <div class="tile special-tile" style="font-size:38px;padding-top:15px;padding-bottom:15px;">&#x20e0;</div>
+              <div class="tile special-tile" style="padding-top: 4px;
+              padding-bottom: 4px;
+              padding-left: 6px;"><div class="restricted-area-tile"></div></div>
               <div class="description ">
                 (Place this tile.)
               </div>
@@ -6097,7 +6099,7 @@ export const HTML_DATA: Map<string, string> =
           <div class="red-arrow"></div> <div class="asteroid resource">A</div> * / <div class="resource " style="background:white;">?</div> OR <br>
           <div class="asteroid resource">A</div><div class="red-arrow"></div> 3 <div class="resource titanium"></div>
           <div class="description" style="text-align:center;">
-            (Action: Add an asteroid resource to ANY card and gain any standard resource, OR remove an asteroid resource from this card to gain 3 titanium.)<br>
+            (Action: Add an asteroid resource to ANY card OR gain any standard resource, OR remove an asteroid resource from this card to gain 3 titanium.)<br>
           </div>
         </div>
         <div class="astrodrill">Astrodrill</div>

@@ -289,7 +289,13 @@ export class Game implements ILoadable<SerializedGame, Game> {
         const player = players[i];
         const remainingPlayers = this.players.length - i;
         
-        if (!player.beginner) {
+        if (!player.beginner ||
+          // Bypass beginner choice if any extension is choosen
+              gameOptions.preludeExtension || 
+              gameOptions.venusNextExtension || 
+              gameOptions.coloniesExtension || 
+              gameOptions.turmoilExtension ||
+              gameOptions.initialDraftVariant) {
           // Failsafe for exceding corporation pool
           if (this.startingCorporations * remainingPlayers > corporationCards.length) {
             this.startingCorporations = 2;
@@ -323,7 +329,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           }
         } else {
           this.setStartingProductions(player);
-          this.playCorporationCard(player, new BeginnerCorporation());
+          this.playerHasPickedCorporationCard(player, new BeginnerCorporation() );
         }
       }
 
@@ -1425,8 +1431,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (space.id === SpaceName.HELLAS_OCEAN_TILE 
           && this.board.getOceansOnBoard() < constants.MAX_OCEAN_TILES
           && this.boardName === BoardName.HELLAS) {
-          player.megaCredits -= 6;
+
           this.addOceanInterrupt(player, "Select space for ocean from placement bonus");
+          this.addSelectHowToPayInterrupt(player, 6, false, false, "Select how to pay for placement bonus ocean");
       }
 
       // Land claim a player can claim land for themselves

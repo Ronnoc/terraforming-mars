@@ -28,7 +28,7 @@
     "Prelude": "Прологи",
     "Venus Next": "Венера",
     "Custom Corporation list": "Настроить корпорации",
-    "Use Solar Phase Option": "Помощь Солнечной системы",
+    "Use Solar Phase": "Помощь Солнечной системы",
 
     "NEXT CARD:": "СЛЕДУЮЩАЯ КАРТА:",
 
@@ -145,7 +145,7 @@
 
     "Pay 9 MC": "Заплатить 9 MC",
     "Trade with a colony": "Торговать с колонией",
-    "TR solo mode": "Соло режим на РТ",
+    "63 TR solo mode": "Соло режим на 63 РТ",
     "Random first player": "Случайный первый игрок",
     "Show real-time VP": "Показывать ПО в реальном времени",
     "Draft variant": "Драфт",
@@ -166,7 +166,7 @@
     "Allow undo": "Разрешить отмену хода",
     "Drafted Cards": "Отложенные на драфте карты",
 
-    "City: 1 VP per each adjanced greenery": "Город: 1 ПО владельцу за каждое смежное озеленение",
+    "City: 1 VP per adjacent greenery": "Город: 1 ПО владельцу за каждое смежное озеленение",
     "Greenery: 1 VP": "Озеленение: 1 ПО владельцу",
     "Commercial District: 1 VP per adjacent city tile": "Коммерческий район: 1 ПО за каждый смежный город",
     "Stanford Torus": "Стэнфордский тор",
@@ -181,5 +181,6 @@
     "Forest": "Озеленение",
     "Alert when Terraforming completed": "Предупреждать о завершении терраформирования",
     "CORPORATION": "Корпорация",
-    "Randomize board tiles": "Случайные места для тайлов"
+    "Randomize board tiles": "Случайные места для тайлов",
+    "Go to main page": "На стартовую страницу"
 }
