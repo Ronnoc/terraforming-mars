@@ -67,16 +67,16 @@ export class ColonyDealer {
         for (let i = 0; i < count; i++) {
             this.coloniesDeck.push(tempDeck.pop());
         }
-        if(players == 1){
+        if(players === 1){
             let hasPluto = false;
             for( let colony of this.coloniesDeck ){
-                if(colony.name == ColonyName.PLUTO)
+                if(colony.name === ColonyName.PLUTO)
                     hasPluto = true;
             }
             if(hasPluto)this.coloniesDeck.push(tempDeck.pop());
             else{
                 for(let colony of tempDeck){
-                    if(colony.name == ColonyName.PLUTO)
+                    if(colony.name === ColonyName.PLUTO)
                         this.coloniesDeck.push(colony);
                     else
                         this.discardedColonies.push(colony);
