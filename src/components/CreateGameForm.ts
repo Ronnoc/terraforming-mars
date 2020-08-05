@@ -75,12 +75,12 @@ export const CreateGameForm = Vue.component("create-game-form", {
             customCorporationsList: [],
             showCorporationList: false,
             isSoloModePage: false,
-            board: BoardName.ORIGINAL,
+            board: "random",
             boards: [
                 BoardName.ORIGINAL,
                 BoardName.HELLAS,
                 BoardName.ELYSIUM,
-                "random"
+                "random",
             ],
             seed: Math.random(),
             seededGame: false,
