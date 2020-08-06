@@ -995,13 +995,13 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             }
             this.setWaitingFor(
               new SelectCard(
-                "Select a card",
+                "Select cards",
                 cards,
                 (foundCards: Array<IProjectCard>) => {
-                  this.draftedCards.push(foundCards[0]);
+                  this.draftedCards.push(...foundCards);
                   this.runResearchPhase(game, draftVariant);
                   return undefined;
-                }, 1, 1
+                }, 1, dif
               ), () => { }
             );
             return undefined;
