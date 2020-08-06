@@ -868,6 +868,33 @@ function serveApp(res: http.ServerResponse): void {
   res.end();
 }
 
+function serveIfGzip(req: http.IncomingMessage, res: http.ServerResponse, file: string):void{
+  let isGzip = false;
+  const ae = req.headers['accept-encoding'];
+  if(ae !== undefined){
+    let aev:string[];
+    if(typeof ae === 'string'){
+      aev=ae.replace(' ','').split(',');
+    }
+    else{
+      aev=ae;
+    }
+    for(let e of aev){
+      if(e === 'gzip'){
+        isGzip = true;
+      }
+    }
+  }
+  if(isGzip){
+    res.setHeader('Content-Encoding', 'gzip');
+    res.write(fs.readFileSync(file+'.gz'));
+  }
+  else{
+    res.setHeader('Content-Type', 'text/javascript');
+    res.write(fs.readFileSync(file));
+  }
+}
+
 function serveAsset(req: http.IncomingMessage, res: http.ServerResponse): void {
   if (req.url === undefined) throw new Error("Empty url");
 
@@ -875,8 +902,9 @@ function serveAsset(req: http.IncomingMessage, res: http.ServerResponse): void {
     res.setHeader('Content-Type', 'image/x-icon');
     res.write(fs.readFileSync('favicon.ico'));
   } else if (req.url === '/main.js') {
-    res.setHeader('Content-Type', 'text/javascript');
-    res.write(fs.readFileSync('dist/main.js'));
+    serveIfGzip(req, res, 'dist/main.js');
+    // res.setHeader('Content-Type', 'text/javascript');
+    // res.write(fs.readFileSync('dist/main.js'));
   } else if (req.url === '/assets/Prototype.ttf') {
     res.write(fs.readFileSync('assets/Prototype.ttf'));
   } else if (req.url === '/assets/futureforces.ttf') {

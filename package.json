@@ -9,6 +9,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^10.17.21",
     "@types/pg": "^7.14.3",
+    "compression-webpack-plugin": "^4.0.0",
     "dialog-polyfill": "^0.5.1",
     "less": "^3.10.3",
     "pg": "^8.2.1",
@@ -33,8 +34,8 @@
     "extends": "@istanbuljs/nyc-config-typescript"
   },
   "scripts": {
-    "build": "node make_locales.js && eslint src/*.ts && lessc src/styles/common.less styles.css && tsc --build tsconfig.json && webpack --config webpack.config.js",
-    "start": "node make_locales.js && lessc src/styles/common.less styles.css && tsc --build tsconfig.json && webpack --config webpack.config.js && node dist/server.js",
+    "build": "node make_locales.js && eslint src/*.ts && lessc src/styles/common.less styles.css && tsc --build tsconfig.json && webpack -p --config webpack.config.js",
+    "start": "node make_locales.js && lessc src/styles/common.less styles.css && tsc --build tsconfig.json && webpack -p --config webpack.config.js && node dist/server.js",
     "pretest": "tsc --build tsconfig-test.json",
     "test": "mocha dist/tests/**.spec.js dist/tests/cards/**.spec.js dist/tests/cards/corporation/**.spec.js dist/tests/cards/prelude/**.spec.js dist/tests/cards/venusNext/**.spec.js dist/tests/cards/colonies/**.spec.js dist/tests/cards/turmoil/**.spec.js dist/tests/cards/promo/**.spec.js dist/tests/globalEvents/**.spec.js dist/tests/milestones/**.spec.js",
     "testgiven": "tsc --build tsconfig.json && webpack --config webpack.config.js && tsc --build tsconfig-test.json && mocha",
