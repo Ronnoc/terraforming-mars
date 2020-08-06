@@ -314,6 +314,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
           for (let i = 0; i < initDealtCards; i++) {
             player.dealtProjectCards.push(this.dealer.dealCard());
           }
+          if (this.exSoloOption) 
+            player.dealtProjectCards.push(...this.dealer.cheat());
           if (this.preludeExtension) {
             let preludeCount = 4;
             if(this.morePreludeOption)

@@ -1084,6 +1084,23 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
             this.deck = this.shuffleCards<IProjectCard>(this.deck);
         }
     }
+
+    public cheat(): Array<IProjectCard> {
+        const rtn : Array<IProjectCard> = [];
+        if(this.useColoniesNextExtension)
+            rtn.push(new MiningColony());
+        if(this.useCorporateEra)
+            rtn.push(new EarthCatapult());
+        rtn.push(new TitaniumMine());
+        if(this.useCorporateEra)
+            rtn.push(new MiningArea());
+        if(this.useCorporateEra)
+            rtn.push(new AdvancedAlloys());
+        if(this.useCorporateEra)
+            rtn.push(new MiningRights());
+        return rtn;
+    }
+
     public shuffleCards<T>(cards: Array<T>): Array<T> {
         const deck: Array<T> = [];
         const copy = cards.slice();
