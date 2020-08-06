@@ -1001,7 +1001,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
                   this.draftedCards.push(...foundCards);
                   this.runResearchPhase(game, draftVariant);
                   return undefined;
-                }, 1, dif
+                }, dif, 1
               ), () => { }
             );
             return undefined;

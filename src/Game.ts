@@ -310,7 +310,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
             }
           }
           let initDealtCards = 10;
-          if (this.exSoloOption) initDealtCards = 15;
           for (let i = 0; i < initDealtCards; i++) {
             player.dealtProjectCards.push(this.dealer.dealCard());
           }
