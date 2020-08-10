@@ -1021,28 +1021,13 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         this.draftedCards = [];
       }
 
-      let htp: HowToPay = {
-        steel: 0,
-        titanium: 0,
-        heat: 0,
-        megaCredits: 0,
-        microbes: 0,
-        floaters: 0,
-        isResearchPhase: true,
-      };
-
       let selectedCards: Array<IProjectCard> = [];
 
       const payForCards = () => {
         const purchasedCardsCost = this.cardCost * selectedCards.length;
-
-        if (htp.heat > 0 && this.canUseHeatAsMegaCredits) {
-          this.heat -= Math.min(htp.heat, purchasedCardsCost); // prevent overspending
-          let megaCreditsToRemove = purchasedCardsCost - htp.heat;
-          if (megaCreditsToRemove > 0) this.megaCredits -= megaCreditsToRemove;
-        } else {
-          this.megaCredits -= purchasedCardsCost;
-        }  
+        if (selectedCards.length > 0) {
+          game.addSelectHowToPayInterrupt(this, purchasedCardsCost, false, false, "Select how to pay " + purchasedCardsCost + " for purchasing " + selectedCards.length + " card(s)");
+        }
         selectedCards.forEach((card) => {
           this.cardsInHand.push(card);
         });
@@ -1069,49 +1054,23 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let maxPurchaseQty = 4;
 
       if (this.canUseHeatAsMegaCredits) {
-        maxPurchaseQty = Math.min(maxPurchaseQty, Math.floor((this.megaCredits + this.heat) / this.cardCost));
-        
-        this.setWaitingFor(
-            new AndOptions(() => {
-              return undefined;
-            },
-            new SelectHowToPay(
-                "Select how to pay for cards",
-                false,
-                false,
-                true,
-                0,
-                (pay) => {
-                  htp = pay;
-                  return undefined;
-                }
-            ),
-            new SelectCard(
-                "Select which cards to take into hand",
-                dealtCards,
-                (foundCards: Array<IProjectCard>) => {
-                  selectedCards = foundCards;
-                  return undefined;
-                }, maxPurchaseQty, 0
-            )
-            ), () => { payForCards(); }
-        );
+        maxPurchaseQty = Math.min(maxPurchaseQty, Math.floor((this.megaCredits + this.heat) / this.cardCost)); 
       } else {
         maxPurchaseQty = Math.min(maxPurchaseQty, Math.floor(this.megaCredits / this.cardCost));
+      }  
 
         this.setWaitingFor(
             new SelectCard(
                 "Select which cards to take into hand",
                 dealtCards,
                 (foundCards: Array<IProjectCard>) => {
-                  htp.megaCredits = foundCards.length * this.cardCost;
                   selectedCards = foundCards;
                   return undefined;
                 }, maxPurchaseQty, 0
             ), () => { payForCards(); }
         );
       }
-    }
+    
 
     public getSelfReplicatingRobotsCards(game: Game) : Array<CardModel> {
       let card = this.playedCards.find(card => card.name === CardName.SELF_REPLICATING_ROBOTS);
@@ -1304,24 +1263,6 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         } 
 
         this.addPlayedCard(game, selectedCard);
-        if (game.exSoloOption){
-          let sortValue = (card: IProjectCard) =>
-            (card.cardType === CardType.ACTIVE ? -300 : 0) +
-            (card.cardType === CardType.AUTOMATED ? -200 : 0) +
-            (card.cardType === CardType.EVENT ? -100 : 0) +
-            (card.cost) +
-            0;
-
-          this.cardsInHand = this.cardsInHand.sort(
-            (c1, c2) => {
-              let n1 = sortValue(c1);
-              let n2 = sortValue(c2);
-              if (n1 > n2) return 1;
-              if (n1 < n2) return -1;
-              return 0;
-            }
-          );
-        }
 
         for (const playedCard of this.playedCards) {
             if (playedCard.onCardPlayed !== undefined) {
@@ -1588,32 +1529,11 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       });      
       let howToPayForTrade = new OrOptions();
       howToPayForTrade.title = "Trade with a colony";
+
       const payWithMC = new SelectOption("Pay " + (9 - this.colonyTradeDiscount) +" MC", () => {
-        this.megaCredits -= (9 - this.colonyTradeDiscount);
+        game.addSelectHowToPayInterrupt(this, 9 - this.colonyTradeDiscount, false, false, "Select how to pay " + (9 - this.colonyTradeDiscount) + " for colony trade");
         return selectColony;
       });
-
-      if (this.canAfford(9, game) && this.canUseHeatAsMegaCredits && this.heat > 0) {
-        let htp: HowToPay;
-        let helionTrade = new SelectHowToPay(
-          "Select how to spend " + (9 - this.colonyTradeDiscount) +" MC",
-          false,
-          false,
-          true,
-          (9 - this.colonyTradeDiscount),
-          (stp) => {
-            htp = stp;
-            this.megaCredits -= htp.megaCredits;
-            this.heat -= htp.heat;
-            return selectColony;
-          }
-        )
-        howToPayForTrade.options.push(helionTrade);
-
-      } else if (this.canAfford((9 - this.colonyTradeDiscount))) {
-        howToPayForTrade.options.push(payWithMC);
-      }
-
       const payWithEnergy = new SelectOption("Pay " + (3 - this.colonyTradeDiscount) +" Energy", () => {
         this.energy -= (3 - this.colonyTradeDiscount);
         return selectColony;
@@ -1623,6 +1543,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         return selectColony;  
       });
 
+      if (this.canAfford((9 - this.colonyTradeDiscount))) howToPayForTrade.options.push(payWithMC);
       if (this.energy >= (3 - this.colonyTradeDiscount)) howToPayForTrade.options.push(payWithEnergy);
       if (this.titanium >= (3 - this.colonyTradeDiscount)) howToPayForTrade.options.push(payWithTitanium);
 
@@ -1736,19 +1657,13 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     }
     }
 
-    private claimMilestone(
-        milestone: IMilestone,
-        game: Game): SelectHowToPay | SelectOption {
-      const claimer = (megaCredits: number, heat: number) => {
+    private claimMilestone(milestone: IMilestone, game: Game): SelectOption {
+      return new SelectOption(milestone.name, () => {
         game.claimedMilestones.push({
           player: this,
           milestone: milestone
         });
-        this.heat -= heat;
-        this.megaCredits -= megaCredits;
-        if(game.exSoloOption){
-          this.megaCreditProduction += 2;
-        }
+        game.addSelectHowToPayInterrupt(this, 8, false, false, "Select how to pay for milestone");
         game.log(
           LogMessageType.DEFAULT,
           "${0} claimed ${1} milestone",
@@ -1756,50 +1671,14 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           new LogMessageData(LogMessageDataType.MILESTONE, milestone.name)
         );
         return undefined;
-      };
-      if (this.canUseHeatAsMegaCredits && this.heat > 0) {
-        return new SelectHowToPay(
-            "Claim milestone: " + milestone.name,
-            false,
-            false,
-            true,
-            8,
-            (stp) => {
-              if (stp.megaCredits + stp.heat < 8) {
-                throw new Error(
-                    "Did not spend enough to claim milestone"
-                );
-              }
-              return claimer(stp.megaCredits, stp.heat);
-            }
-        );
-      }
-      return new SelectOption(milestone.name, () => {
-        return claimer(8, 0);
       });
     }
 
     private fundAward(award: IAward, game: Game): PlayerInput {
-      const funder = (megaCredits: number, heat: number) => {
-        game.fundAward(this, award);
-        this.megaCredits -= megaCredits;
-        this.heat -= heat;
-        return undefined;
-      };
-      if (this.canUseHeatAsMegaCredits && this.heat > 0) {
-        return new SelectHowToPay(
-            award.name + " (" + game.getAwardFundingCost() + " MC)",
-            false,
-            false,
-            true,
-            game.getAwardFundingCost(),
-            (htp: HowToPay) => {
-              return funder(htp.megaCredits, htp.heat);
-            }
-        );
-      }
       return new SelectOption(award.name, () => {
-        return funder(game.getAwardFundingCost(), 0);
+        game.addSelectHowToPayInterrupt(this, game.getAwardFundingCost(), false, false, "Select how to pay for award");
+        game.fundAward(this, award);
+        return undefined;
       });
     }
 
@@ -2015,6 +1894,12 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
 
       const redsAreRuling = PartyHooks.shouldApplyPolicy(game, PartyName.REDS);
 
+      if (this.canAfford(this.powerPlantCost)) {
+        standardProjects.options.push(
+            this.buildPowerPlant(game)
+        );
+      }
+
       let asteroidCost = constants.ASTEROID_COST
       if (redsAreRuling) asteroidCost += REDS_RULING_POLICY_COST;
       
@@ -2039,12 +1924,6 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       if (this.canAfford(greeneryCost) && game.board.getAvailableSpacesForGreenery(this).length > 0) {
         standardProjects.options.push(
             this.addGreenery(game)
-        );
-      }
-
-      if (this.canAfford(this.powerPlantCost)) {
-        standardProjects.options.push(
-          this.buildPowerPlant(game)
         );
       }
 
@@ -2082,7 +1961,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let bufferGasCost = constants.BUFFER_GAS_COST
       if (redsAreRuling) bufferGasCost += REDS_RULING_POLICY_COST;
 
-      if ((game.soloTR || game.exSoloOption) && this.canAfford(bufferGasCost)) {
+      if (game.soloTR && this.canAfford(bufferGasCost)) {
         standardProjects.options.push(
             this.bufferGas(game)
         );
@@ -2134,7 +2013,11 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         }
         
         this.setWaitingFor(this.playPreludeCard(game), () => {
-            game.playerIsFinishedTakingActions();
+            if (this.preludeCardsInHand.length === 1) {
+                this.takeAction(game);
+            } else {
+                game.playerIsFinishedTakingActions();
+            }
         });
         return;
       } else {
@@ -2219,7 +2102,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       // Turmoil Scientists capacity
       if (this.canAfford(10) 
         && PartyHooks.shouldApplyPolicy(game, PartyName.SCIENTISTS)
-        && (!this.turmoilScientistsActionUsed || game.exSoloOption ) ) {
+        && !this.turmoilScientistsActionUsed) {
           action.options.push(this.turmoilScientistsAction(game));
       }
 
@@ -2241,6 +2124,18 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
                   this.claimMilestone(milestone, game));
         
         if (remainingMilestones.options.length >= 1) action.options.push(remainingMilestones);
+      }
+
+      // If you can pay to send some in the Ara
+      if (game.turmoilExtension) {
+        if (game.turmoil?.lobby.has(this.id)) {
+          const selectParty = new SelectParty(this, game, "Send a delegate in an area (from lobby)");
+          action.options.push(selectParty.playerInput);
+        }
+        else if (this.canAfford(5) && game.turmoil!.getDelegates(this.id) > 0){
+          const selectParty = new SelectParty(this, game, "Send a delegate in an area (5MC)", 1, undefined, 5, false);
+          action.options.push(selectParty.playerInput);
+        }
       }
 
       action.options.sort((a, b) => {
@@ -2275,18 +2170,6 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         action.options.push(standardProjects);
       } else if (standardProjects.options.length === 1) {
         action.options.push(standardProjects.options[0]);
-      }
-
-      // If you can pay to send some in the Ara
-      if (game.turmoilExtension) {
-        if (game.turmoil?.lobby.has(this.id)) {
-          const selectParty = new SelectParty(this, game, "Send a delegate in an area (from lobby)");
-          action.options.push(selectParty.playerInput);
-        }
-        else if (this.canAfford(5) && game.turmoil!.getDelegates(this.id) > 0) {
-          const selectParty = new SelectParty(this, game, "Send a delegate in an area (5MC)", 1, undefined, 5, false);
-          action.options.push(selectParty.playerInput);
-        }
       }
 
       action.options.push(
