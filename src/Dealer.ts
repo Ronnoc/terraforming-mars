@@ -1091,13 +1091,8 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
             rtn.push(new MiningColony());
         if(this.useCorporateEra)
             rtn.push(new EarthCatapult());
-        rtn.push(new TitaniumMine());
         if(this.useCorporateEra)
-            rtn.push(new MiningArea());
-        if(this.useCorporateEra)
-            rtn.push(new AdvancedAlloys());
-        if(this.useCorporateEra)
-            rtn.push(new MiningRights());
+            rtn.push(new EarthOffice());
         return rtn;
     }
 
