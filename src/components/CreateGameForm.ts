@@ -5,6 +5,8 @@ import { CardName } from "../CardName";
 import { CorporationsFilter } from "./CorporationsFilter";
 import { $t } from "../directives/i18n";
 import { IGameData } from "../database/IDatabase";
+import { ColoniesFilter } from "./ColoniesFilter";
+import { ColonyName } from "../colonies/ColonyName";
 
 interface CreateGameModel {
     firstIndex: number;
@@ -22,7 +24,9 @@ interface CreateGameModel {
     colonies: boolean;
     turmoil: boolean;
     customCorporationsList: Array<CardName>;
+    customColoniesList: Array<ColonyName>;
     showCorporationList: boolean;
+    showColoniesList: boolean;
     isSoloModePage: boolean;
     board: BoardName | "random";
     seed: number;
@@ -46,6 +50,7 @@ interface NewPlayerModel {
     name: string;
     color: Color;
     beginner: boolean;
+    handicap: number;
     first: boolean;
 }
 
@@ -55,12 +60,12 @@ export const CreateGameForm = Vue.component("create-game-form", {
             firstIndex: 1,
             playersCount: 1,
             players: [
-                {index: 1, name: "", color: Color.RED, beginner: false, first: false},
-                {index: 2, name: "", color: Color.GREEN, beginner: false, first: false},
-                {index: 3, name: "", color: Color.YELLOW, beginner: false, first: false},
-                {index: 4, name: "", color: Color.BLUE, beginner: false, first: false},
-                {index: 5, name: "", color: Color.BLACK, beginner: false, first: false},
-                {index: 6, name: "", color: Color.PURPLE, beginner: false, first: false}
+                {index: 1, name: "", color: Color.RED, beginner: false, handicap: 0, first: false},
+                {index: 2, name: "", color: Color.GREEN, beginner: false, handicap: 0, first: false},
+                {index: 3, name: "", color: Color.YELLOW, beginner: false, handicap: 0, first: false},
+                {index: 4, name: "", color: Color.BLUE, beginner: false, handicap: 0, first: false},
+                {index: 5, name: "", color: Color.BLACK, beginner: false, handicap: 0, first: false},
+                {index: 6, name: "", color: Color.PURPLE, beginner: false, handicap: 0, first: false}
             ],
             corporateEra: true,
             prelude: true,
@@ -72,8 +77,10 @@ export const CreateGameForm = Vue.component("create-game-form", {
             showOtherPlayersVP: true,
             venusNext: true,
             colonies: true,
+            showColoniesList: false,
             turmoil: true,
             customCorporationsList: [],
+            customColoniesList: [],
             showCorporationList: false,
             isSoloModePage: false,
             board: "random",
@@ -101,6 +108,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
     },
     components: {
         "corporations-filter": CorporationsFilter,
+        "colonies-filter": ColoniesFilter
     },
     mounted: function () {
         if (window.location.pathname === "/solo") {
@@ -128,6 +136,10 @@ export const CreateGameForm = Vue.component("create-game-form", {
         updateCustomCorporationsList: function (newCustomCorporationsList: Array<CardName>) {
             const component = (this as any) as CreateGameModel;
             component.customCorporationsList = newCustomCorporationsList;
+        },
+        updateCustomColoniesList: function (newCustomColoniesList: Array<ColonyName>) {
+            const component = (this as any) as CreateGameModel;
+            component.customColoniesList = newCustomColoniesList;
         },
         getPlayers: function (): Array<NewPlayerModel> {
             const component = (this as any) as CreateGameModel;
@@ -202,6 +214,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const morePreludeOption = this.morePreludeOption;
             const fanMadeOption = this.fanMadeOption;
             const customCorporationsList = component.customCorporationsList;
+            const customColoniesList = component.customColoniesList;
             const board =  component.board;
             const seed = component.seed;
             const promoCardsOption = component.promoCardsOption;
@@ -210,6 +223,21 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const startingCorporations = component.startingCorporations;
             const soloTR = component.soloTR;
             let clonedGamedId: undefined | string = undefined;
+
+            if (customColoniesList.length > 0) {
+                let playersCount = players.length;
+                let neededColoniesCount = playersCount + 2;
+                if (playersCount === 1) {
+                    neededColoniesCount = 4;
+                } else if (playersCount === 2) {
+                    neededColoniesCount = 5;
+                }
+
+                if (customColoniesList.length < neededColoniesCount) {
+                    window.alert("Must select at least " + neededColoniesCount + " colonies");
+                    return
+                }
+            }
 
             // Clone game checks
             if (component.clonedGameData !== undefined && component.seededGame) {
@@ -233,6 +261,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 colonies,
                 turmoil,
                 customCorporationsList,
+                customColoniesList,
                 board,
                 seed,
                 solarPhaseOption,
@@ -363,10 +392,15 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <i class="form-icon"></i> <span v-i18n>Initial Draft rounds:</span>
                                 <input type="number" class="form-input form-inline create-game-corporations-count" min="1" max="10" name="initialDraftRounds" v-model="initialDraftRounds">
                             </label>
-                            
+
                             <label class="form-switch">
                                 <input type="checkbox" v-model="showCorporationList">
                                 <i class="form-icon"></i> <span v-i18n>Custom Corporation list</span>
+                            </label>
+
+                            <label class="form-switch" v-if="colonies">
+                                <input type="checkbox" v-model="showColoniesList">
+                                <i class="form-icon"></i> <span v-i18n>Custom Colonies list</span>
                             </label>
 
                             <label class="form-switch" v-if="playersCount === 1">
@@ -405,12 +439,18 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </label>
 
                             <label class="form-switch">
-                                <input type="checkbox" v-model="undoOption" >
+                                <input type="checkbox" v-model="undoOption">
                                 <i class="form-icon"></i> <span v-i18n>Allow undo</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#allow-undo" class="tooltip" target="_blank">&#9432;</a>
                             </label>
+
                             <label class="form-switch">
                                 <input type="checkbox" v-model="shuffleMapOption">
                                 <i class="form-icon"></i> <span v-i18n>Randomize board tiles</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#randomize-board-tiles" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <label class="form-switch" v-if="venusNext && playersCount > 1">
+                                <input type="checkbox" v-model="includeVenusMA">
+                                <i class="form-icon"></i> <span v-i18n>Venus Milestone/Award</span>
                             </label>
 
                             <label class="form-label">
@@ -470,6 +510,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                     <i class="form-icon"></i> <span v-i18n>Beginner?</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#beginner-corporation" class="tooltip" target="_blank">&#9432;</a>
                                 </label>
 
+                                <label class="form-label">
+                                    <input type="number" class="form-input form-inline player-handicap" value="0" min="0" :max="10" v-model="newPlayer.handicap" />
+                                    <i class="form-icon"></i><span v-i18n>TR Boost</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#tr-boost" class="tooltip" target="_blank">&#9432;</a>
+                                </label>
+
                                 <label class="form-radio form-inline" v-if="!randomFirstPlayer">
                                     <input type="radio" name="firstIndex" :value="newPlayer.index" v-model="firstIndex">
                                     <i class="form-icon"></i> <span v-i18n>Goes First?</span>
@@ -479,7 +524,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                     </div>
                 </div>
             </div>
-            
+
             <corporations-filter
                 v-if="showCorporationList"
                 v-on:corporation-list-changed="updateCustomCorporationsList"
@@ -492,6 +537,10 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 v-bind:fanMadeOption="fanMadeOption"
             ></corporations-filter>
 
+            <colonies-filter
+                v-if="showColoniesList"
+                v-on:colonies-list-changed="updateCustomColoniesList"
+            ></colonies-filter>
         </div>
     `
 });
