@@ -37,6 +37,7 @@ interface CreateGameModel {
     exSoloOption: boolean;
     promoCardsOption: boolean;
     undoOption: boolean;
+    fastModeOption: boolean;
     includeVenusMA: boolean;
     startingCorporations: number;
     soloTR: boolean;
@@ -99,6 +100,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             fanMadeOption: true,
             promoCardsOption: true,
             undoOption: true,
+            fastModeOption: false,
             includeVenusMA: true,
             startingCorporations: 4,
             soloTR: false,
@@ -197,7 +199,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 const boards = Object.values(BoardName);
                 this.board = boards[Math.floor(Math.random() * boards.length)];
             }
-            
+
             const corporateEra = component.corporateEra;
             const prelude = component.prelude;
             const draftVariant = component.draftVariant;
@@ -219,6 +221,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const seed = component.seed;
             const promoCardsOption = component.promoCardsOption;
             const undoOption = component.undoOption;
+            const fastModeOption = component.fastModeOption;
             const includeVenusMA = component.includeVenusMA;
             const startingCorporations = component.startingCorporations;
             const soloTR = component.soloTR;
@@ -267,6 +270,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 solarPhaseOption,
                 promoCardsOption,
                 undoOption,
+                fastModeOption,
                 includeVenusMA,
                 startingCorporations,
                 soloTR,
@@ -427,7 +431,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP">
                                 <i class="form-icon"></i> <span v-i18n>Show real-time VP</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#show-real-time-vp" class="tooltip" target="_blank">&#9432;</a>
                             </label>
-
+                            
                             <label class="form-switch">
                                 <input type="checkbox" v-model="solarPhaseOption">
                                 <i class="form-icon"></i> <span v-i18n>Use Solar Phase</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#solar-phase" class="tooltip" target="_blank">&#9432;</a>
@@ -442,6 +446,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <input type="checkbox" v-model="undoOption">
                                 <i class="form-icon"></i> <span v-i18n>Allow undo</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#allow-undo" class="tooltip" target="_blank">&#9432;</a>
                             </label>
+
+                            <label class="form-switch">
+                                <input type="checkbox" v-model="fastModeOption">
+                                <i class="form-icon"></i> <span v-i18n>Fast mode</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#fast-mode" class="tooltip" target="_blank">&#9432;</a>
+                            </label>                            
 
                             <label class="form-switch">
                                 <input type="checkbox" v-model="shuffleMapOption">

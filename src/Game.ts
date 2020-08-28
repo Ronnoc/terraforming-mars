@@ -59,7 +59,7 @@ import { SelectOption } from "./inputs/SelectOption";
 import { LogHelper } from "./components/LogHelper";
 import { ColonyName } from "./colonies/ColonyName";
 
- 
+
 export interface Score {
   corporation: String;
   playerScore: number;
@@ -83,6 +83,7 @@ export interface GameOptions {
   fanMadeOption: boolean;
   promoCardsOption: boolean;
   undoOption: boolean;
+  fastModeOption: boolean;
   includeVenusMA: boolean;
   startingCorporations: number;
   soloTR: boolean;
@@ -90,7 +91,7 @@ export interface GameOptions {
   initialDraftVariant: boolean;
   initialDraftRounds?: number;
   randomMA: boolean;
-}  
+}
 
 export class Game implements ILoadable<SerializedGame, Game> {
     public activePlayer: PlayerId;
@@ -101,6 +102,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public awards: Array<IAward> = [];
     public generation: number = 1;
     private draftRound: number = 1;
+    private initialDraftIteration: number = 1;
     public phase: Phase = Phase.RESEARCH;
     private donePlayers: Set<Player> = new Set<Player>();
     private oxygenLevel: number = constants.MIN_OXYGEN_LEVEL;
@@ -145,8 +147,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public initialDraftRounds: number = 4;
     public randomMA: boolean = false;
     public seed: number = Math.random();
-    private gameOptions: GameOptions;
-    
+    public gameOptions: GameOptions;
+
 
     constructor(
       public id: string,
@@ -179,6 +181,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           fanMadeOption: true,
           promoCardsOption: true,
           undoOption: false,
+          fastModeOption: false,
           startingCorporations: 4,
           includeVenusMA: true,
           soloTR: false,
@@ -196,7 +199,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.preludeExtension = gameOptions.preludeExtension;
       this.venusNextExtension = gameOptions.venusNextExtension;
       this.coloniesExtension = gameOptions.coloniesExtension;
-      this.turmoilExtension = gameOptions.turmoilExtension;      
+      this.turmoilExtension = gameOptions.turmoilExtension;
       this.promoCardsOption = gameOptions.promoCardsOption;
       this.undoOption = gameOptions.undoOption;
       this.startingCorporations = gameOptions.startingCorporations;
@@ -213,7 +216,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.randomMA = gameOptions.randomMA;
 
       // Clone game
-      if (gameOptions !== undefined 
+      if (gameOptions !== undefined
         && gameOptions.clonedGamedId !== undefined
         && !gameOptions.clonedGamedId.startsWith("#")) {
         this.cloneGame(gameOptions.clonedGamedId, this);
@@ -221,7 +224,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         return;
       }
 
-      
+
       // Single player game player starts with 14TR
       // and 2 neutral cities and forests on board
       if (players.length === 1) {
@@ -241,7 +244,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.corporateEra) {
         corporationCards.push(...ALL_CORP_ERA_CORPORATION_CARDS.map((cf) => new cf.factory()));
       }
-      
+
       // Add prelude corporations cards
       if (this.preludeExtension) {
         corporationCards.push(...ALL_PRELUDE_CORPORATIONS.map((cf) => new cf.factory()));
@@ -279,7 +282,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       // Add Promo stuff
       if (this.promoCardsOption) {
         corporationCards.push(...ALL_PROMO_CORPORATIONS.map((cf) => new cf.factory()));
-      }  
+      }
 
       // Setup custom corporation list
       const minCorpsRequired = players.length * this.startingCorporations;
@@ -306,14 +309,14 @@ export class Game implements ILoadable<SerializedGame, Game> {
       for (var i = 0; i < players.length; i++) {
         const player = players[i];
         const remainingPlayers = this.players.length - i;
-        
+
         player.increaseTerraformRatingSteps(player.handicap, this);
-        
+
         if (!player.beginner ||
           // Bypass beginner choice if any extension is choosen
-              gameOptions.preludeExtension || 
-              gameOptions.venusNextExtension || 
-              gameOptions.coloniesExtension || 
+              gameOptions.preludeExtension ||
+              gameOptions.venusNextExtension ||
+              gameOptions.coloniesExtension ||
               gameOptions.turmoilExtension ||
               gameOptions.initialDraftVariant) {
           // Failsafe for exceding corporation pool
@@ -405,7 +408,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           this.milestones.push(...ELYSIUM_MILESTONES);
           this.awards.push(...ELYSIUM_AWARDS);
         }
-        
+
         return new ElysiumBoard(this.shuffleMapOption, this.seed);
       } else if (boardName === BoardName.HELLAS) {
         if (randomMA) {
@@ -416,7 +419,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         }
 
         return new HellasBoard(this.shuffleMapOption, this.seed);
-      } else {        
+      } else {
         if (randomMA) {
           this.getRandomMilestonesAndAwards(hasVenus, requiredQty);
         } else {
@@ -469,7 +472,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     }
 
     private cloneGame(gameId: string, game: Game): void {
-      
+
         const player = new Player("test", Color.BLUE, false, 0);
         const player2 = new Player("test2", Color.RED, false, 0);
         let gameToRebuild = new Game(gameId,[player,player2], player);
@@ -487,10 +490,11 @@ export class Game implements ILoadable<SerializedGame, Game> {
               console.log("Clone game error: " + e.message);
               // Revert to game creation screen with error message
               return;
-            }  
-          }  
+            }
+          }
 
           // Update game options
+          game.gameOptions = gameToRebuild.gameOptions;
           game.draftVariant = gameToRebuild.draftVariant;
           game.soloMode = gameToRebuild.soloMode;
           game.corporateEra = gameToRebuild.corporateEra;
@@ -542,14 +546,14 @@ export class Game implements ILoadable<SerializedGame, Game> {
               if (game.turmoil !== undefined) {
                 game.turmoil.lobby.add(player.id);
                 for (let i = 0; i < 6; i++) {
-                  game.turmoil.delegate_reserve.push(player.id);   
+                  game.turmoil.delegate_reserve.push(player.id);
                 }
               }
             });
             for (let i = 0; i < 13; i++) {
-              game.turmoil.delegate_reserve.push("NEUTRAL");   
-            }  
-          }  
+              game.turmoil.delegate_reserve.push("NEUTRAL");
+            }
+          }
 
           // Update Players
           game.players.forEach(player => {
@@ -559,7 +563,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
             player.dealtPreludeCards = referencePlayer.dealtPreludeCards;
             player.dealtProjectCards = referencePlayer.dealtProjectCards;
             player.setTerraformRating(referencePlayer.getTerraformRating());
-            
+
             // Special case solo play and Colonies
             if (game.players.length === 1 && game.coloniesExtension) {
               player.setProduction(Resources.MEGACREDITS, -2);
@@ -567,25 +571,25 @@ export class Game implements ILoadable<SerializedGame, Game> {
             }
             if (!game.initialDraft) {
               player.setWaitingFor(game.pickCorporationCard(player), () => {});
-            }            
+            }
           });
           // Initial Draft
           if (game.initialDraft) {
             game.runDraftRound(true);
             return;
           }
-        });  
+        });
     }
-    
+
     public addSelectHowToPayInterrupt(player: Player, amount: number, canUseSteel: boolean, canUseTitanium: boolean, title?: string): void {
       if ((!player.canUseHeatAsMegaCredits || player.heat === 0) &&
           (!canUseSteel || player.steel === 0) &&
           (!canUseTitanium || player.titanium === 0)) {
             player.megaCredits -= amount;
             return;
-      }        
+      }
       this.addInterrupt(new SelectHowToPayInterrupt(player, amount, title, canUseSteel, canUseTitanium));
-    }  
+    }
 
     public addOceanInterrupt(player: Player, title?: string, isWorldGov: boolean = false): void {
       if (this.board.getOceansOnBoard() + this.pendingOceans  >= constants.MAX_OCEAN_TILES) {
@@ -596,13 +600,13 @@ export class Game implements ILoadable<SerializedGame, Game> {
     }
 
     public addColonyInterrupt(player: Player, allowDuplicate: boolean = false, title: string): void {
-      let openColonies = this.colonies.filter(colony => colony.colonies.length < 3 
+      let openColonies = this.colonies.filter(colony => colony.colonies.length < 3
         && (colony.colonies.indexOf(player.id) === -1 || allowDuplicate)
         && colony.isActive);
       if (openColonies.length >0 ) {
         this.addInterrupt(new SelectColony(player, this, openColonies, title));
-      }  
-    }  
+      }
+    }
 
     public addResourceInterrupt(player: Player, resourceType: ResourceType, count: number = 1, optionalCard : ICard | undefined, restrictedTag?: Tags, title?: string): void {
       let resourceCards = player.getResourceCards(resourceType);
@@ -676,13 +680,13 @@ export class Game implements ILoadable<SerializedGame, Game> {
         if (resource === Resources.PLANTS) {
           const removalOptions = candidates.map((candidate) => {
             let qtyToRemove = Math.min(candidate.plants, count);
-  
+
             return new SelectOption("Remove " + qtyToRemove + " plants from " + candidate.name, "Remove plants", () => {
               candidate.setResource(resource, -qtyToRemove, this, player);
               return undefined;
             })
           });
-  
+
           this.addInterrupt({ player, playerInput: new OrOptions(
             ...removalOptions,
             new SelectOption("Skip removing plants", "Confirm", () => { return undefined; })
@@ -810,7 +814,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       for (let somePlayer of this.getPlayers()) {
         if (somePlayer !== player && somePlayer.corporationCard !== undefined && somePlayer.corporationCard.onCorpCardPlayed !== undefined) {
             const actionFromPlayedCard: OrOptions | void = somePlayer.corporationCard.onCorpCardPlayed(player, this, corporationCard);
-            if (actionFromPlayedCard !== undefined) {  // always be undefined for the present 
+            if (actionFromPlayedCard !== undefined) {  // always be undefined for the present
                 this.interrupts.push({
                     player: player,
                     playerInput: actionFromPlayedCard
@@ -835,7 +839,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
       result.title = " ";
       result.buttonLabel = "Start";
-      
+
       result.options.push(
         new SelectCard<CorporationCard>(
           "Select corporation", undefined, player.dealtCorporationCards,
@@ -907,6 +911,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
         player.needsToDraft = true;
         if (this.draftRound === 1) {
           player.runDraftPhase(initialDraft,this,this.getNextDraft(player).name);
+        }
+        else if (this.draftRound === 1 && preludeDraft) {
+          player.runDraftPhase(initialDraft,this,this.getNextDraft(player).name, player.dealtPreludeCards);
         } else {
           let cards = this.unDraftedCards.get(this.getDraftCardsFrom(player));
           this.unDraftedCards.delete(this.getDraftCardsFrom(player));
@@ -921,7 +928,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.players.forEach((player) => {
         player.runResearchPhase(this, this.draftVariant);
       });
-    }  
+    }
 
     private gotoDraftingPhase(): void {
       this.phase = Phase.DRAFTING;
@@ -958,7 +965,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           this.log(LogMessageType.DEFAULT, "This game id was " + this.id);
         }
         return;
-      } 
+      }
       // solar Phase Option
       if (this.solarPhaseOption && ! this.marsIsTerraformed()) {
         this.gotoWorldGovernmentTerraforming();
@@ -977,13 +984,13 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if(this.turmoilExtension) {
         this.turmoil?.endGeneration(this);
       }
-         
+
       // Resolve Turmoil interrupts
       if (this.interrupts.length > 0) {
         this.resolveTurmoilInterrupts();
         return;
       }
-      
+
       this.goToDraftOrResearch();
     }
 
@@ -1019,7 +1026,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         player.terraformRatingAtGenerationStart = player.getTerraformRating();
         player.hasIncreasedTerraformRatingThisGeneration = false;
       });
-       
+
       if (this.draftVariant) {
         this.gotoDraftingPhase();
       } else {
@@ -1034,7 +1041,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     public doneWorldGovernmentTerraforming() {
       //Carry on to next phase
       this.gotoEndGeneration();
-    }  
+    }
 
     private allPlayersHavePassed(): boolean {
       for (const player of this.players) {
@@ -1091,7 +1098,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
               this.playerIsFinishedWithResearchPhase(player);
               return;
             });
-          }          
+          }
         }
       }
     }
@@ -1127,13 +1134,39 @@ export class Game implements ILoadable<SerializedGame, Game> {
             player.draftedCards.push(...lastCards);
           }
           player.needsToDraft = undefined;
-
-          if (initialDraft) {
+        
+          if (initialDraft && this.initialDraftIteration === 2) {
             player.dealtProjectCards = player.draftedCards;
-            player.draftedCards = [];
+            player.draftedCards = [];            
+          }
+
+          if (initialDraft && this.initialDraftIteration === 2 && !this.preludeExtension) {
             player.setWaitingFor(this.pickCorporationCard(player), () => {});
           }
+
+          if (initialDraft && this.initialDraftIteration === 3) {
+            player.dealtPreludeCards = player.draftedCards;
+            player.draftedCards = [];
+            player.setWaitingFor(this.pickCorporationCard(player), () => {});
+          }          
         });
+
+        if (initialDraft && this.initialDraftIteration === 1) {
+          this.initialDraftIteration++;
+          this.initialDraft = true;
+          this.draftRound = 1;
+          this.runDraftRound(true);
+          return;
+        }
+
+        if (initialDraft && this.initialDraftIteration === 2 && this.preludeExtension) {
+          this.initialDraftIteration++;
+          this.initialDraft = true;
+          this.draftRound = 1;
+          this.runDraftRound(true, true);
+          return;
+        }        
+        
 
         if ( ! initialDraft) {
           this.gotoResearchPhase();
@@ -1145,7 +1178,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       let nextPlayer = this.getPreviousPlayer(this.players, player);
       if (this.generation%2 === 1) {
         nextPlayer = this.getNextPlayer(this.players, player);
-      }  
+      }
       if (nextPlayer !== undefined) {
         return nextPlayer;
       }
@@ -1156,23 +1189,28 @@ export class Game implements ILoadable<SerializedGame, Game> {
       let nextPlayer = this.getNextPlayer(this.players, player);
       if (this.generation%2 === 1) {
         nextPlayer = this.getPreviousPlayer(this.players, player);
-      }  
+      }
+      // Change initial draft direction on second iteration
+      if (this.initialDraftIteration === 2 && this.generation === 1) {
+        nextPlayer = this.getNextPlayer(this.players, player);
+      }
+
       if (nextPlayer !== undefined) {
         return nextPlayer;
       }
       return player;
-    }  
+    }
 
     private getPreviousPlayer(
       players: Array<Player>, player: Player
       ): Player | undefined {
         const playerIndex: number = players.indexOf(player);
-  
+
         // The player was not found
         if (playerIndex === -1) {
           return undefined;
         }
-  
+
         // Go to the end of the array if stand at the start
         return players[(playerIndex === 0) ? players.length - 1 : playerIndex - 1];
     }
@@ -1341,7 +1379,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     this.venusScaleLevel += 2 * steps;
     if (!isWorldGov) {
       player.increaseTerraformRatingSteps(steps, this);
-    }  
+    }
 
     // Check for Aphrodite corporation
     this.players.forEach((player) => {
@@ -1350,19 +1388,19 @@ export class Game implements ILoadable<SerializedGame, Game> {
       }
     });
 
-    if ((!isWorldGov) && this.venusScaleLevel === 8 
-        || ((steps === 2 || steps === 3) && this.venusScaleLevel === 10) 
+    if ((!isWorldGov) && this.venusScaleLevel === 8
+        || ((steps === 2 || steps === 3) && this.venusScaleLevel === 10)
         || (steps === 3 && this.venusScaleLevel === 12)
     ) {
       player.cardsInHand.push(this.dealer.dealCard());
     }
 
-    if ((!isWorldGov) && this.venusScaleLevel === 16 
-        || ((steps === 2 || steps === 3) && this.venusScaleLevel === 18) 
+    if ((!isWorldGov) && this.venusScaleLevel === 16
+        || ((steps === 2 || steps === 3) && this.venusScaleLevel === 18)
         || (steps === 3 && this.venusScaleLevel === 20)
     ) {
       player.increaseTerraformRating(this);
-    }    
+    }
 
     return undefined;
   }
@@ -1373,7 +1411,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
     public increaseTemperature(
         player: Player, steps: -2 | 1 | 2 | 3, isWorldGov: boolean = false): undefined {
-      if (steps === -2) {    
+      if (steps === -2) {
         if (this.temperature >= constants.MIN_TEMPERATURE + 4) {
           this.temperature -= 4;
           return;
@@ -1409,9 +1447,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
               (steps === 3 && this.temperature === -16)
         ) {
           player.setProduction(Resources.HEAT);;
-        } 
+        }
       }
-      
+
       // BONUS FOR OCEAN TILE AT 0
       if (
           this.temperature === 0 ||
@@ -1477,7 +1515,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       PartyHooks.applyMarsFirstRulingPolicy(this, player, spaceType, isWorldGov);
 
       // Hellas special requirements ocean tile
-      if (space.id === SpaceName.HELLAS_OCEAN_TILE 
+      if (space.id === SpaceName.HELLAS_OCEAN_TILE
           && this.board.getOceansOnBoard() < constants.MAX_OCEAN_TILES
           && this.boardName === BoardName.HELLAS) {
 
@@ -1513,10 +1551,10 @@ export class Game implements ILoadable<SerializedGame, Game> {
           } else if (spaceBonus === SpaceBonus.TITANIUM) {
             player.titanium++;
           } else if (spaceBonus === SpaceBonus.HEAT) {
-            player.heat++;  
+            player.heat++;
           }
         });
-      
+
         this.board.getAdjacentSpaces(space).forEach((adjacentSpace) => {
           if (adjacentSpace.tile &&
               adjacentSpace.tile.tileType === TileType.OCEAN) {
@@ -1526,7 +1564,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       }else{
         space.player = undefined;
       }
-      
+
       this.tilePlaced(space);
       LogHelper.logTilePlacement(this, player, space, tile.tileType);
 
@@ -1581,7 +1619,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       }, isWorldGov);
       if (!isWorldGov) {
         player.increaseTerraformRating(this);
-      }  
+      }
     }
 
     public removeTile(spaceId: string): void {
@@ -1600,7 +1638,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         } else {
           ret.push(p);
         }
-      } 
+      }
       return ret;
     }
 
@@ -1763,15 +1801,15 @@ export class Game implements ILoadable<SerializedGame, Game> {
         let player = new Player(element.name, element.color, element.beginner, element.handicap);
         return player.loadFromJSON(element);
       });
-      
+
       // Rebuild milestones, awards and board elements
       if (d.boardName === BoardName.ELYSIUM) {
         this.board = new ElysiumBoard(this.shuffleMapOption, this.seed);
       } else if (d.boardName === BoardName.HELLAS) {
         this.board = new HellasBoard(this.shuffleMapOption, this.seed);
-      } else {        
+      } else {
         this.board = new OriginalBoard(this.shuffleMapOption, this.seed);
-      }  
+      }
 
       this.milestones = [];
       this.awards = [];
@@ -1784,7 +1822,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
             this.milestones.push(ms);
           }
         });
-      });  
+      });
 
       let allAwards = ELYSIUM_AWARDS.concat(HELLAS_AWARDS, ORIGINAL_AWARDS, VENUS_AWARDS);
 
@@ -1824,7 +1862,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         }
       });
 
-      // Reload colonies elements if needed 
+      // Reload colonies elements if needed
       if (this.coloniesExtension) {
         this.colonyDealer = new ColonyDealer();
         this.colonies = new Array<IColony>();
@@ -1833,7 +1871,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           if(this.colonyDealer !== undefined) {
             this.colonyDealer.discardedColonies.push(element);
           }
-        });  
+        });
 
         d.colonies.forEach((element: IColony) => {
           let colony = getColonyByName(element.name);
@@ -1844,14 +1882,14 @@ export class Game implements ILoadable<SerializedGame, Game> {
           if (colony !== undefined) {
             this.colonies.push(colony);
           }
-        });     
+        });
       }
 
-      // Reload turmoil elements if needed 
+      // Reload turmoil elements if needed
       if (this.turmoilExtension) {
         let turmoil = new Turmoil(this);
         this.turmoil = turmoil.loadFromJSON(d.turmoil);
-        
+
         // Rebuild lobby
         this.turmoil.lobby = new Set<string>(d.turmoil.lobby);
 

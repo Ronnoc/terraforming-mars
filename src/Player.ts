@@ -141,7 +141,8 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         if (this.canAfford(REDS_RULING_POLICY_COST)) {
           game.addSelectHowToPayInterrupt(this, REDS_RULING_POLICY_COST, false, false, "Select how to pay for TR increase");
         } else {
-          this.megaCredits -= REDS_RULING_POLICY_COST;
+          // Cannot pay Reds, will not increase TR
+          return;
         }
         
         this.terraformRating++;
@@ -254,7 +255,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       }      
 
       // Mons Insurance hook
-      if (game !== undefined && game.monsInsuranceOwner !== undefined && amount < 0 && fromPlayer !== undefined) {
+      if (game !== undefined && game.monsInsuranceOwner !== undefined && amount < 0 && fromPlayer !== undefined && fromPlayer !== this) {
         this.resolveMonsInsurance(game);
       }
     }
@@ -307,7 +308,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       }
 
       // Mons Insurance hook  
-      if (game !== undefined && game.monsInsuranceOwner !== undefined && amount < 0 && fromPlayer !== undefined) {
+      if (game !== undefined && game.monsInsuranceOwner !== undefined && amount < 0 && fromPlayer !== undefined && fromPlayer !== this) {
         this.resolveMonsInsurance(game);
       }
 
@@ -957,17 +958,19 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       });
     }
 
+    public dealCards(game: Game, quantity: number, cards: Array<IProjectCard>) {
+      for (let i = 0; i < quantity; i++) {
+        cards.push(game.dealer.dealCard(true));
+      }      
+    }
+
     public runDraftPhase(initialDraft: boolean, game: Game, playerName: String, passedCards?: Array<IProjectCard>): void {
       let cards: Array<IProjectCard> = [];
       if (passedCards === undefined) {
         if (!initialDraft) {
-          cards.push(
-            game.dealer.dealCard(true),
-            game.dealer.dealCard(true),
-            game.dealer.dealCard(true),
-            game.dealer.dealCard(true));
+          this.dealCards(game, 4, cards);
         } else {
-          cards = this.dealtProjectCards;
+          this.dealCards(game, 5, cards);
         }
       } else { cards = passedCards}      
 
@@ -1918,16 +1921,28 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       return playableCards;
     }
 
-    public canAfford(cost: number, game?: Game, canUseSteel: boolean = false, canUseTitanium: boolean = false): boolean {
+    public canAfford(cost: number, game?: Game, canUseSteel: boolean = false, canUseTitanium: boolean = false, canUseFloaters: boolean = false, canUseMicrobes : boolean = false): boolean {
+      
+      let extraResource: number = 0;
+      if (canUseFloaters !== undefined && canUseFloaters) {
+        extraResource += this.getFloatersCanSpend() * 3;
+      }
+
+      if (canUseMicrobes !== undefined && canUseMicrobes) {
+        extraResource += this.getMicrobesCanSpend() * 2;
+      }
+      
       if (game !== undefined && canUseTitanium) {
         return (this.canUseHeatAsMegaCredits ? this.heat : 0) +
         (canUseSteel ? this.steel * this.steelValue : 0) +
         (canUseTitanium ? this.titanium * this.getTitaniumValue(game) : 0) +
+        extraResource +
           this.megaCredits >= cost;        
       }
       
       return (this.canUseHeatAsMegaCredits ? this.heat : 0) +
               (canUseSteel ? this.steel * this.steelValue : 0) +
+              extraResource +
                 this.megaCredits >= cost;
     }
 
@@ -1963,7 +1978,8 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       }
 
       let greeneryCost = constants.GREENERY_COST
-      if (redsAreRuling) greeneryCost += REDS_RULING_POLICY_COST;
+      const oxygenNotMaxed = game.getOxygenLevel() < constants.MAX_OXYGEN_LEVEL;
+      if (redsAreRuling && oxygenNotMaxed) greeneryCost += REDS_RULING_POLICY_COST;
 
       if (this.canAfford(greeneryCost) && game.board.getAvailableSpacesForGreenery(this).length > 0) {
         standardProjects.options.push(
@@ -2198,7 +2214,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         return 0;
       });
 
-      if (game.getPlayers().length > 1 && this.actionsTakenThisRound > 0) {
+      if (game.getPlayers().length > 1 && this.actionsTakenThisRound > 0 && !game.gameOptions.fastModeOption) {
         action.options.push(
             this.endTurnOption(game)
         );
