@@ -6,7 +6,7 @@
     "Options": "选项",
     "Fan Made": "社区卡牌",
     "Random Milestones/Awards": "随机里程碑/奖项",
-    "Shuffle map": "打乱地图(基础only)",
+    "Shuffle map": "打乱地图",
     "Starting Corporations": "起始公司",
     "Create Game": "建立游戏",
     "Board": "版图",
@@ -21,6 +21,7 @@
     "random": "随机1/3",
     
     "Corporate Era": "企业时代",
+
     "Prelude": "前序",
     "Venus Next": "金星",
     "Custom Corporation list": "自定义公司列表",
