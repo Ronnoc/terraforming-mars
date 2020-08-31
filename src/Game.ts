@@ -89,7 +89,6 @@ export interface GameOptions {
   soloTR: boolean;
   clonedGamedId: string | undefined;
   initialDraftVariant: boolean;
-  initialDraftRounds?: number;
   randomMA: boolean;
 }
 
@@ -144,7 +143,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
     private clonedGamedId: string | undefined;
     public initialDraft: boolean = false;
     public someoneHasRemovedOtherPlayersPlants: boolean = false;
-    public initialDraftRounds: number = 4;
     public randomMA: boolean = false;
     public seed: number = Math.random();
     public gameOptions: GameOptions;
@@ -163,7 +161,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
         gameOptions = {
           draftVariant: false,
           initialDraftVariant: false,
-          initialDraftRounds: 4,
           corporateEra: true,
           randomMA: true,
           preludeExtension: true,
@@ -212,7 +209,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.exSoloOption = gameOptions.exSoloOption;
       this.soloTR = gameOptions.soloTR;
       this.initialDraft = gameOptions.initialDraftVariant;
-      this.initialDraftRounds = gameOptions.initialDraftRounds || 4;
       this.randomMA = gameOptions.randomMA;
 
       // Clone game
@@ -516,7 +512,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
           game.includeVenusMA = gameToRebuild.includeVenusMA;
           game.soloTR = gameToRebuild.soloTR;
           game.initialDraft = gameToRebuild.initialDraft;
-          game.initialDraftRounds = gameToRebuild.initialDraftRounds || 4;
           game.randomMA = gameToRebuild.randomMA;
 
           // Update dealers
@@ -905,11 +900,11 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.first = this.players[firstIndex];
     }
 
-    private runDraftRound(initialDraft: boolean = false): void {
+    private runDraftRound(initialDraft: boolean = false, preludeDraft: boolean = false): void {
       this.draftedPlayers.clear();
       this.players.forEach((player) => {
         player.needsToDraft = true;
-        if (this.draftRound === 1) {
+        if (this.draftRound === 1 && !preludeDraft ) {
           player.runDraftPhase(initialDraft,this,this.getNextDraft(player).name);
         }
         else if (this.draftRound === 1 && preludeDraft) {
@@ -1103,11 +1098,11 @@ export class Game implements ILoadable<SerializedGame, Game> {
       }
     }
 
-    private isLastActiveRoundOfDraft(initialDraft: boolean): boolean {
+    private isLastActiveRoundOfDraft(initialDraft: boolean, preludeDraft: boolean = false): boolean {
 
-      if (initialDraft && (this.draftRound === this.initialDraftRounds || this.draftRound === 9)) return true;
+      if (initialDraft && !preludeDraft && this.draftRound === 4) return true;
 
-      if ( ! initialDraft && this.draftRound === 3) return true;
+      if ( (!initialDraft || preludeDraft) && this.draftRound === 3) return true;
 
       return false;
     }
@@ -1121,7 +1116,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         return;
       }
 
-      if ( ! this.isLastActiveRoundOfDraft(initialDraft)) {
+      if ( ! this.isLastActiveRoundOfDraft(initialDraft, this.initialDraftIteration === 3 ? true : false)) {
         this.draftRound++;
         this.runDraftRound(initialDraft);
       } else {
