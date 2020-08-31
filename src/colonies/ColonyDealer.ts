@@ -77,7 +77,7 @@ export class ColonyDealer {
         for (let i = 0; i < count; i++) {
             this.coloniesDeck.push(tempDeck.pop());
         }
-        if(players === 1){
+        if(players === 1 || players === 7){
             let hasPluto = false;
             for( let colony of this.coloniesDeck ){
                 if(colony.name === ColonyName.PLUTO)

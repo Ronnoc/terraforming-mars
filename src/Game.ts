@@ -1,5 +1,6 @@
 import { Player, PlayerId } from "./Player";
-import { Dealer, ALL_VENUS_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_CORP_ERA_CORPORATION_CARDS, ALL_PRELUDE_CORPORATIONS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS, FAN_BASIC_CORPORATION_CARDS} from "./Dealer";
+import { Dealer, ALL_VENUS_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_CORP_ERA_CORPORATION_CARDS, ALL_PRELUDE_CORPORATIONS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS } from "./Dealer";
+import { FAN_BASIC_CORPORATION_CARDS } from "./Dealer";
 import {ISpace} from "./ISpace";
 import {SpaceType} from "./SpaceType";
 import {TileType} from "./TileType";
@@ -256,9 +257,14 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.coloniesExtension) {
         corporationCards.push(...ALL_COLONIES_CORPORATIONS.map((cf) => new cf.factory()));
         this.colonyDealer = new ColonyDealer();
-        this.colonies = this.colonyDealer.drawColonies(players.length, this.gameOptions.customColoniesList);
+        let pl = players.length;
+        if (this.exSoloOption)
+          pl = 7;
+        this.colonies = this.colonyDealer.drawColonies(pl, this.gameOptions.customColoniesList);
         if (this.players.length === 1) {
           players[0].setProduction(Resources.MEGACREDITS, -2);
+          if (this.exSoloOption)
+            players[0].fleetSize += 2;
           if(!this.exSoloOption)
             this.addInterrupt(new SelectRemoveColony(players[0], this));
         }
