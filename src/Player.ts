@@ -155,6 +155,12 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     }
 
     public increaseTerraformRatingSteps(value: number, game: Game) {
+      if(value < 0){
+        for (let i = 0; i < -value; i++) {
+          this.decreaseTerraformRating();
+        }
+        return;
+      }
       for (let i = 0; i < value; i++) {
         this.increaseTerraformRating(game);
       }

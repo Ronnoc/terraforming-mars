@@ -228,7 +228,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
         this.soloMode = true;
         this.draftVariant = false;
         this.initialDraft = false;
-        this.draftVariant = false;
         this.setupSolo();
       }
       else{
@@ -334,11 +333,11 @@ export class Game implements ILoadable<SerializedGame, Game> {
             }
           }
           let initDealtCards = 10;
+          if (this.exSoloOption)
+            initDealtCards = 15;
           for (let i = 0; i < initDealtCards; i++) {
             player.dealtProjectCards.push(this.dealer.dealCard());
           }
-          if (this.exSoloOption) 
-            player.dealtProjectCards.push(...this.dealer.cheat());
           if (this.preludeExtension) {
             let preludeCount = 4;
             if(this.morePreludeOption)

@@ -486,7 +486,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 </div>
             </div>
 
-            <div class="create-game-players-cont" v-if="playersCount > 1">
+            <div class="create-game-players-cont">
                 <h2 v-i18n>Players</h2>
                 <div class="container">
                     <div class="columns">
