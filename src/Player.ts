@@ -130,7 +130,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     }    
 
     public increaseTerraformRating(game: Game) {
-      if (!game.turmoilExtension) {
+      if (!game.gameOptions.turmoilExtension) {
         this.terraformRating++;
         this.hasIncreasedTerraformRatingThisGeneration = true;
         return;
@@ -380,7 +380,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       });
 
       // Turmoil Victory Points
-      if (game.phase === Phase.END && game.turmoilExtension && game.turmoil){
+      if (game.phase === Phase.END && game.gameOptions.turmoilExtension && game.turmoil){
         this.victoryPointsBreakdown.setVictoryPoints("victoryPoints", game.turmoil.getPlayerVictoryPoints(this), "Turmoil Points");
       }
 
@@ -403,6 +403,18 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     
     public getCitiesCount(game: Game) {
       return game.getSpaceCount(TileType.CITY, this) + game.getSpaceCount(TileType.CAPITAL, this);
+    }
+
+    public getNoTagsCount() {
+      let noTagsCount: number = 0;
+
+      if (this.corporationCard !== undefined && this.corporationCard.tags.filter(tag => tag !== Tags.WILDCARD).length === 0) {
+          noTagsCount++;
+      }
+
+      noTagsCount += this.playedCards.filter((card) => card.cardType !== CardType.EVENT && card.tags.filter(tag => tag !== Tags.WILDCARD).length === 0).length
+
+      return noTagsCount;
     }
         
     public getResourcesOnCard(card: ICard): number | undefined {
@@ -945,7 +957,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           )
         );
       }
-      if (game.getVenusScaleLevel() < constants.MAX_VENUS_SCALE && game.venusNextExtension) {
+      if (game.getVenusScaleLevel() < constants.MAX_VENUS_SCALE && game.gameOptions.venusNextExtension) {
         action.options.push(
           new SelectOption("Increase Venus scale", "Increase", () => {
             game.increaseVenusScaleLevel(this,1, true);
@@ -999,7 +1011,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let dealtCards: Array<IProjectCard> = [];
       if (!draftVariant) {
         let dealCardCount = 4;
-        if (game.exSoloOption) {
+        if (game.gameOptions.exSoloOption) {
           let dif = dealCardCount - this.draftedCards.length;
           if (dif >1 ){
             let cards: Array<IProjectCard> = [];
@@ -1242,7 +1254,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         }
 
         //Activate some colonies
-        if (game.coloniesExtension && selectedCard.resourceType !== undefined) {
+        if (game.gameOptions.coloniesExtension && selectedCard.resourceType !== undefined) {
             game.colonies.filter(colony => colony.resourceType !== undefined && colony.resourceType === selectedCard.resourceType).forEach(colony => {
                 colony.isActive = true;
             });
@@ -1278,7 +1290,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         } 
 
         this.addPlayedCard(game, selectedCard);
-        if (game.exSoloOption){
+        if (game.gameOptions.exSoloOption){
           let sortValue = (card: IProjectCard) =>
             (card.cardType === CardType.ACTIVE ? -300 : 0) +
             (card.cardType === CardType.AUTOMATED ? -200 : 0) +
@@ -1713,7 +1725,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           player: this,
           milestone: milestone
         });
-        if(game.exSoloOption)this.megaCreditProduction += 2;
+        if(game.gameOptions.exSoloOption)this.megaCreditProduction += 2;
         game.addSelectHowToPayInterrupt(this, 8, false, false, "Select how to pay for milestone");
         game.log(
           LogMessageType.DEFAULT,
@@ -2004,7 +2016,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let airScrappingCost = constants.AIR_SCRAPPING_COST
       if (redsAreRuling) airScrappingCost += REDS_RULING_POLICY_COST;
 
-      if (game.venusNextExtension
+      if (game.gameOptions.venusNextExtension
         && this.canAfford(airScrappingCost)
         && game.getVenusScaleLevel() < constants.MAX_VENUS_SCALE) {
         standardProjects.options.push(
@@ -2012,7 +2024,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         );
       }
 
-      if ( game.coloniesExtension &&
+      if ( game.gameOptions.coloniesExtension &&
         this.canAfford(constants.BUILD_COLONY_COST)) {
         let openColonies = game.colonies.filter(colony => colony.colonies.length < 3 
           && colony.colonies.indexOf(this.id) === -1
@@ -2027,7 +2039,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let bufferGasCost = constants.BUFFER_GAS_COST
       if (redsAreRuling) bufferGasCost += REDS_RULING_POLICY_COST;
 
-      if ((game.soloTR || game.exSoloOption) && this.canAfford(bufferGasCost)) {
+      if ((game.gameOptions.soloTR || game.gameOptions.exSoloOption) && this.canAfford(bufferGasCost)) {
         standardProjects.options.push(
             this.bufferGas(game)
         );
@@ -2133,7 +2145,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         );
       }
 
-      if (game.coloniesExtension) {
+      if (game.gameOptions.coloniesExtension) {
         let openColonies = game.colonies.filter(colony => colony.isActive && colony.visitor === undefined);
         if (openColonies.length > 0 
           && this.fleetSize > this.tradesThisTurn
@@ -2175,7 +2187,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       // Turmoil Scientists capacity
       if (this.canAfford(10) 
         && PartyHooks.shouldApplyPolicy(game, PartyName.SCIENTISTS)
-        && (!this.turmoilScientistsActionUsed  || game.exSoloOption)) {
+        && (!this.turmoilScientistsActionUsed  || game.gameOptions.exSoloOption)) {
           action.options.push(this.turmoilScientistsAction(game));
       }
 
@@ -2200,7 +2212,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       }
 
       // If you can pay to send some in the Ara
-      if (game.turmoilExtension) {
+      if (game.gameOptions.turmoilExtension) {
         if (game.turmoil?.lobby.has(this.id)) {
           const selectParty = new SelectParty(this, game, "Send a delegate in an area (from lobby)");
           action.options.push(selectParty.playerInput);
@@ -2257,7 +2269,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       }
 
       // Propose undo action only if you have done one action this turn
-      if (this.actionsTakenThisRound > 0 && game.undoOption) {
+      if (this.actionsTakenThisRound > 0 && game.gameOptions.undoOption) {
         action.options.push(this.undoTurnOption(game));
       }
 

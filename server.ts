@@ -495,6 +495,8 @@ function getPlayer(player: Player, game: Game): string {
     plantProduction: player.getProduction(Resources.PLANTS),
     playedCards: getCards(player, player.playedCards, game),
     cardsInHandNbr: player.cardsInHand.length,
+    citiesCount: player.getCitiesCount(game),
+    noTagsCount: player.getNoTagsCount(),
     players: getPlayers(game.getPlayers(), game),
     spaces: getSpaces(game.board.spaces),
     steel: player.steel,
@@ -511,13 +513,13 @@ function getPlayer(player: Player, game: Game): string {
     isSoloModeWin: game.isSoloModeWin(),
     gameAge: game.gameAge,
     isActive: player.id === game.activePlayer,
-    corporateEra: game.corporateEra,
-    venusNextExtension: game.venusNextExtension,
+    corporateEra: game.gameOptions.corporateEra,
+    venusNextExtension: game.gameOptions.venusNextExtension,
     venusScaleLevel: game.getVenusScaleLevel(),
-    boardName: game.boardName,
+    boardName: game.gameOptions.boardName,
     colonies: getColonies(game),
     tags: player.getAllTags(),
-    showOtherPlayersVP: game.showOtherPlayersVP,
+    showOtherPlayersVP: game.gameOptions.showOtherPlayersVP,
     actionsThisGeneration: Array.from(player.getActionsThisGeneration()),
     fleetSize: player.fleetSize,
     tradesThisTurn: player.tradesThisTurn,
@@ -526,10 +528,10 @@ function getPlayer(player: Player, game: Game): string {
     dealtCorporationCards: player.dealtCorporationCards,
     dealtPreludeCards: player.dealtPreludeCards,
     dealtProjectCards:  player.dealtProjectCards,
-    initialDraft: game.initialDraft,
+    initialDraft: game.gameOptions.initialDraftVariant,
     needsToDraft: player.needsToDraft,
     deckSize: game.dealer.getDeckSize(),
-    randomMA: game.randomMA
+    randomMA: game.gameOptions.randomMA
   } as PlayerModel;
   return JSON.stringify(output);
 }
@@ -654,6 +656,8 @@ function getPlayers(players: Array<Player>, game: Game): Array<PlayerModel> {
       plantProduction: player.getProduction(Resources.PLANTS),
       playedCards: getCards(player, player.playedCards, game),
       cardsInHandNbr: player.cardsInHand.length,
+      citiesCount: player.getCitiesCount(game),
+      noTagsCount: player.getNoTagsCount(),
       steel: player.steel,
       steelProduction: player.getProduction(Resources.STEEL),
       steelValue: player.steelValue,
@@ -663,12 +667,12 @@ function getPlayers(players: Array<Player>, game: Game): Array<PlayerModel> {
       titaniumValue: player.getTitaniumValue(game),
       victoryPointsBreakdown: player.getVictoryPoints(game),
       isActive: player.id === game.activePlayer,
-      venusNextExtension: game.venusNextExtension,
+      venusNextExtension: game.gameOptions.venusNextExtension,
       venusScaleLevel: game.getVenusScaleLevel(),
-      boardName: game.boardName,
+      boardName: game.gameOptions.boardName,
       colonies: getColonies(game),
       tags: player.getAllTags(),
-      showOtherPlayersVP: game.showOtherPlayersVP,
+      showOtherPlayersVP: game.gameOptions.showOtherPlayersVP,
       actionsThisGeneration: Array.from(player.getActionsThisGeneration()),
       fleetSize: player.fleetSize,
       tradesThisTurn: player.tradesThisTurn,
@@ -691,7 +695,7 @@ function getColonies(game: Game): Array<ColonyModel> {
 }
 
 function getTurmoil(game: Game): TurmoilModel | undefined {
-  if (game.turmoilExtension && game.turmoil){
+  if (game.gameOptions.turmoilExtension && game.turmoil){
     const parties = getParties(game);
     let chairman, dominant, ruling;
     if (game.turmoil.chairman){
@@ -770,7 +774,7 @@ function getTurmoil(game: Game): TurmoilModel | undefined {
 }
 
 function getParties(game: Game): Array<PartyModel> | undefined{
-  if (game.turmoilExtension && game.turmoil){
+  if (game.gameOptions.turmoilExtension && game.turmoil){
     return game.turmoil.parties.map(function(party) {
       let delegates = new Array<DelegatesModel>();
       party.getPresentPlayers().forEach(player => {
