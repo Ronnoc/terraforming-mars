@@ -341,6 +341,20 @@ export const PlayerHome = Vue.component("player-home", {
                     </div>
                 </details>
             </div>
+
+            <div v-if="player.colonies.length > 0" class="player_home_block">
+                <h2 :class="'player_color_'+ player.color" v-i18n>Colonies</h2>
+                <div class="colonies-fleets-cont" v-if="player.corporationCard">
+                    <div class="colonies-player-fleets" v-for="colonyPlayer in player.players">
+                        <div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)"></div>
+                    </div>
+                </div>
+                <div class="player_home_colony_cont">
+                    <div class="player_home_colony" v-for="colony in player.colonies" :key="colony.name">
+                        <colony :colony="colony"></colony>
+                    </div>
+                </div>
+            </div>
         </div>
     `
 });
