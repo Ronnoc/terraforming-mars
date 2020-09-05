@@ -236,29 +236,6 @@ export const PlayerHome = Vue.component("player-home", {
                     </div>
                 </div>
 
-                <div v-if="player.colonies.length > 0" class="player_home_block">
-                    <h2 :class="'player_color_'+ player.color" v-i18n>Colonies</h2>
-                    <div class="colonies-fleets-cont" v-if="player.corporationCard">
-                        <div class="colonies-player-fleets" v-for="colonyPlayer in player.players">
-                            <div :class="'colonies-fleet colonies-fleet-'+ colonyPlayer.color" v-for="idx in getFleetsCountRange(colonyPlayer)"></div>
-                        </div>
-                    </div>
-                    <div class="player_home_colony_cont">
-                        <div class="player_home_colony" v-for="colony in player.colonies" :key="colony.name">
-                            <colony :colony="colony"></colony>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="player.selfReplicatingRobotsCards.length > 0" class="player_home_block">
-                    <h2 :class="'player_color_'+ player.color" v-i18n>Self-Replicating Robots cards</h2>
-                    <div>
-                        <div v-for="card in getCardsByType(player.selfReplicatingRobotsCards, [getActiveCardType()])" :key="card.name" class="cardbox">
-                            <card :card="card"></card>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="player_home_block player_home_block--cards">
                     <h2 :class="'player_color_'+ player.color" v-i18n>Played Cards</h2>
 
