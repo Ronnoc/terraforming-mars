@@ -7,6 +7,7 @@ import { $t } from "../directives/i18n";
 import { IGameData } from "../database/IDatabase";
 import { ColoniesFilter } from "./ColoniesFilter";
 import { ColonyName } from "../colonies/ColonyName";
+import { CardsFilter } from "./CardsFilter";
 
 interface CreateGameModel {
     firstIndex: number;
@@ -24,8 +25,10 @@ interface CreateGameModel {
     turmoil: boolean;
     customCorporationsList: Array<CardName>;
     customColoniesList: Array<ColonyName>;
+    cardsBlackList: Array<CardName>;
     showCorporationList: boolean;
     showColoniesList: boolean;
+    showCardsBlackList: boolean;
     isSoloModePage: boolean;
     board: BoardName | "random";
     seed: number;
@@ -77,10 +80,12 @@ export const CreateGameForm = Vue.component("create-game-form", {
             venusNext: true,
             colonies: true,
             showColoniesList: false,
-            turmoil: true,
+            showCorporationList: false,
+            showCardsBlackList: false,
+            turmoil: false,
             customCorporationsList: [],
             customColoniesList: [],
-            showCorporationList: false,
+            cardsBlackList: [],
             isSoloModePage: false,
             board: "random",
             boards: [
@@ -108,7 +113,8 @@ export const CreateGameForm = Vue.component("create-game-form", {
     },
     components: {
         "corporations-filter": CorporationsFilter,
-        "colonies-filter": ColoniesFilter
+        "colonies-filter": ColoniesFilter,
+        "cards-filter": CardsFilter
     },
     mounted: function () {
         if (window.location.pathname === "/solo") {
@@ -135,6 +141,10 @@ export const CreateGameForm = Vue.component("create-game-form", {
         updateCustomCorporationsList: function (newCustomCorporationsList: Array<CardName>) {
             const component = (this as any) as CreateGameModel;
             component.customCorporationsList = newCustomCorporationsList;
+        },
+        updateCardsBlackList: function (newCardsBlackList: Array<CardName>) {
+            const component = (this as any) as CreateGameModel;
+            component.cardsBlackList = newCardsBlackList;
         },
         updateCustomColoniesList: function (newCustomColoniesList: Array<ColonyName>) {
             const component = (this as any) as CreateGameModel;
@@ -213,6 +223,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const fanMadeOption = this.fanMadeOption;
             const customCorporationsList = component.customCorporationsList;
             const customColoniesList = component.customColoniesList;
+            const cardsBlackList = component.cardsBlackList;
             const board =  component.board;
             const seed = component.seed;
             const promoCardsOption = component.promoCardsOption;
@@ -261,6 +272,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 turmoil,
                 customCorporationsList,
                 customColoniesList,
+                cardsBlackList,
                 board,
                 seed,
                 solarPhaseOption,
@@ -390,6 +402,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             <label class="form-switch">
                                 <input type="checkbox" v-model="showCorporationList">
                                 <i class="form-icon"></i> <span v-i18n>Custom Corporation list</span>
+                            </label>
+
+                            <label class="form-switch">
+                                <input type="checkbox" v-model="showCardsBlackList">
+                                <i class="form-icon"></i> <span v-i18n>Exclude some cards</span>
                             </label>
 
                             <label class="form-switch" v-if="colonies">
@@ -540,6 +557,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 v-if="showColoniesList"
                 v-on:colonies-list-changed="updateCustomColoniesList"
             ></colonies-filter>
+
+            <cards-filter
+                v-if="showCardsBlackList"
+                v-on:cards-list-changed="updateCardsBlackList"
+            ></cards-filter>
         </div>
     `
 });

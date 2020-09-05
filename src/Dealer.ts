@@ -1047,7 +1047,16 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
     private useColoniesNextExtension: boolean = false;
     private usePromoCards: boolean = false;
     private useTurmoilExtension: boolean = false;
-    constructor(useCorporateEra: boolean, usePreludeExtension: boolean, useVenusNextExtension: boolean, useColoniesNextExtension : boolean, usePromoCards: boolean, useTurmoilExtension: boolean, _seed?: number) {
+    constructor(
+            useCorporateEra: boolean,
+            usePreludeExtension: boolean,
+            useVenusNextExtension: boolean,
+            useColoniesNextExtension : boolean,
+            usePromoCards: boolean,
+            useTurmoilExtension: boolean,
+            _seed?: number,
+            cardsBlackList?: Array<CardName>
+        ) {
         this.useCorporateEra = useCorporateEra;
         this.usePreludeExtension = usePreludeExtension;
         this.useVenusNextExtension = useVenusNextExtension;
@@ -1082,6 +1091,9 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
 
             this.deck.push(...ALL_PROMO_PROJECTS_CARDS.map((cf) => new cf.factory()));
             this.deck = this.shuffleCards<IProjectCard>(this.deck);
+        }
+        if (cardsBlackList) {
+            this.deck = this.deck.filter((card: IProjectCard) => ! cardsBlackList.includes(card.name))
         }
     }
 
