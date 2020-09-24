@@ -26,7 +26,6 @@ import {Tags} from "./cards/Tags";
 import {Resources} from "./Resources";
 import {ORIGINAL_MILESTONES, VENUS_MILESTONES, ELYSIUM_MILESTONES, HELLAS_MILESTONES} from "./milestones/Milestones";
 import {ORIGINAL_AWARDS, VENUS_AWARDS, ELYSIUM_AWARDS, HELLAS_AWARDS} from "./awards/Awards";
-import {FAN_AWARDS} from "./awards/Awards";
 import {SpaceName} from "./SpaceName";
 import {BoardColony, Board} from "./Board";
 import { CorporationName } from "./CorporationName";
@@ -311,7 +310,6 @@ export class Game implements ILoadable<SerializedGame, Game> {
           for (let i = 0; i < initDealtCards; i++) {
               player.dealtProjectCards.push(this.dealer.dealCard());
             }
-          }
           if (this.gameOptions.preludeExtension) {
             let preludeCount = 4;
             if(this.gameOptions.morePreludeOption)

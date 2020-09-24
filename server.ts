@@ -1081,10 +1081,10 @@ function serveResource(res: http.ServerResponse, s: Buffer): void {
 
 loadAllGames();
 
-console.log("Starting server on port " + (process.env.PORT || 8080));
+console.log("Starting server on port " + (process.env.PORT || 9853));
 console.log("version 0.X");
 
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 9853);
 
 console.log(
     "\nThe secret serverId for this server is \x1b[1m" +
