@@ -40,6 +40,7 @@ interface CreateGameModel {
     promoCardsOption: boolean;
     undoOption: boolean;
     fastModeOption: boolean;
+    removeNegativeGlobalEventsOption: boolean;
     includeVenusMA: boolean;
     startingCorporations: number;
     soloTR: boolean;
@@ -104,6 +105,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             promoCardsOption: true,
             undoOption: true,
             fastModeOption: false,
+            removeNegativeGlobalEventsOption: false,
             includeVenusMA: true,
             startingCorporations: 4,
             soloTR: false,
@@ -229,6 +231,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const promoCardsOption = component.promoCardsOption;
             const undoOption = component.undoOption;
             const fastModeOption = component.fastModeOption;
+            const removeNegativeGlobalEventsOption = this.removeNegativeGlobalEventsOption;
             const includeVenusMA = component.includeVenusMA;
             const startingCorporations = component.startingCorporations;
             const soloTR = component.soloTR;
@@ -279,6 +282,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 promoCardsOption,
                 undoOption,
                 fastModeOption,
+                removeNegativeGlobalEventsOption,
                 includeVenusMA,
                 startingCorporations,
                 soloTR,
@@ -462,6 +466,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             <label class="form-switch">
                                 <input type="checkbox" v-model="shuffleMapOption">
                                 <i class="form-icon"></i> <span v-i18n>Randomize board tiles</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#randomize-board-tiles" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <label class="form-switch" v-if="turmoil">
+                                <input type="checkbox" v-model="removeNegativeGlobalEventsOption">
+                                <i class="form-icon"></i> <span v-i18n>Remove negative Global Events</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#remove-negative-global-events" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <label class="form-switch" v-if="venusNext && playersCount > 1">
