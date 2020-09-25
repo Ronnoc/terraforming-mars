@@ -38,6 +38,7 @@ interface CreateGameModel {
     fanMadeOption: boolean;
     exSoloOption: boolean;
     promoCardsOption: boolean;
+    communityCardsOption: boolean;
     undoOption: boolean;
     fastModeOption: boolean;
     removeNegativeGlobalEventsOption: boolean;
@@ -102,6 +103,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             shuffleMapOption: true,
             morePreludeOption: false,
             fanMadeOption: true,
+            communityCardsOption: false,
             promoCardsOption: true,
             undoOption: true,
             fastModeOption: false,
@@ -130,11 +132,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
         fetch("/api/clonablegames")
         .then(response => response.json())
         .then(onSucces)
-        .catch(_ => alert("Unexpected server response"));        
-    },
-    watch: {
-        playersCount: function () {
-        }
+        .catch(_ => alert("Unexpected server response"));
     },
     methods: {
         getPlayerNamePlaceholder: function (player: NewPlayerModel): string {
@@ -229,6 +227,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const board =  component.board;
             const seed = component.seed;
             const promoCardsOption = component.promoCardsOption;
+            const communityCardsOption = component.communityCardsOption;
             const undoOption = component.undoOption;
             const fastModeOption = component.fastModeOption;
             const removeNegativeGlobalEventsOption = this.removeNegativeGlobalEventsOption;
@@ -280,6 +279,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 seed,
                 solarPhaseOption,
                 promoCardsOption,
+                communityCardsOption,
                 undoOption,
                 fastModeOption,
                 removeNegativeGlobalEventsOption,
@@ -387,7 +387,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <input type="checkbox" v-model="fanMadeOption">
                                 <i class="form-icon"></i> <span v-i18n>Fan Made</span>
                             </label>
-                            
+
+                            <label class="form-switch">
+                                <input type="checkbox" v-model="communityCardsOption">
+                                <i class="form-icon"></i> <span v-i18n>Community</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#community-corps" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
                         </div>
 
                         <div class="create-game-options-block col3 col-sm-6">
@@ -445,7 +449,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             
                             <label class="form-switch">
                                 <input type="checkbox" v-model="solarPhaseOption">
-                                <i class="form-icon"></i> <span v-i18n>Use Solar Phase</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#solar-phase" class="tooltip" target="_blank">&#9432;</a>
+                                <i class="form-icon"></i> <span v-i18n>World Government Terraforming</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#solar-phase" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <label class="form-switch" v-if="playersCount < 2">
@@ -559,6 +563,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 v-bind:colonies="colonies"
                 v-bind:turmoil="turmoil"
                 v-bind:promoCardsOption="promoCardsOption"
+                v-bind:communityCardsOption="communityCardsOption"
                 v-bind:fanMadeOption="fanMadeOption"
             ></corporations-filter>
 
