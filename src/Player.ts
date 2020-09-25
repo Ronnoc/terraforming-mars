@@ -2245,7 +2245,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       // Turmoil Scientists capacity
       if (this.canAfford(10) 
         && PartyHooks.shouldApplyPolicy(game, PartyName.SCIENTISTS)
-        && !this.turmoilScientistsActionUsed || game.gameOptions.exSoloOption) {
+        && (!this.turmoilScientistsActionUsed || game.gameOptions.exSoloOption)) {
           action.options.push(this.turmoilScientistsAction(game));
       }
 
