@@ -1050,6 +1050,13 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
                 "Select cards", undefined,
                 cards,
                 (foundCards: Array<IProjectCard>) => {
+                  cards.filter(
+                    (card) => foundCards.find(
+                      (foundCard) => foundCard.name === card.name
+                    ) === undefined
+                  ).forEach(
+                    (card)=>{game.dealer.discard(card);}
+                  );
                   this.draftedCards.push(...foundCards);
                   this.runResearchPhase(game, draftVariant);
                   return undefined;
