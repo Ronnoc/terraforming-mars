@@ -19,7 +19,7 @@ import { SelectColony } from "./SelectColony";
 let ui_update_timeout_id: number | undefined = undefined;
 
 export const WaitingFor = Vue.component("waiting-for", {
-    props: ["player", "players", "waitingfor", "soundtip"],
+    props: ["player", "players", "waitingfor"],
     data: function () {
         return {}
     },

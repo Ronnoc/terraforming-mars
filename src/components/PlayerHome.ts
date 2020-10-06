@@ -131,7 +131,7 @@ export const PlayerHome = Vue.component("player-home", {
 
                     <turmoil v-if="player.turmoil" :turmoil="player.turmoil"></turmoil>
 
-                    <div  class="player_home_block--milestones-and-awards">
+                    <div class="player_home_block--milestones-and-awards">
                         <milestone :milestones_list="player.milestones" />
                         <award v-if="player.players.length > 1" :awards_list="player.awards" />
                     </div>

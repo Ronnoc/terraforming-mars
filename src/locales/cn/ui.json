@@ -4,6 +4,7 @@
     "Players count": "玩家人数",
     "Expansions": "扩展",
     "Options": "选项",
+    "Promos": "Promo卡牌",
     "Fan Made": "社区卡牌",
     "Random Milestones/Awards": "随机里程碑/奖项",
     "Shuffle map": "打乱地图",
@@ -17,11 +18,11 @@
     "Blue": "蓝色",
     "Black": "黑色",
 
-    "original": "基础",
-    "random": "随机1/3",
-    
+    "tharsis": "基础版图",
+    "hellas": "hellas版图",
+    "elysium": "elysium版图",
+    "random": "随机地图",
     "Corporate Era": "企业时代",
-
     "Prelude": "前序",
     "Venus Next": "金星",
     "Custom Corporation list": "自定义公司列表",

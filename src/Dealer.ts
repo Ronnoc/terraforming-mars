@@ -998,7 +998,7 @@ export function getProjectCardByName(cardName: string): IProjectCard | undefined
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
-    console.log("not found car name "+String(cardName));
+    console.log("not found card name "+String(cardName));
     return undefined;
 }
 

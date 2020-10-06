@@ -46,6 +46,10 @@ function getCorporationCardByName(cardName: string): ICard | undefined {
     cardFactory = ALL_PROMO_CORPORATIONS.find((cardFactory) => cardFactory.cardName === cardName);
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
+    }    
+    cardFactory = ALL_COMMUNITY_CORPORATIONS.find((cardFactory) => cardFactory.cardName === cardName);
+    if (cardFactory !== undefined) {
+        return new cardFactory.factory();
     }
     cardFactory = ALL_COMMUNITY_CORPORATIONS.find((cardFactory) => cardFactory.cardName === cardName);
     if (cardFactory !== undefined) {

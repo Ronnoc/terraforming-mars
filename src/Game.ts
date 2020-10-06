@@ -238,9 +238,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
         if (this.players.length === 1) {
           players[0].setProduction(Resources.MEGACREDITS, -2);
           if (this.gameOptions.exSoloOption)
-            players[0].fleetSize += 2;
-          if(!this.gameOptions.exSoloOption)
-            this.addInterrupt(new SelectRemoveColony(players[0], this));
+            players[0].fleetSize += 1;
+          this.addInterrupt(new SelectRemoveColony(players[0], this));
         }
       }
 
@@ -891,7 +890,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       this.draftedPlayers.clear();
       this.players.forEach((player) => {
         player.needsToDraft = true;
-        if (this.draftRound === 1 && !preludeDraft ) {
+        if (this.draftRound === 1 && !preludeDraft) {
           player.runDraftPhase(initialDraft,this,this.getNextDraft(player).name);
         }
         else if (this.draftRound === 1 && preludeDraft) {
