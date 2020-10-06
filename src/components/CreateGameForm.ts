@@ -35,11 +35,12 @@ interface CreateGameModel {
     solarPhaseOption: boolean;
     shuffleMapOption: boolean;
     morePreludeOption: boolean;
-    fanMadeOption: boolean;
     exSoloOption: boolean;
     promoCardsOption: boolean;
+    communityCardsOption: boolean;
     undoOption: boolean;
     fastModeOption: boolean;
+    removeNegativeGlobalEventsOption: boolean;
     includeVenusMA: boolean;
     startingCorporations: number;
     soloTR: boolean;
@@ -97,18 +98,20 @@ export const CreateGameForm = Vue.component("create-game-form", {
             seed: Math.random(),
             seededGame: false,
             solarPhaseOption: true,
-            exSoloOption: true,
             shuffleMapOption: true,
-            morePreludeOption: false,
-            fanMadeOption: true,
             promoCardsOption: true,
+            communityCardsOption: false,
             undoOption: true,
+            morePreludeOption: false,
+            exSoloOption: true,
             fastModeOption: false,
+            removeNegativeGlobalEventsOption: false,
             includeVenusMA: true,
             startingCorporations: 4,
             soloTR: false,
             clonedGameData: undefined,
-            cloneGameData: []
+            cloneGameData: [],
+            allOfficialExpansions: false
         } as CreateGameModel
     },
     components: {
@@ -126,13 +129,9 @@ export const CreateGameForm = Vue.component("create-game-form", {
         }
 
         fetch("/api/clonablegames")
-        .then(response => response.json())
-        .then(onSucces)
-        .catch(_ => alert("Unexpected server response"));        
-    },
-    watch: {
-        playersCount: function () {
-        }
+            .then(response => response.json())
+            .then(onSucces)
+            .catch(_ => alert("Unexpected server response"));
     },
     methods: {
         getPlayerNamePlaceholder: function (player: NewPlayerModel): string {
@@ -157,10 +156,18 @@ export const CreateGameForm = Vue.component("create-game-form", {
         isBeginnerToggleEnabled: function(): Boolean {
             return !(this.initialDraft || this.prelude || this.venusNext || this.colonies || this.turmoil)
         },
+        selectAll: function() {
+            this.corporateEra = this.$data.allOfficialExpansions;
+            this.prelude = this.$data.allOfficialExpansions;
+            this.venusNext = this.$data.allOfficialExpansions;
+            this.colonies = this.$data.allOfficialExpansions;
+            this.turmoil = this.$data.allOfficialExpansions;
+            this.promoCardsOption = this.$data.allOfficialExpansions;
+        },
         createGame: function () {
             const component = (this as any) as CreateGameModel;
 
-            var players = component.players.slice(0, component.playersCount);
+            let players = component.players.slice(0, component.playersCount);
 
             if (component.randomFirstPlayer) {
                 // Shuffle players array to assign each player a random seat around the table
@@ -220,22 +227,23 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const exSoloOption = this.exSoloOption;
             const shuffleMapOption = this.shuffleMapOption;
             const morePreludeOption = this.morePreludeOption;
-            const fanMadeOption = this.fanMadeOption;
             const customCorporationsList = component.customCorporationsList;
             const customColoniesList = component.customColoniesList;
             const cardsBlackList = component.cardsBlackList;
             const board =  component.board;
             const seed = component.seed;
             const promoCardsOption = component.promoCardsOption;
+            const communityCardsOption = component.communityCardsOption;
             const undoOption = component.undoOption;
             const fastModeOption = component.fastModeOption;
+            const removeNegativeGlobalEventsOption = this.removeNegativeGlobalEventsOption;
             const includeVenusMA = component.includeVenusMA;
             const startingCorporations = component.startingCorporations;
             const soloTR = component.soloTR;
             let clonedGamedId: undefined | string = undefined;
 
             if (customColoniesList.length > 0) {
-                let playersCount = players.length;
+                const playersCount = players.length;
                 let neededColoniesCount = playersCount + 2;
                 if (playersCount === 1) {
                     neededColoniesCount = 4;
@@ -277,15 +285,16 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 seed,
                 solarPhaseOption,
                 promoCardsOption,
+                communityCardsOption,
                 undoOption,
                 fastModeOption,
+                removeNegativeGlobalEventsOption,
                 includeVenusMA,
                 startingCorporations,
                 soloTR,
                 clonedGamedId,
                 initialDraft,
                 randomMA,
-                fanMadeOption,
                 shuffleMapOption,
                 morePreludeOption,
                 exSoloOption,
@@ -349,6 +358,13 @@ export const CreateGameForm = Vue.component("create-game-form", {
 
                         <div class="create-game-options-block col3 col-sm-6">
                             <h4 v-i18n>Expansions</h4>
+                            <div class="expansion-label">Official</div>
+
+                            <label class="form-switch">
+                                <input type="checkbox" name="allOfficialExpansions" v-model="allOfficialExpansions" v-on:change="selectAll()">
+                                <i class="form-icon"></i> <span v-i18n>All</span>
+                            </label>
+
                             <label class="form-switch">
                                 <input type="checkbox" name="corporateEra" v-model="corporateEra">
                                 <i class="form-icon"></i> <span v-i18n>Corporate Era</span>
@@ -379,11 +395,13 @@ export const CreateGameForm = Vue.component("create-game-form", {
                                 <i class="form-icon"></i> <span v-i18n>Promos</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#promo-cards" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
+                            <div class="create-game-divider" />
+
+                            <div class="expansion-label">Fan-made</div>
                             <label class="form-switch">
-                                <input type="checkbox" v-model="fanMadeOption">
-                                <i class="form-icon"></i> <span v-i18n>Fan Made</span>
+                                <input type="checkbox" v-model="communityCardsOption">
+                                <i class="form-icon"></i> <span v-i18n>Community</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#community" class="tooltip" target="_blank">&#9432;</a>
                             </label>
-                            
                         </div>
 
                         <div class="create-game-options-block col3 col-sm-6">
@@ -462,6 +480,11 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             <label class="form-switch">
                                 <input type="checkbox" v-model="shuffleMapOption">
                                 <i class="form-icon"></i> <span v-i18n>Randomize board tiles</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#randomize-board-tiles" class="tooltip" target="_blank">&#9432;</a>
+                            </label>
+
+                            <label class="form-switch" v-if="turmoil">
+                                <input type="checkbox" v-model="removeNegativeGlobalEventsOption">
+                                <i class="form-icon"></i> <span v-i18n>Remove negative Global Events</span>&nbsp;<a href="https://github.com/bafolts/terraforming-mars/wiki/Variants#remove-negative-global-events" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
                             <label class="form-switch" v-if="venusNext && playersCount > 1">
@@ -550,12 +573,13 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 v-bind:colonies="colonies"
                 v-bind:turmoil="turmoil"
                 v-bind:promoCardsOption="promoCardsOption"
-                v-bind:fanMadeOption="fanMadeOption"
+                v-bind:communityCardsOption="communityCardsOption"
             ></corporations-filter>
 
             <colonies-filter
                 v-if="showColoniesList"
                 v-on:colonies-list-changed="updateCustomColoniesList"
+                v-bind:communityCardsOption="communityCardsOption"
             ></colonies-filter>
 
             <cards-filter

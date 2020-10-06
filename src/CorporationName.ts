@@ -4,9 +4,10 @@ import { VenusCorporation } from "./cards/venusNext/VenusCorporation";
 import { ColoniesCorporation } from "./cards/colonies/ColoniesCorporation";
 import { TurmoilCorporation } from "./cards/turmoil/TurmoilCorporation";
 import { PromoCorporation } from "./cards/promo/PromoCorporation";
+import { CommunityCorporation } from "./cards/community/CommunityCorporation";
 
-export const CorporationName =  { ...OriginalCorporation, ...PreludeCorporation, ...VenusCorporation, ...ColoniesCorporation, ...TurmoilCorporation, ...PromoCorporation }
-export type CorporationName = typeof OriginalCorporation | PreludeCorporation | VenusCorporation | ColoniesCorporation | TurmoilCorporation | PromoCorporation | string;
+export const CorporationName =  { ...OriginalCorporation, ...PreludeCorporation, ...VenusCorporation, ...ColoniesCorporation, ...TurmoilCorporation, ...PromoCorporation, ...CommunityCorporation }
+export type CorporationName = typeof OriginalCorporation | PreludeCorporation | VenusCorporation | ColoniesCorporation | TurmoilCorporation | PromoCorporation | CommunityCorporation | string;
 export enum CorporationGroup {
   ORIGINAL = "Original",
   PRELUDE = "Prelude",
@@ -14,6 +15,6 @@ export enum CorporationGroup {
   COLONIES = "Colonies",
   TURMOIL = "Turmoil",
   PROMO = "Promo",
-  FANMADE = "FanMade",
+  COMMUNITY = "Community"
 }
 

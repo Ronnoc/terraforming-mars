@@ -441,7 +441,10 @@ export enum CardName {
     LAW_SUIT = "Law Suit",
     STANFORD_TORUS = "Stanford Torus",
     SATURN_SURFING = "Saturn Surfing",
-
-    // Fan Made Cards
-    ARCELOR_MITTAL = "Arcelor Mittal",
+    
+    // Community corps
+    AGRICOLA_INC = "Agricola Inc",
+    PROJECT_WORKSHOP = "Project Workshop",
+    INCITE = "Incite",
+    PLAYWRIGHTS = "Playwrights",
 }

@@ -16,8 +16,7 @@ import { ALL_PRELUDE_CORPORATIONS,
          ALL_VENUS_PROJECTS_CARDS,
          ALL_COLONIES_PROJECTS_CARDS,
          ALL_TURMOIL_PROJECTS_CARDS,
-         ALL_PROMO_PROJECTS_CARDS,
-         FAN_BASIC_CORPORATION_CARDS,
+         ALL_PROMO_PROJECTS_CARDS, ALL_COMMUNITY_CORPORATIONS
          } from "../Dealer";
 import { HTML_DATA } from "../HTML_data";
 import { CardModel } from "../models/CardModel";
@@ -48,7 +47,7 @@ function getCorporationCardByName(cardName: string): ICard | undefined {
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
-    cardFactory = FAN_BASIC_CORPORATION_CARDS.find((cardFactory) => cardFactory.cardName === cardName);
+    cardFactory = ALL_COMMUNITY_CORPORATIONS.find((cardFactory) => cardFactory.cardName === cardName);
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
@@ -92,7 +91,7 @@ export function getProjectCardByName(cardName: string): IProjectCard | undefined
 }
 
 function getCardContent(cardName: string): string {
-    let htmlData : string | undefined = '';
+    let htmlData : string | undefined = "";
     htmlData = HTML_DATA.get(cardName);
     return htmlData || "";
 }
@@ -110,7 +109,7 @@ export const Card = Vue.component("card", {
             return getProjectCardByName(this.card.name) || getCorporationCardByName(this.card.name);
         },
         getCardCssClass: function (card: CardModel): string {
-            var cssClass = "filterDiv card-" + card.name.toLowerCase().replace(/ /g, "-");
+            let cssClass = "filterDiv card-" + card.name.toLowerCase().replace(/ /g, "-");
             if (this.actionUsed) {
                 cssClass += " cards-action-was-used"
             }

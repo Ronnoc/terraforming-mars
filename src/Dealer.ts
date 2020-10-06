@@ -415,9 +415,6 @@ import { StanfordTorus } from "./cards/promo/StanfordTorus";
 import { SaturnSurfing } from "./cards/promo/SaturnSurfing";
 import { SelfReplicatingRobots } from "./cards/promo/SelfReplicatingRobots";
 
-// Fan Made Cards
-import { ArcelorMittal } from "./cards/fanmade/ArcelorMittal"
-
 
 import { ILoadable } from "./ILoadable";
 import { CardName } from "./CardName";
@@ -463,6 +460,11 @@ import { Potatoes } from "./cards/promo/Potatoes";
 import { MeatIndustry } from "./cards/promo/MeatIndustry";
 import { PoliticalAlliance } from "./cards/turmoil/PoliticalAlliance";
 
+// Community corporations
+import { AgricolaInc } from "./cards/community/AgricolaInc";
+import { ProjectWorkshop } from "./cards/community/ProjectWorkshop";
+import { Incite } from "./cards/community/Incite";
+import { Playwrights } from "./cards/community/Playwrights";
 
 export interface ICardFactory<T> {
     cardName: CardName;
@@ -700,6 +702,13 @@ export const ALL_PROMO_CORPORATIONS: Array<ICardFactory<CorporationCard>> = [
     { cardName: CardName.MONS_INSURANCE, factory: MonsInsurance },
     { cardName: CardName.RECYCLON, factory: Recyclon },
     { cardName: CardName.SPLICE, factory: Splice }
+];
+
+export const ALL_COMMUNITY_CORPORATIONS: Array<ICardFactory<CorporationCard>> = [
+    { cardName: CardName.AGRICOLA_INC, factory: AgricolaInc },
+    { cardName: CardName.PROJECT_WORKSHOP, factory: ProjectWorkshop },
+    { cardName: CardName.INCITE, factory: Incite },
+    { cardName: CardName.PLAYWRIGHTS, factory: Playwrights }
 ];
 
 export const ALL_PROMO_PROJECTS_CARDS: Array<ICardFactory<IProjectCard>> = [
@@ -955,10 +964,6 @@ export const ALL_CORP_ERA_PROJECT_CARDS: Array<ICardFactory<IProjectCard>> = [
     { cardName: CardName.VIRUS, factory: Virus },
 ]
 
-export const FAN_BASIC_CORPORATION_CARDS: Array<ICardFactory<CorporationCard>> = [
-    { cardName: CardName.ARCELOR_MITTAL, factory: ArcelorMittal },
-]
-
 // Function to return a card object by its name
 export function getProjectCardByName(cardName: string): IProjectCard | undefined {
     let cardFactory = ALL_PRELUDE_CARDS.find((cardFactory) => cardFactory.cardName === cardName);
@@ -1030,7 +1035,7 @@ export function getCorporationCardByName(cardName: string): CorporationCard | un
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
-    cardFactory = FAN_BASIC_CORPORATION_CARDS.find((cf) => cf.cardName === cardName);
+    cardFactory = ALL_COMMUNITY_CORPORATIONS.find((cf) => cf.cardName === cardName);
     if (cardFactory !== undefined) {
         return new cardFactory.factory();
     }
@@ -1047,6 +1052,7 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
     private useColoniesNextExtension: boolean = false;
     private usePromoCards: boolean = false;
     private useTurmoilExtension: boolean = false;
+
     constructor(
             useCorporateEra: boolean,
             usePreludeExtension: boolean,
@@ -1054,7 +1060,6 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
             useColoniesNextExtension : boolean,
             usePromoCards: boolean,
             useTurmoilExtension: boolean,
-            _seed?: number,
             cardsBlackList?: Array<CardName>
         ) {
         this.useCorporateEra = useCorporateEra;
@@ -1063,6 +1068,7 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
         this.useColoniesNextExtension = useColoniesNextExtension;
         this.usePromoCards = usePromoCards;
         this.useTurmoilExtension = useTurmoilExtension;
+
         this.deck = this.shuffleCards(ALL_PROJECT_CARDS.map((cf) => new cf.factory()));
         if (this.useCorporateEra) {
             this.deck.push(...ALL_CORP_ERA_PROJECT_CARDS.map((cf) => new cf.factory()));
@@ -1148,7 +1154,7 @@ export class Dealer implements ILoadable<SerializedDealer, Dealer>{
     // Function used to rebuild each objects
     public loadFromJSON(d: SerializedDealer): Dealer {
         // Assign each attributes
-        let o = Object.assign(this, d);
+        const o = Object.assign(this, d);
 
         // Rebuild deck
         this.deck = d.deck.map((element: IProjectCard)  => {

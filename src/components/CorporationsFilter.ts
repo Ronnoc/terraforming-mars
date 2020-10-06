@@ -1,6 +1,6 @@
 import Vue from "vue";
 
-import { ALL_VENUS_CORPORATIONS, ALL_PRELUDE_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS, ALL_CORP_ERA_CORPORATION_CARDS, FAN_BASIC_CORPORATION_CARDS } from '../Dealer';
+import { ALL_VENUS_CORPORATIONS, ALL_PRELUDE_CORPORATIONS, ALL_CORPORATION_CARDS, ALL_COLONIES_CORPORATIONS, ALL_TURMOIL_CORPORATIONS, ALL_PROMO_CORPORATIONS, ALL_CORP_ERA_CORPORATION_CARDS, ALL_COMMUNITY_CORPORATIONS } from "../Dealer";
 import { CardName } from "../CardName";
 import { CorporationGroup } from "../CorporationName";
 
@@ -12,13 +12,11 @@ const allItems: Array<CardName> = [
     ...ALL_COLONIES_CORPORATIONS.map((cf) => cf.cardName),
     ...ALL_TURMOIL_CORPORATIONS.map((cf) => cf.cardName),
     ...ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName),
-    ...FAN_BASIC_CORPORATION_CARDS.map((cf) => cf.cardName),
+    ...ALL_COMMUNITY_CORPORATIONS.map((cf) => cf.cardName)
 ];
 
 export const CorporationsFilter = Vue.component("corporations-filter", {
-    props: ["corporateEra", "prelude", "venusNext", "colonies", "turmoil", "promoCardsOption",
-        "fanMadeOption",
-    ],
+    props: ["corporateEra", "prelude", "venusNext", "colonies", "turmoil", "promoCardsOption", "communityCardsOption"],
     data: function () {
         return {
             customCorporationsList: false,
@@ -29,7 +27,7 @@ export const CorporationsFilter = Vue.component("corporations-filter", {
                 ...this.colonies ? ALL_COLONIES_CORPORATIONS.map((cf) => cf.cardName) : [],
                 ...this.turmoil ? ALL_TURMOIL_CORPORATIONS.map((cf) => cf.cardName) : [],
                 ...this.promoCardsOption ? ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName) : [],
-                ...this.fanMadeOption ? FAN_BASIC_CORPORATION_CARDS.map((cf) => cf.cardName) : [],
+                ...this.communityCardsOption ? ALL_COMMUNITY_CORPORATIONS.map((cf) => cf.cardName) : []
             ],
             corporationGroups: [
                 {"title": CorporationGroup.ORIGINAL, "items": ALL_CORPORATION_CARDS.concat(ALL_CORP_ERA_CORPORATION_CARDS).map((cf) => cf.cardName)},
@@ -38,7 +36,7 @@ export const CorporationsFilter = Vue.component("corporations-filter", {
                 {"title": CorporationGroup.COLONIES, "items": ALL_COLONIES_CORPORATIONS.map((cf) => cf.cardName)},
                 {"title": CorporationGroup.TURMOIL, "items": ALL_TURMOIL_CORPORATIONS.map((cf) => cf.cardName)},
                 {"title": CorporationGroup.PROMO, "items": ALL_PROMO_CORPORATIONS.map((cf) => cf.cardName)},
-                {"title": CorporationGroup.FANMADE, "items": FAN_BASIC_CORPORATION_CARDS.map((cf) => cf.cardName)},
+                {"title": CorporationGroup.COMMUNITY, "items": ALL_COMMUNITY_CORPORATIONS.map((cf) => cf.cardName)}
             ]
         }
     },
@@ -105,9 +103,9 @@ export const CorporationsFilter = Vue.component("corporations-filter", {
         promoCardsOption: function (enabled) {
             enabled ? this.selectAll(CorporationGroup.PROMO) : this.selectNone(CorporationGroup.PROMO);
         },
-        fanMadeOption: function (enabled) {
-            enabled ? this.selectAll(CorporationGroup.FANMADE) : this.selectNone(CorporationGroup.FANMADE);
-        },
+        communityCardsOption: function (enabled) {
+            enabled ? this.selectAll(CorporationGroup.COMMUNITY) : this.selectNone(CorporationGroup.COMMUNITY);
+        }
     },
     template: `
     <div class="corporations-filter">

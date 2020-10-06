@@ -2,16 +2,14 @@ import { CorporationCard } from "../corporation/CorporationCard";
 import { Player } from "../../Player";
 import { Tags } from "../Tags";
 import { Game } from "../../Game";
-import { SelectOption } from "../../inputs/SelectOption";
-import { OrOptions } from "../../inputs/OrOptions";
 import { IProjectCard } from "../IProjectCard";
 import { Resources } from "../../Resources";
 import { CardType } from "../CardType";
 import { CardName } from "../../CardName";
 import { IColony } from "../../colonies/Colony";
-import { LogMessageType } from "../../LogMessageType";
-import { LogMessageData } from "../../LogMessageData";
-import { LogMessageDataType } from "../../LogMessageDataType";
+import { SelectColony } from "../../inputs/SelectColony";
+import { ColonyName } from "../../colonies/ColonyName";
+import { ColonyModel } from "../../models/ColonyModel";
 
 export class Aridor implements CorporationCard {
     public name: CardName =  CardName.ARIDOR;
@@ -20,31 +18,29 @@ export class Aridor implements CorporationCard {
     public allTags = new Set();
 
     public initialAction(player: Player, game: Game) {
-        if (game.colonyDealer === undefined || !game.coloniesExtension) return undefined;
-        let addColony = new OrOptions();
-        addColony.title = "Aridor first action - Select colony tile to add";
-        game.colonyDealer.discardedColonies.forEach(colony => {
-          const colonySelect =  new SelectOption(
-            colony.name + " - (" + colony.description + ")", 
-            "Add colony tile",
-            () => {
-                game.colonies.push(colony);
-                game.colonies.sort((a,b) => (a.name > b.name) ? 1 : -1);
-                
-                game.log(
-                    LogMessageType.DEFAULT,
-                    "${0} added a new Colony tile: ${1}",
-                    new LogMessageData(LogMessageDataType.PLAYER, player.id),
-                    new LogMessageData(LogMessageDataType.STRING, colony.name)
-                );
-
-                this.checkActivation(colony, game);
+        if (game.colonyDealer === undefined || !game.gameOptions.coloniesExtension) return undefined;
+        
+        const availableColonies: IColony[] = game.colonyDealer.discardedColonies;
+        if (availableColonies.length === 0) return undefined;
+        
+        let coloniesModel: Array<ColonyModel> = game.getColoniesModel(availableColonies);
+        let selectColony = new SelectColony("Aridor first action - Select colony tile to add", "Add colony tile", coloniesModel, (colonyName: ColonyName) => {
+            if (game.colonyDealer !== undefined) {
+                availableColonies.forEach(colony => {
+                    if (colony.name === colonyName) {
+                      game.colonies.push(colony);
+                      game.colonies.sort((a,b) => (a.name > b.name) ? 1 : -1);
+                      game.log("${0} added a new Colony tile: ${1}", b => b.player(player).colony(colony));
+                      this.checkActivation(colony, game);
+                      return undefined;
+                    }
+                    return undefined;
+                  });
                 return undefined;
-            }
-          );
-          addColony.options.push(colonySelect);
-        });
-        return addColony;
+            } else return undefined;
+          }
+        );
+        return selectColony;
     }
 
     private checkActivation(colony: IColony, game: Game): void {

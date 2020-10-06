@@ -28,7 +28,7 @@ export const Turmoil = Vue.component("turmoil", {
         else if (party === PartyName.KELVINISTS) {
           return `<div class="resource money party-resource">1</div> / 
           <div class="production-box party-production-box">
-            <div class="heat party-production"></div>
+            <div class="heat production"></div>
           </div>`;
         }
         else if (party === PartyName.REDS) {
@@ -85,10 +85,10 @@ export const Turmoil = Vue.component("turmoil", {
       },
       toggleMe: function () {
         let currentState: boolean = this.isVisible();
-        (this.$root as any).setVisibilityState("turmoil.parties", ! currentState);
+        (this.$root as any).setVisibilityState("turmoil_parties", ! currentState);
       },
       isVisible: function () {
-          return (this.$root as any).getVisibilityState("turmoil.parties");
+          return (this.$root as any).getVisibilityState("turmoil_parties");
       }
     },
     template: `

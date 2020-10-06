@@ -1,7 +1,3 @@
- /**
-  * This component show the award list
-  */
-
 import Vue from "vue";
 
 export const Award = Vue.component("award", {
@@ -9,21 +5,28 @@ export const Award = Vue.component("award", {
     methods: {
         toggleMe: function () {
             let currentState: boolean = this.isVisible();
-            (this.$root as any).setVisibilityState("awards_list", ! currentState);
+            (this.$root as any).setVisibilityState(
+                "awards_list",
+                !currentState
+            );
         },
         isVisible: function () {
             return (this.$root as any).getVisibilityState("awards_list");
         },
-        getNameCss: function(awardName: string): string {
-            return "ma-name ma-name--" +  awardName.replace(/ /g, "-").toLowerCase();
+        getNameCss: function (awardName: string): string {
+            return (
+                "ma-name ma-name--" + awardName.replace(/ /g, "-").toLowerCase()
+            );
         },
-        getNameId: function(awardName: string): string {
+        getNameId: function (awardName: string): string {
             return awardName.replace(/ /g, "");
         },
-        toggleMADescription: function(awardName: string) {
+        toggleMADescription: function (awardName: string) {
             //TODO - rework this with v-show?
-            document.querySelector(`#${awardName} > .ma-description`)?.classList.toggle("ma-description-hidden");
-        }
+            document
+                .querySelector(`#${awardName} > .ma-description`)
+                ?.classList.toggle("ma-description-hidden");
+        },
     },
     template: `
     <div class="awards_cont" v-trim-whitespace>
@@ -39,7 +42,7 @@ export const Award = Vue.component("award", {
             <div v-show="isVisible()">
                 <div :id="getNameId(award.award.name)" title="press to show or hide the description" v-on:click.prevent="toggleMADescription(getNameId(award.award.name))" v-for="award in awards_list" class="ma-block">
                     <div class="ma-player" v-if="award.player_name"><i :title="award.player_name" :class="'board-cube board-cube--'+award.player_color" /></div>
-                    <div class="ma-name--awards" :class="getNameCss(award.award.name)" v-i18n>
+                    <div class="ma-name--awards award-block" :class="getNameCss(award.award.name)" v-i18n>
                         {{award.award.name}}
                         <div class="ma-scores player_home_block--milestones-and-awards-scores">
                             <p v-for="score in award.scores.sort(
@@ -52,6 +55,5 @@ export const Award = Vue.component("award", {
             </div>
         </div>
     </div>
-    `
+    `,
 });
-

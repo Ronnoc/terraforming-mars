@@ -1,9 +1,8 @@
-
+/*
 import { Tags } from "../Tags";
 import { Player } from "../../Player";
 import { Game } from "../../Game";
 import { CorporationCard } from "../corporation/CorporationCard";
-import { CardName } from '../../CardName';
 
 export class ArcelorMittal implements CorporationCard {
     public name: CardName = CardName.ARCELOR_MITTAL;
@@ -15,3 +14,4 @@ export class ArcelorMittal implements CorporationCard {
         return undefined;
     }
 }
+*/

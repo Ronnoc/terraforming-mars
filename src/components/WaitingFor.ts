@@ -1,4 +1,3 @@
-
 import Vue from "vue";
 
 import { AndOptions } from "./AndOptions";
@@ -13,9 +12,11 @@ import { SelectPlayer } from "./SelectPlayer";
 import { SelectSpace } from "./SelectSpace";
 import { $t } from "../directives/i18n";
 import { SelectPartyPlayer } from "./SelectPartyPlayer";
-import { playTips } from "../PlaySound";
+import { PreferencesManager } from "./PreferencesManager";
+import { playActivePlayerSound } from "../SoundManager";
+import { SelectColony } from "./SelectColony";
 
-var ui_update_timeout_id: number | undefined = undefined;
+let ui_update_timeout_id: number | undefined = undefined;
 
 export const WaitingFor = Vue.component("waiting-for", {
     props: ["player", "players", "waitingfor", "soundtip"],
@@ -32,7 +33,8 @@ export const WaitingFor = Vue.component("waiting-for", {
         "select-how-to-pay-for-card": SelectHowToPayForCard,
         "select-player": SelectPlayer,
         "select-space": SelectSpace,
-        "select-party-player": SelectPartyPlayer
+        "select-party-player": SelectPartyPlayer,
+        "select-colony": SelectColony
     },
     methods: {
         waitForUpdate: function () {
@@ -50,18 +52,18 @@ export const WaitingFor = Vue.component("waiting-for", {
                         if (result["result"] === "GO") {
                             (vueApp as any).$root.updatePlayer();
 
-                            if (Notification.permission !== 'granted') {
+                            if (Notification.permission !== "granted") {
                                 Notification.requestPermission();
                             }
                             if (Notification.permission === "granted") {
-                                new Notification('Terraforming Mars Online', {
+                                new Notification("Terraforming Mars Online", {
                                     icon: "/favicon.ico",
                                     body: "It's your turn!",
                                 });
                             }
-                            if (this.soundtip) {
-                                playTips();
-                            }
+                            const soundsEnabled = PreferencesManager.loadValue("enable_sounds") === "1";
+                            if (soundsEnabled) playActivePlayerSound();
+
                             // We don't need to wait anymore - it's our turn
                             return;
                         } else if (result["result"] === "REFRESH") {
@@ -100,7 +102,7 @@ export const WaitingFor = Vue.component("waiting-for", {
                         (window as any).location = (window as any).location;
                     }
 
-                } else if (xhr.status === 400 && xhr.responseType === 'json') {
+                } else if (xhr.status === 400 && xhr.responseType === "json") {
                     const element: HTMLElement | null = document.getElementById("dialog-default");
                     const message: HTMLElement | null = document.getElementById("dialog-default-message");
                     if (message !== null && element !== null && (element as HTMLDialogElement).showModal !== undefined) {

@@ -10,10 +10,11 @@ import { $t } from "../directives/i18n";
 import { getProjectCardByName } from "./../Dealer";
 
 export const LogPanel = Vue.component("log-panel", {
-    props: ["messages", "players"],
+    props: ["id", "players"],
     data: function () {
         return {
             cards: new Array<string>(),
+            messages: new Array<LogMessage>()
         }
     },
     components: {
@@ -48,7 +49,7 @@ export const LogPanel = Vue.component("log-panel", {
             if (data.type !== undefined && data.value !== undefined) {
                 if (data.type === LogMessageDataType.PLAYER) {
                     for (let player of this.players) {
-                        if (data.value === player.id) {
+                        if (data.value === player.color || data.value === player.id) {
                             return "<log-player class=\"player_bg_color_"+player.color+"\">"+player.name+"</log-player>";
                         }
                     }
@@ -75,13 +76,36 @@ export const LogPanel = Vue.component("log-panel", {
             }
             return "";
         },
+        // Called in the event that a bad log message comes down. Does its best to return something.
+        safeMessage: function(message: LogMessage) {
+            try {
+                if (message === undefined) {
+                    return "undefined";
+                }
+                if (message.data === undefined) {
+                    return `BUG: Unparseable message: ${message.message}`;
+                }
+                var data = message.data.map(datum => {
+                    return (datum === undefined)
+                        ? "undefined"
+                        : ("(" + datum.type + ") " + datum.value)
+                    });
+                return `BUG: Unparseable message: ${message.message}, (${data.join(", ")})`;
+            } catch(err) {
+                return `BUG: Unparseable message: ${message.message} ${err.toString()}`;
+            }
+        },
         parseMessage: function(message: LogMessage) {
-            let logEntryBullet = (this.isNewGeneration(message.type)) ? "" : `<span title="${new Date(message.timestamp).toLocaleString()}">&#x1f551;</span>`;
-            if (message.type !== undefined && message.message !== undefined) {
-                message.message = $t(message.message);
-                return logEntryBullet+message.message.replace(/\$\{([0-9]{1})\}/gi, (_match, idx) => {
-                    return this.parseData(message.data[idx]);
-                });
+            try {
+                let logEntryBullet = (this.isNewGeneration(message.type)) ? "" : `<span title="${new Date(message.timestamp).toLocaleString()}">&#x1f551;</span>`;
+                if (message.type !== undefined && message.message !== undefined) {
+                    message.message = $t(message.message);
+                    return logEntryBullet+message.message.replace(/\$\{([0-9]{1})\}/gi, (_match, idx) => {
+                        return this.parseData(message.data[idx]);
+                    });
+                }
+            } catch(err) {
+                return this.safeMessage(message);
             }
             return "";
         },
@@ -93,9 +117,12 @@ export const LogPanel = Vue.component("log-panel", {
             datas.forEach((data: LogMessageData) => {
                 if (data.type !== undefined && data.value !== undefined) {
                     if (data.type === LogMessageDataType.CARD) {
-                        let card_name = data.value;    
-                        if (!this.cards.includes(card_name)) {
+                        let card_name = data.value;
+                        var index = this.cards.indexOf(card_name);
+                        if (index === -1) {
                             this.cards.push(card_name);
+                        } else {
+                            this.cards.splice(index, 1);
                         }
                     }
                 }
@@ -106,7 +133,16 @@ export const LogPanel = Vue.component("log-panel", {
         },
     },
     mounted: function () {
-        this.$nextTick(this.scrollToEnd);
+        fetch(`/api/game/logs?id=${this.id}&limit=50`)
+            .then((response) => response.json())
+            .then((messages) => {
+                this.messages.splice(0, this.messages.length);
+                this.messages.push(...messages);
+                this.$nextTick(this.scrollToEnd);
+            })
+            .catch((error) => {
+                console.error("error updating messages", error);
+            });
     },
     template: `
     <div>

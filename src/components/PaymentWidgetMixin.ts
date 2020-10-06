@@ -78,6 +78,24 @@ export const PaymentWidgetMixin = {
               } else {
                 (this as any)["megaCredits"] = Math.max(0, Math.min(this.getMegaCreditsMax(), remainingMC));
               }
-        }
+        },
+        setMaxValue: function (target: string): void {
+            let currentValue: number = (this as any)[target];
+            const cardCost: number = (this as any).$data.cost;
+            let amountHave: number = (this as any).player[target];
+
+            let amountNeed: number = cardCost;
+            if (["titanium", "steel", "microbes", "floaters"].includes(target)) {
+                amountNeed = Math.floor(cardCost/this.getResourceRate(target));
+            }
+
+            if (target === "microbes") amountHave = (this as any).playerinput.microbes;
+            if (target === "floaters") amountHave = (this as any).playerinput.floaters;
+
+            while (currentValue < amountHave && currentValue < amountNeed) {
+                this.addValue(target, 1);
+                currentValue++;
+            }
+        },
     }
 }

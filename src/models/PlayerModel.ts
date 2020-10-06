@@ -2,10 +2,10 @@ import { CardModel } from "./CardModel";
 import { ColonyModel } from "./ColonyModel";
 import { Color } from "../Color";
 import { VictoryPointsBreakdown } from "../VictoryPointsBreakdown";
-import { ITagCount } from '../ITagCount';
+import { ITagCount } from "../ITagCount";
 import { TurmoilModel } from "./TurmoilModel";
-import { IProjectCard } from '../cards/IProjectCard';
-import { CorporationCard } from '../cards/corporation/CorporationCard';
+import { IProjectCard } from "../cards/IProjectCard";
+import { CorporationCard } from "../cards/corporation/CorporationCard";
 
 export interface PlayerModel {
     boardName: string;
@@ -51,9 +51,12 @@ export interface PlayerModel {
     tradesThisTurn: number;
     selfReplicatingRobotsCards: Array<CardModel>;
     dealtCorporationCards: Array<CorporationCard>;
-    dealtPreludeCards:  Array<IProjectCard>;
-    dealtProjectCards:  Array<IProjectCard>;
+    dealtPreludeCards: Array<IProjectCard>;
+    dealtProjectCards: Array<IProjectCard>;
     initialDraft: boolean;
     needsToDraft: boolean | undefined;
+    passedPlayers: Array<Color>;
+    actionsTakenThisRound: number;
     deckSize: number;
+    preludeExtension: boolean;
 }

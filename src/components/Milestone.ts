@@ -1,7 +1,3 @@
- /**
-  * This component show the milestone list
-  */
-
 import Vue from "vue";
 
 export const Milestone = Vue.component("milestone", {
@@ -9,21 +5,29 @@ export const Milestone = Vue.component("milestone", {
     methods: {
         toggleMe: function () {
             let currentState: boolean = this.isVisible();
-            (this.$root as any).setVisibilityState("millestones_list", ! currentState);
+            (this.$root as any).setVisibilityState(
+                "millestones_list",
+                !currentState
+            );
         },
         isVisible: function () {
             return (this.$root as any).getVisibilityState("millestones_list");
         },
-        getNameCss: function(milestoneName: string): string {
-            return "ma-name ma-name--" +  milestoneName.replace(/ /g, "-").toLowerCase();
+        getNameCss: function (milestoneName: string): string {
+            return (
+                "ma-name ma-name--" +
+                milestoneName.replace(/ /g, "-").toLowerCase()
+            );
         },
-        getNameId: function(awardName: string): string {
+        getNameId: function (awardName: string): string {
             return awardName.replace(/ /g, "");
         },
-        toggleMADescription: function(milestoneName: string) {
+        toggleMADescription: function (milestoneName: string) {
             //TODO - rework this with v-show?
-            document.querySelector(`#${milestoneName} > .ma-description`)?.classList.toggle("ma-description-hidden");
-        }
+            document
+                .querySelector(`#${milestoneName} > .ma-description`)
+                ?.classList.toggle("ma-description-hidden");
+        },
     },
     template: `
     <div class="milestones_cont" v-trim-whitespace>
@@ -31,7 +35,7 @@ export const Milestone = Vue.component("milestone", {
             <div class="ma-title">
                 <a class="ma-clickable" href="#" v-on:click.prevent="toggleMe()" v-i18n>Milestones</a>
                 <span v-for="milestone in milestones_list" v-if="milestone.player_name" class="claimed-milestone-inline" :title="milestone.player_name">
-                    <span v-i18n>{{ milestone.milestone.name }}</span>: <span>{{ milestone.player_name }}</span>
+                    <span v-i18n>{{ milestone.milestone.name }}</span>
                     <span class="ma-player-cube"><i :class="'board-cube board-cube--'+milestone.player_color" /></span>
                 </span>
             </div>
@@ -51,6 +55,5 @@ export const Milestone = Vue.component("milestone", {
             </div>
         </div>
     </div>
-    `
+    `,
 });
-
