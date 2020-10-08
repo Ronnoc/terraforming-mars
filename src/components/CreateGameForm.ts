@@ -331,7 +331,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                         <div>
                             <input class="form-input form-inline create-game-player-name" placeholder="Your name" v-model="newPlayer.name" />
                         </div>
-                        <div>
+                        <div class="create-game-colors-wrapper">
                             <label class="form-label form-inline create-game-color-label" v-i18n>Color:</label>
                             <span class="create-game-colors-cont">
                             <label class="form-radio form-inline create-game-color" v-for="color in ['Red', 'Green', 'Yellow', 'Blue', 'Black', 'Purple']">
@@ -349,7 +349,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                     </div>
 
                     <div class="columns">
-                        <div class="create-game-options-block col3 col-sm-6" v-if="! isSoloModePage">
+                        <div class="create-game-options-block" v-if="! isSoloModePage">
                             <h4 v-i18n>Players count</h4>
 
                             <label class="form-radio" v-for="pCount in [1,2,3,4,5,6]">
@@ -358,7 +358,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </label>
                         </div>
 
-                        <div class="create-game-options-block col3 col-sm-6">
+                        <div class="create-game-options-block">
                             <h4 v-i18n>Expansions</h4>
                             <div class="expansion-label">Official</div>
 
@@ -406,7 +406,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </label>
                         </div>
 
-                        <div class="create-game-options-block col3 col-sm-6">
+                        <div class="create-game-options-block">
                             <h4 v-i18n>Options</h4>
 
                             <label class="form-switch" v-if="playersCount > 1">
@@ -512,7 +512,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
                             </div>
                         </div>
 
-                        <div class="create-game-options-block col3 col-sm-6">
+                        <div class="create-game-options-block">
                             <h4 v-i18n>Board</h4>
 
                             <label class="form-radio" v-for="boardName in boards">
