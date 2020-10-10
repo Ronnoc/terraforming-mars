@@ -47,7 +47,7 @@ import { MiningRights } from "./cards/MiningRights";
 import { PharmacyUnion } from "./cards/promo/PharmacyUnion";
 import { Board } from "./Board";
 import { PartyHooks } from "./turmoil/parties/PartyHooks";
-import { REDS_RULING_POLICY_COST } from "./constants";
+import { MAX_FLEET_SIZE, REDS_RULING_POLICY_COST } from "./constants";
 import { CardModel } from "./models/CardModel";
 import { SelectColony } from "./inputs/SelectColony";
 import { ColonyName } from "./colonies/ColonyName";
@@ -1215,7 +1215,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       );
     }
 
-    private playProjectCard(game: Game): PlayerInput {
+    public playProjectCard(game: Game): PlayerInput {
       const cb = (selectedCard: IProjectCard, howToPay: HowToPay) => {
         const cardCost: number = this.getCardCost(game, selectedCard);
         let totalToPay: number = 0;
@@ -1387,14 +1387,12 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             }
         }
 
-        if (selectedCard.name === CardName.ECOLOGY_EXPERTS || selectedCard.name === CardName.ECCENTRIC_SPONSOR) {
-            if (this.getPlayableCards(game).length > 0) {
-                game.interrupts.push({
-                    player: this,
-                    playerInput: this.playProjectCard(game)
-                });
-            }
+        const preludesWithPlayCardEffects = [CardName.ECOLOGY_EXPERTS, CardName.ECCENTRIC_SPONSOR, CardName.VALUABLE_GASES];
+
+        if (preludesWithPlayCardEffects.includes(selectedCard.name)) {
+            selectedCard.addPlayCardInterrupt!(this, game);
         }
+
         return undefined;
     }
 
@@ -1878,7 +1876,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       this.takeActionForFinalGreenery(game);
     }
 
-    private getPlayableCards(game: Game): Array<IProjectCard> {
+    public getPlayableCards(game: Game): Array<IProjectCard> {
       const candidateCards: Array<IProjectCard> = [...this.cardsInHand];
       // Self Replicating robots check
       const card = this.playedCards.find(card => card.name === CardName.SELF_REPLICATING_ROBOTS);
@@ -2394,6 +2392,10 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       });
       
       return o;
+    }
+
+    public increaseFleetSize() {
+      if (this.fleetSize < MAX_FLEET_SIZE) this.fleetSize++;
     }
 }
 
