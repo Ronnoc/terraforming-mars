@@ -428,31 +428,34 @@ function createGame(req: http.IncomingMessage, res: http.ServerResponse): void {
             }
 
             const gameOptions = {
-                draftVariant: gameReq.draftVariant,
-                corporateEra: gameReq.corporateEra,
-                preludeExtension: gameReq.prelude,
-                venusNextExtension: gameReq.venusNext,
-                coloniesExtension: gameReq.colonies,
-                turmoilExtension: gameReq.turmoil,
                 boardName: gameReq.board,
-                showOtherPlayersVP: gameReq.showOtherPlayersVP,
-                customCorporationsList: gameReq.customCorporationsList,
-                customColoniesList: gameReq.customColoniesList,
-                cardsBlackList: gameReq.cardsBlackList,
-                solarPhaseOption: gameReq.solarPhaseOption,
-                promoCardsOption: gameReq.promoCardsOption,
-                communityCardsOption: gameReq.communityCardsOption,
+                clonedGamedId: gameReq.clonedGamedId,
+
                 undoOption: gameReq.undoOption,
                 fastModeOption: gameReq.fastModeOption,
+                showOtherPlayersVP: gameReq.showOtherPlayersVP,
+
+                corporateEra: gameReq.corporateEra,
+                venusNextExtension: gameReq.venusNext,
+                coloniesExtension: gameReq.colonies,
+                preludeExtension: gameReq.prelude,
+                turmoilExtension: gameReq.turmoil,
+                promoCardsOption: gameReq.promoCardsOption,
+                communityCardsOption: gameReq.communityCardsOption,
+                solarPhaseOption: gameReq.solarPhaseOption,
                 removeNegativeGlobalEventsOption:
                     gameReq.removeNegativeGlobalEventsOption,
-                startingCorporations: gameReq.startingCorporations,
                 includeVenusMA: gameReq.includeVenusMA,
-                soloTR: gameReq.soloTR,
-                clonedGamedId: gameReq.clonedGamedId,
+                
+                draftVariant: gameReq.draftVariant,
                 initialDraftVariant: gameReq.initialDraft,
-                randomMA: gameReq.randomMA,
+                startingCorporations: gameReq.startingCorporations,
                 shuffleMapOption: gameReq.shuffleMapOption,
+                randomMA: gameReq.randomMA,
+                soloTR: gameReq.soloTR,
+                customCorporationsList: gameReq.customCorporationsList,
+                cardsBlackList: gameReq.cardsBlackList,
+                customColoniesList: gameReq.customColoniesList,
                 morePreludeOption: gameReq.morePreludeOption,
                 exSoloOption: gameReq.exSoloOption,
             } as GameOptions;
@@ -994,33 +997,6 @@ function serveApp(req: http.IncomingMessage, res: http.ServerResponse): void {
         res.end();
     });
 }
-/*
-function serveIfGzip(req: http.IncomingMessage, res: http.ServerResponse, file: string):void{
-  let isGzip = false;
-  const ae = req.headers["accept-encoding"];
-  if(ae !== undefined){
-    let aev:string[];
-    if(typeof ae === "string"){
-      aev=ae.replace(" ","").split(",");
-    }
-    else{
-      aev=ae;
-    }
-    for(const e of aev){
-      if(e === "gzip"){
-        isGzip = true;
-      }
-    }
-  }
-  if(isGzip){
-    res.setHeader("Content-Encoding", "gzip");
-    res.write(fs.readFileSync(file+".gz"));
-  }
-  else{
-    res.setHeader("Content-Type", "text/javascript");
-    res.write(fs.readFileSync(file));
-  }
-}*/
 
 function serveAsset(req: http.IncomingMessage, res: http.ServerResponse): void {
     if (req.url === undefined) throw new Error("Empty url");
@@ -1030,13 +1006,7 @@ function serveAsset(req: http.IncomingMessage, res: http.ServerResponse): void {
     if (req.url === "/favicon.ico") {
         res.setHeader("Content-Type", "image/x-icon");
         file = "favicon.ico";
-    }else if (req.url === "/main.js"){
-        // serveIfGzip(req, res, "dist/main.js");
-        // return;
-        res.setHeader("Content-Encoding", "gzip");
-        // res.setHeader("Content-Type", "text/javascript");
-        file = "dist" + req.url + ".gz";
-    }else if (req.url === "/main.js.map") {
+    } else if (req.url === "/main.js" || req.url === "/main.js.map") {
         // res.setHeader("Content-Type", "text/javascript");
         res.setHeader("Content-Encoding", "gzip");
         file = "dist" + req.url + ".gz";
