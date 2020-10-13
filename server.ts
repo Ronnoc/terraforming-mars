@@ -538,8 +538,7 @@ function getAwards(game: Game): Array<FundedAwardModel> {
 }
 
 function getCorporationCard(player: Player): CardModel | undefined {
-    if (player.corporationCard === undefined) return undefined;
-
+    if (player.corporationCard === undefined) return undefined; 
     return {
         name: player.corporationCard.name,
         resources: player.getResourcesOnCard(player.corporationCard),
