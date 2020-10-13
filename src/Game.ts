@@ -73,8 +73,7 @@ export interface GameOptions {
   // Configuration
   undoOption: boolean;
   fastModeOption: boolean;
-  showOtherPlayersVP: boolean;
-
+  
   // Extensions
   corporateEra: boolean;
   venusNextExtension: boolean;
@@ -175,7 +174,6 @@ export class Game implements ISerializable<SerializedGame, Game> {
         randomMA: RandomMAOptionType.NONE,
         removeNegativeGlobalEventsOption: false,
         requiresVenusTrackCompletion: false,
-        showOtherPlayersVP: false,
         shuffleMapOption: false,
         solarPhaseOption: false,
         soloTR: false,
