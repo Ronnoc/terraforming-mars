@@ -1,5 +1,4 @@
 "use strict"
-const CompressionPlugin = require("compression-webpack-plugin");
 
 const CompressionPlugin = require("compression-webpack-plugin");
 
