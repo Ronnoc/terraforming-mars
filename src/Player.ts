@@ -1731,7 +1731,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           player: this,
           milestone: milestone
         });
-        if(game.gameOptions.exSoloOption)this.megaCreditProduction += 2;
+        if(game.gameOptions.exSoloOption)this.megaCreditProduction += 3;
         game.addSelectHowToPayInterrupt(this, 8, false, false, "Select how to pay for milestone");
         game.log("${0} claimed ${1} milestone", b => b.player(this).milestone(milestone));
         return undefined;
