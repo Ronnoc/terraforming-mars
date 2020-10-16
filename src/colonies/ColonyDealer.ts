@@ -61,8 +61,8 @@ export class ColonyDealer {
     public coloniesDeck: Array<IColony> = [];
     public discardedColonies: Array<IColony> = [];
 
-    public shuffle(cards: Array<any>): Array<any> {
-        const deck: Array<any> = [];
+    public shuffle(cards: Array<IColony>): Array<IColony> {
+        const deck: Array<IColony> = [];
         const copy = cards.slice();
         while (copy.length) {
             deck.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
@@ -95,7 +95,7 @@ export class ColonyDealer {
             )
         );
         for (let i = 0; i < count; i++) {
-            this.coloniesDeck.push(tempDeck.pop());
+            this.coloniesDeck.push(tempDeck.pop()!);
         }
         if(players === 1 || players === 7){
             let hasPluto = false;
@@ -103,7 +103,7 @@ export class ColonyDealer {
                 if(colony.name === ColonyName.PLUTO)
                     hasPluto = true;
             }
-            if(hasPluto)this.coloniesDeck.push(tempDeck.pop());
+            if(hasPluto)this.coloniesDeck.push(tempDeck.pop()!);
             else{
                 for(let colony of tempDeck){
                     if(colony.name === ColonyName.PLUTO)
