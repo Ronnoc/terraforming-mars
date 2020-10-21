@@ -59,6 +59,7 @@ import { Tags } from "./cards/Tags";
 import { TileType } from "./TileType";
 import { Turmoil } from "./turmoil/Turmoil";
 import { getRandomMilestonesAndAwards } from "./MilestoneAwardSelector";
+import { RandomMAOptionType } from "./RandomMAOptionType";
 import { IAresData } from "./ares/IAresData";
 
 export interface Score {
@@ -92,7 +93,7 @@ export interface GameOptions {
   initialDraftVariant: boolean;
   startingCorporations: number;
   shuffleMapOption: boolean;
-  randomMA: boolean;
+  randomMA: RandomMAOptionType;
   soloTR: boolean; // Solo victory by getting TR 63 by game end
   customCorporationsList: Array<CardName>;
   cardsBlackList: Array<CardName>;
@@ -184,7 +185,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           initialDraftVariant: false,
           startingCorporations: 2,
           shuffleMapOption: false,
-          randomMA: false,
+          randomMA: RandomMAOptionType.NONE,
           soloTR: false,
           customCorporationsList: [],
           cardsBlackList: [],
@@ -224,7 +225,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (players.length === 1) {
         gameOptions.draftVariant = false;
         gameOptions.initialDraftVariant = false;
-        gameOptions.randomMA = false;
+        gameOptions.randomMA = RandomMAOptionType.NONE;
         gameOptions.draftVariant = false;
         this.setupSolo();
       }
@@ -387,12 +388,11 @@ export class Game implements ILoadable<SerializedGame, Game> {
     }
 
     // Function to construct the board and milestones/awards list
-    public boardConstructor(boardName: BoardName, randomMA: boolean, hasVenus: boolean): Board {
+    public boardConstructor(boardName: BoardName, randomMA: RandomMAOptionType, hasVenus: boolean): Board {
       const requiredQty = 5;
-
       if (boardName === BoardName.ELYSIUM) {
-        if (randomMA) {
-          this.setRandomMilestonesAndAwards(hasVenus, requiredQty);
+        if (randomMA !== RandomMAOptionType.NONE) {
+          this.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
         } else {
           this.milestones.push(...ELYSIUM_MILESTONES);
           this.awards.push(...ELYSIUM_AWARDS);
@@ -400,8 +400,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
         return new ElysiumBoard(this.gameOptions.shuffleMapOption, this.seed);
       } else if (boardName === BoardName.HELLAS) {
-        if (randomMA) {
-          this.setRandomMilestonesAndAwards(hasVenus, requiredQty);
+        if (randomMA !== RandomMAOptionType.NONE) {
+          this.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
         } else {
           this.milestones.push(...HELLAS_MILESTONES);
           this.awards.push(...HELLAS_AWARDS);
@@ -409,8 +409,8 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
         return new HellasBoard(this.gameOptions.shuffleMapOption, this.seed);
       } else {
-        if (randomMA) {
-          this.setRandomMilestonesAndAwards(hasVenus, requiredQty);
+        if (randomMA !== RandomMAOptionType.NONE) {
+          this.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
         } else {
           this.milestones.push(...ORIGINAL_MILESTONES);
           this.awards.push(...ORIGINAL_AWARDS);
@@ -420,18 +420,23 @@ export class Game implements ILoadable<SerializedGame, Game> {
       }
     }
 
-    public setRandomMilestonesAndAwards(hasVenus: boolean, requiredQty: number) {
-      const drawnMilestonesAndAwards = getRandomMilestonesAndAwards(hasVenus, requiredQty);
+    public setRandomMilestonesAndAwards(hasVenus: boolean, requiredQty: number, randomMA: RandomMAOptionType) {
+      let drawnMilestonesAndAwards;
+      if (randomMA === RandomMAOptionType.LIMITED){
+        drawnMilestonesAndAwards = getRandomMilestonesAndAwards(hasVenus, requiredQty);
+      } else { // Unlimited synergy
+        drawnMilestonesAndAwards = getRandomMilestonesAndAwards(hasVenus, requiredQty, 100, 100, 100, 100);
+      }
       this.milestones.push(...drawnMilestonesAndAwards.milestones);
       this.awards.push(...drawnMilestonesAndAwards.awards);
     }
 
     // Add Venus Next board colonies and milestone / award
-    public setVenusElements(randomMA: boolean, includeVenusMA: boolean) {
-      if (randomMA && includeVenusMA) {
+    public setVenusElements(randomMA: RandomMAOptionType, includeVenusMA: boolean) {
+      if ((randomMA !== RandomMAOptionType.NONE) && includeVenusMA) {
         this.milestones = []
         this.awards = []
-        this.setRandomMilestonesAndAwards(true, 6);
+        this.setRandomMilestonesAndAwards(true, 6, randomMA);
       } else {
         if (includeVenusMA) this.milestones.push(...VENUS_MILESTONES);
         if (includeVenusMA) this.awards.push(...VENUS_AWARDS);
@@ -551,7 +556,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
     }
 
     public addResourceInterrupt(player: Player, resourceType: ResourceType, count: number = 1, restrictedTag?: Tags, title?: string): void {
-      this.addInterrupt(new SelectResourceCard(player, this, resourceType, title, count, restrictedTag));
+      this.addInterrupt(new SelectResourceCard(player, this, resourceType, title, count, restrictedTag, []));
     }
 
     public addResourceProductionDecreaseInterrupt(player: Player, resource: Resources, count: number = 1, title?: string): void {
