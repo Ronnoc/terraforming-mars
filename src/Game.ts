@@ -200,7 +200,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         } as GameOptions
       }
       this.gameOptions = gameOptions;
-      this.board = this.boardConstructor(gameOptions.boardName, gameOptions.randomMA, gameOptions.venusNextExtension && gameOptions.includeVenusMA);
+      this.board = this.boardConstructor(gameOptions.boardName, gameOptions.randomMA, gameOptions.venusNextExtension && gameOptions.includeVenusMA, gameOptions.aresExtension);
 
       this.activePlayer = first.id;
 
@@ -402,34 +402,28 @@ export class Game implements ILoadable<SerializedGame, Game> {
     }
 
     // Function to construct the board and milestones/awards list
-    public boardConstructor(boardName: BoardName, randomMA: RandomMAOptionType, hasVenus: boolean): Board {
-      const requiredQty = 5;
-      if (boardName === BoardName.ELYSIUM) {
+    public boardConstructor(boardName: BoardName, randomMA: RandomMAOptionType, hasVenus: boolean, hasAres: boolean): Board {
+      const chooseMilestonesAndAwards = function(game: Game, milestones: Array<IMilestone>, awards: Array<IAward>) {
+        const requiredQty = 5;
         if (randomMA !== RandomMAOptionType.NONE) {
-          this.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
+          game.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
         } else {
-          this.milestones.push(...ELYSIUM_MILESTONES);
-          this.awards.push(...ELYSIUM_AWARDS);
+          game.milestones.push(...milestones);
+          game.awards.push(...awards);
         }
+        if (hasAres) {
+          AresHandler.setupMilestonesAwards(game);
+        }
+      }
 
+      if (boardName === BoardName.ELYSIUM) {
+        chooseMilestonesAndAwards(this, ELYSIUM_MILESTONES, ELYSIUM_AWARDS)
         return new ElysiumBoard(this.gameOptions.shuffleMapOption, this.seed);
       } else if (boardName === BoardName.HELLAS) {
-        if (randomMA !== RandomMAOptionType.NONE) {
-          this.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
-        } else {
-          this.milestones.push(...HELLAS_MILESTONES);
-          this.awards.push(...HELLAS_AWARDS);
-        }
-
+        chooseMilestonesAndAwards(this, HELLAS_MILESTONES, HELLAS_AWARDS)
         return new HellasBoard(this.gameOptions.shuffleMapOption, this.seed);
       } else {
-        if (randomMA !== RandomMAOptionType.NONE) {
-          this.setRandomMilestonesAndAwards(hasVenus, requiredQty, randomMA);
-        } else {
-          this.milestones.push(...ORIGINAL_MILESTONES);
-          this.awards.push(...ORIGINAL_AWARDS);
-        }
-
+        chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
         return new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed);
       }
     }
@@ -1269,6 +1263,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (this.oxygenLevel === 8 || (steps === 2 && this.oxygenLevel === 9)) {
         return this.increaseTemperature(player, 1);
       }
+      if (this.gameOptions.aresExtension) {
+        AresHandler.onOxygenChange(this);
+      }
       return undefined;
     }
 
@@ -1366,6 +1363,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
           (steps === 3 && this.temperature === 4)
       ) {
         this.addOceanInterrupt(player, "Select space for ocean from temperature increase");
+      }
+      if (this.gameOptions.aresExtension) {
+        AresHandler.onTemperatureChange(this);
       }
 
       return undefined;
@@ -1472,6 +1472,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
       // Part 3. Setup for bonuses
       const arcadianCommunityBonus = space.player === player && player.isCorporation(CardName.ARCADIAN_COMMUNITIES);
+      const startingResources = this.gameOptions.aresExtension ? AresHandler.beforeTilePlacement(player) : undefined;
       const initialTileTypeForAres = space.tile?.tileType;
 
       // Part 4. Place the tile
@@ -1529,7 +1530,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         space.bonus = [];
 
         // Must occur after all other onTilePlaced operations.
-        // AresHandler.afterTilePlacement(this, player, startingResources);
+        AresHandler.afterTilePlacement(this, player, startingResources);
       }
     }
 
@@ -1580,6 +1581,9 @@ export class Game implements ILoadable<SerializedGame, Game> {
       });
       if (this.phase !== Phase.SOLAR) {
         player.increaseTerraformRating(this);
+      }
+      if (this.gameOptions.aresExtension) {
+        AresHandler.onOceanPlaced(this, player);
       }
     }
 
