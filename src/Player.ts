@@ -1354,7 +1354,10 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           }  
         } 
 
-        this.addPlayedCard(game, selectedCard);
+        if (selectedCard.cardType !== CardType.PROXY) {
+            this.addPlayedCard(game, selectedCard);
+        }
+
         if (game.gameOptions.exSoloOption){
           const sortValue = (card: IProjectCard) =>
             (card.cardType === CardType.ACTIVE ? -300 : 0) +
@@ -2030,7 +2033,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       let bufferGasCost = constants.BUFFER_GAS_COST
       if (redsAreRuling) bufferGasCost += REDS_RULING_POLICY_COST;
 
-      if ((game.gameOptions.soloTR || game.gameOptions.exSoloOption) && this.canAfford(bufferGasCost)) {
+      if (game.gameOptions.soloTR && this.canAfford(bufferGasCost)) {
         standardProjects.options.push(
             this.bufferGas(game)
         );
