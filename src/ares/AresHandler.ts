@@ -12,11 +12,14 @@ import { TileType } from "../TileType";
 import { ITile } from "../ITile";
 import { IAresData, IHazardConstraint, IMilestoneCount } from "./IAresData";
 import { IAdjacencyCost } from "./IAdjacencyCost";
-// import { SelectProductionToLoseInterrupt } from "../interrupts/SelectProductionToLoseInterrupt";
 import { ARES_MILESTONES } from "../milestones/Milestones";
 import { ARES_AWARDS } from "../awards/Awards";
 import { Multiset } from "../utils/Multiset";
 import { Phase } from "../Phase";
+import { SimpleDeferredAction } from "../deferredActions/SimpleDeferredAction";
+import { AddResourcesToCard } from "../deferredActions/AddResourcesToCard";
+import { SelectHowToPayDeferred } from "../deferredActions/SelectHowToPayDeferred";
+import { SelectProductionToLoseDeferred } from "../deferredActions/SelectProductionToLoseDeferred";
 
 export const OCEAN_UPGRADE_TILES = [TileType.OCEAN_CITY, TileType.OCEAN_FARM, TileType.OCEAN_SANCTUARY];
 export const HAZARD_TILES = [TileType.DUST_STORM_MILD, TileType.DUST_STORM_SEVERE, TileType.EROSION_MILD, TileType.EROSION_SEVERE];
@@ -51,16 +54,18 @@ export class AresHandler {
         game.awards.push(...ARES_AWARDS)
     }
 
-    public static assertHasAres(game: Game) : boolean {
-        console.assert(game.gameOptions.aresExtension, "Assertion failure: game.gameOptions.aresExtension is not true");
-        console.assert(game.aresData !== undefined, "Assertion failure: game.aresData is undefined");
-        // I wish console.assert returned a boolean value.
-        return game.gameOptions.aresExtension && game.aresData !== undefined;
+    public static ifAres(game: Game, cb: (aresData: IAresData) => void) {
+        if (game.gameOptions.aresExtension) {
+            if (game.aresData === undefined) {
+                console.log("Assertion failure: game.aresData is undefined");
+                // TODO(kberg): switch to throw.
+                return;
+            }
+            cb(game.aresData);
+        }
     }
 
-    public static earnAdjacencyBonuses(game: Game, player: Player, space: ISpace) {
-        if (!AresHandler.assertHasAres(game)) { return; }
-
+    public static earnAdjacencyBonuses(game: Game, aresData: IAresData, player: Player, space: ISpace) {
         let incrementMilestone = false;
 
         game.board.getAdjacentSpaces(space).forEach((adjacentSpace) => {
@@ -69,7 +74,7 @@ export class AresHandler {
             }
         });
         if (incrementMilestone) {
-            const milestoneResults = game.aresData!.milestoneResults;
+            const milestoneResults = aresData.milestoneResults;
             const entry : IMilestoneCount | undefined = milestoneResults.find(e => e.id === player.id);
             if (entry === undefined) {
                 throw new Error("Player ID not in the Ares milestone results map: " + player.id);
@@ -81,8 +86,6 @@ export class AresHandler {
     // |player| placed a tile next to |adjacentSpace|.
     // Returns true if the adjacent space contains a bonus for adjacency.
     private static earnAdacencyBonus(game: Game, adjacentSpace: ISpace, player: Player): boolean {
-        if (!AresHandler.assertHasAres(game)) { return false; }
-
         if (adjacentSpace.adjacency === undefined || adjacentSpace.adjacency.bonus.length === 0) {
             return false;
         }
@@ -97,19 +100,19 @@ export class AresHandler {
             } else if (availableCards.length === 1) {
                 player.addResourceTo(availableCards[0]);
             } else if (availableCards.length > 1) {
-                game.addInterrupt({
-                player: player,
-                playerInput:
-                    new SelectCard(
-                    "Select a card to add an " + resourceAsText,
-                    "Add " + resourceAsText + "s",
-                    availableCards,
-                    (selected: ICard[]) => {
-                        player.addResourceTo(selected[0]);
-                        LogHelper.logAddResource(game, player, selected[0], 1);
-                        return undefined;
-                    })
-                });
+                game.defer(new SimpleDeferredAction(
+                    player,
+                    () => new SelectCard(
+                        "Select a card to add an " + resourceAsText,
+                        "Add " + resourceAsText + "s",
+                        availableCards,
+                        (selected: ICard[]) => {
+                            player.addResourceTo(selected[0]);
+                            LogHelper.logAddResource(game, player, selected[0], 1);
+                            return undefined;
+                        }
+                    )
+                ));
             }
         };
     
@@ -197,12 +200,12 @@ export class AresHandler {
         });
         [ResourceType.MICROBE, ResourceType.ANIMAL].forEach((resourceType) => {
             if (giveBonus(startingResources.get(resourceType), AresHandler.countResources(player, resourceType))) {
-                game.addResourceInterrupt(
+                game.defer(new AddResourcesToCard(
                     player,
+                    game,
                     resourceType,
-                    1,
-                    undefined,
-                );
+                    1
+                ));
             }
         });
     } 
@@ -287,7 +290,6 @@ export class AresHandler {
     }
 
     public static assertCanPay(game: Game, player: Player, space: ISpace): IAdjacencyCost {
-        if (!AresHandler.assertHasAres(game)) { return { megacredits: 0, production: 0}; }
         if (game.phase === Phase.SOLAR) {
             return {megacredits: 0, production: 0 };
         }
@@ -313,18 +315,16 @@ export class AresHandler {
     }
 
     public static payAdjacencyAndHazardCosts(game: Game, player: Player, space: ISpace) {
-        if (!AresHandler.assertHasAres(game)) { return; }
-
         const cost = this.assertCanPay(game, player, space);
 
-        // if (cost.production > 0) {
-        //     // TODO(kberg): don't send interrupt if total is available.
-        //     game.addInterrupt(new SelectProductionToLoseInterrupt(player, cost.production));
-        // }
+        if (cost.production > 0) {
+            // TODO(kberg): don't send interrupt if total is available.
+            game.defer(new SelectProductionToLoseDeferred(player, cost.production));
+        }
         if (cost.megacredits > 0) {
             game.log("${0} placing a tile here costs ${1} M€", b => b.player(player).number(cost.megacredits));
 
-            game.addSelectHowToPayInterrupt(player, cost.megacredits, false, false, "Select how to pay additional placement costs.");
+            game.defer(new SelectHowToPayDeferred(player, cost.megacredits, false, false, "Select how to pay additional placement costs."));
         }
     }
 
@@ -344,27 +344,24 @@ export class AresHandler {
         return false;
     }
 
-    public static onTemperatureChange(game: Game) {
-        if (!AresHandler.assertHasAres(game)) { return; }
+    public static onTemperatureChange(game: Game, aresData: IAresData) {
         // This will have no effect if the erosions don't exist, but that's OK --
         // the check for placing erosions will take this into account.
         testConstraint(
-            game.aresData!.hazardData.severeErosionTemperature,
+            aresData.hazardData.severeErosionTemperature,
             game.getTemperature(),
             () => { makeSevere(game, TileType.EROSION_MILD, TileType.EROSION_SEVERE); }
         );
     }
 
-    public static onOceanPlaced(game: Game, player: Player) {
-        if (!AresHandler.assertHasAres(game)) { return; }
-        testToPlaceErosionTiles(game, player);
-        testToRemoveDustStorms(game, player);
+    public static onOceanPlaced(game: Game, aresData: IAresData, player: Player) {
+        testToPlaceErosionTiles(game, aresData, player);
+        testToRemoveDustStorms(game, aresData, player);
     }
 
-    public static onOxygenChange(game: Game) {
-        AresHandler.assertHasAres(game);
-        testConstraint(game.aresData!.hazardData.severeDustStormOxygen, game.getOxygenLevel(), () => {
-            makeSevere( game, TileType.DUST_STORM_MILD, TileType.DUST_STORM_SEVERE);
+    public static onOxygenChange(game: Game, aresData: IAresData) {
+        testConstraint(aresData.hazardData.severeDustStormOxygen, game.getOxygenLevel(), () => {
+            makeSevere(game, TileType.DUST_STORM_MILD, TileType.DUST_STORM_SEVERE);
             });
     }
 
@@ -424,9 +421,9 @@ function testConstraint(constraint: IHazardConstraint, testValue: number, cb: ()
     }
 }
 
-function testToRemoveDustStorms(game: Game, player: Player) {
+function testToRemoveDustStorms(game: Game, aresData: IAresData, player: Player) {
     testConstraint(
-        game.aresData!.hazardData.removeDustStormsOceanCount,
+        aresData.hazardData.removeDustStormsOceanCount,
         game.board.getOceansOnBoard(),
         () => {
             game.board.spaces.forEach((space) => {
@@ -445,13 +442,13 @@ function testToRemoveDustStorms(game: Game, player: Player) {
     );
 }
 
-function testToPlaceErosionTiles(game: Game, player: Player) {
+function testToPlaceErosionTiles(game: Game, aresData: IAresData, player: Player) {
     testConstraint(
-        game.aresData!.hazardData.erosionOceanCount,
+        aresData.hazardData.erosionOceanCount,
         game.board.getOceansOnBoard(),
         () => {
             let type = TileType.EROSION_MILD;
-            if (game.aresData!.hazardData.severeErosionTemperature.available !== true) {
+            if (aresData.hazardData.severeErosionTemperature.available !== true) {
                 type = TileType.EROSION_SEVERE;
             }
 
