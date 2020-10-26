@@ -1755,6 +1755,9 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         });
         game.defer(new SelectHowToPayDeferred(this, 8, false, false, "Select how to pay for milestone"));
         game.log("${0} claimed ${1} milestone", b => b.player(this).milestone(milestone));
+        if(game.gameOptions.exSoloOption){
+            this.addProduction(Resources.MEGACREDITS,3);
+        }
         return undefined;
       });
     }

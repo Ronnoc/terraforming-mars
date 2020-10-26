@@ -8,41 +8,29 @@ Join us on Discord [here](https://discord.gg/fWXE53K).
 
 ## Changelog
 
-you can try the change in http://158.247.194.238:9853/;
+you can try the change in http://192.144.184.221:9853/;
 
-- Merge Chinese branch
-- add FanMade Option to use FanMade Cards
-  - Add Awards
-    - Voyager: Having the most Jovian/Earth/Venus tags in play
-    - MicroEntrepreneur: most played project cards cheaper or equal to 10M€ (not events ofcourse)
-  - Add Corporation
-    - ArcelorMittal: 24MC, 13 steel; steel value + 1
-- add Shuffle Map Option : (merged in forked repo)
 - add More Prelude Option : Select 3/5 instead of 2/4 for prelude
-- add ex Solo Option: init 15 card; research (1/4+1/3+1/2+1/1); claim milestone for +2MC Production;
+- add ex Solo Option: init 15 card; research (1/4+1/3+1/2+1/1); claim milestone for +3MC Production; unlimit scient turmoil action; more colony
 
 ## TODO LIST
 
 - More FanMade
   - Board (shuffle is enough now)
-  - Awards (2 more is enough now)
+  - Awards (WIP)
   - Milestone (WIP)
-  - Corporation (balance is hard or enhance some corporation?)
-    - sell card with 2 MC
-  - Prelude (WIP maybe prelude for venus/colony/turmoil is good idea)
-  - Project (less impact)
+  - Corporation (WIP)
+  - Prelude (WIP)
+  - Project (WIP, less impact)
   - Colony (WIP)
   - Turmoil Events (WIP)
   - Rule
     - 7 heat to increase temp
     - Standard project to Research 8 MC 3 choose 1
   - Hard Feature
-    - open afk / stop afk
+    - open afk
     - give up game
     - random AI player
-  - enhance
-    - game end if WGT finish terrforming MARS
-    - prelude drafting
   - ex Solo
   - bug
 
