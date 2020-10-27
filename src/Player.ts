@@ -144,6 +144,9 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
     // Lawsuit
     public removingPlayers: Array<PlayerId> = [];
 
+    // Stats
+    public totalSpend: number = 0;
+
     constructor(
         public name: string,
         public color: Color,
@@ -1251,6 +1254,7 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
       if (totalToPay < cardCost) {
         throw new Error('Did not spend enough to pay for card');
       }
+      this.totalSpend += cardCost;
       return this.playCard(game, selectedCard, howToPay);
     }
 

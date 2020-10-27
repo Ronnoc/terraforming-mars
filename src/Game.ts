@@ -450,7 +450,7 @@ export class Game implements ISerializable<SerializedGame, Game> {
         chooseMilestonesAndAwards(this, HELLAS_MILESTONES, HELLAS_AWARDS);
         return new HellasBoard(this.gameOptions.shuffleMapOption, this.seed);
       } else if (boardName === BoardName.AMAZONIS) {
-        this.setRandomMilestonesAndAwards(hasVenus, requiredQty);
+        chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
         return new AmazonisBoard(this.gameOptions.shuffleMapOption, this.seed);
       } else {
         chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
@@ -705,6 +705,7 @@ export class Game implements ISerializable<SerializedGame, Game> {
       if (corporationCard.name !== new BeginnerCorporation().name) {
         const cardsToPayFor: number = player.cardsInHand.length;
         player.megaCredits -= cardsToPayFor * cardCost;
+        player.totalSpend += cardsToPayFor * cardCost;
       }
       corporationCard.play(player, this);
       this.log('${0} played ${1}', (b) => b.player(player).card(corporationCard));
