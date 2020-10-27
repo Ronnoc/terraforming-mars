@@ -26,13 +26,13 @@ describe("Virus", function () {
         player.plants = 5;
 
         const orOptions = card.play(player2, game) as OrOptions;
-        expect(orOptions instanceof OrOptions).to.eq(true);
+        expect(orOptions instanceof OrOptions).is.true;
         
         orOptions.options[0].cb([player.playedCards[0]]);
         expect(player.getResourcesOnCard(birds)).to.eq(0);
 
         orOptions.options[1].cb();
-        expect(game.deferredActions.length).to.eq(1);
+        expect(game.deferredActions).has.lengthOf(1);
         
         const orOptions2 = game.deferredActions[0].execute() as OrOptions;
         orOptions2.options[0].cb();
@@ -48,6 +48,6 @@ describe("Virus", function () {
     });
 
     it("Should play", function () {
-        expect(card.canPlay()).to.eq(true);
+        expect(card.canPlay()).is.true;
     });
 });

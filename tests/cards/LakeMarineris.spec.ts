@@ -15,15 +15,15 @@ describe("LakeMarineris", function () {
     });
 
     it("Can't play", function () {
-        expect(card.canPlay(player, game)).to.eq(false);
+        expect(card.canPlay(player, game)).is.not.true;
     });
 
     it("Should play", function () {
         (game as any).temperature = -0;
-        expect(card.canPlay(player, game)).to.eq(true);
+        expect(card.canPlay(player, game)).is.true;
         card.play(player, game);
 
-        expect(game.deferredActions.length).to.eq(2);
+        expect(game.deferredActions).has.lengthOf(2);
         const firstOcean = game.deferredActions[0].execute() as SelectSpace;
         firstOcean.cb(firstOcean.availableSpaces[0]);
         const secondOcean = game.deferredActions[1].execute() as SelectSpace;
