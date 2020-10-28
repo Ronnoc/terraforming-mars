@@ -40,7 +40,7 @@ import { PlaceCityTile } from "./deferredActions/PlaceCityTile";
 import { PlaceOceanTile } from "./deferredActions/PlaceOceanTile";
 import { PlaceGreeneryTile } from "./deferredActions/PlaceGreeneryTile";
 import { SendDelegateToArea } from "./deferredActions/SendDelegateToArea";
-import { SimpleDeferredAction } from "./deferredActions/SimpleDeferredAction";
+import { DeferredAction } from "./deferredActions/DeferredAction";
 import { SelectHowToPayDeferred } from "./deferredActions/SelectHowToPayDeferred";
 import { SelectColony } from "./inputs/SelectColony";
 import { SelectDelegate } from "./inputs/SelectDelegate";
@@ -686,7 +686,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     }
     private runInputCb(game: Game, result: PlayerInput | undefined): void {
         if (result !== undefined) {
-            game.defer(new SimpleDeferredAction(
+            game.defer(new DeferredAction(
                 this,
                 () => result
             ));
@@ -1345,7 +1345,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         // Play the card
         const action = selectedCard.play(this, game);
         if (action !== undefined) {
-            game.defer(new SimpleDeferredAction(
+            game.defer(new DeferredAction(
                 this,
                 () => action
             ));
@@ -1398,7 +1398,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             if (playedCard.onCardPlayed !== undefined) {
                 const actionFromPlayedCard: OrOptions | void = playedCard.onCardPlayed(this, game, selectedCard);
                 if (actionFromPlayedCard !== undefined) {
-                    game.defer(new SimpleDeferredAction(
+                    game.defer(new DeferredAction(
                         this,
                         () => actionFromPlayedCard
                     ));
@@ -1410,7 +1410,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             if (somePlayer.corporationCard !== undefined && somePlayer.corporationCard.onCardPlayed !== undefined) {
                 const actionFromPlayedCard: OrOptions | void = somePlayer.corporationCard.onCardPlayed(this, game, selectedCard);
                 if (actionFromPlayedCard !== undefined) {
-                    game.defer(new SimpleDeferredAction(
+                    game.defer(new DeferredAction(
                         this,
                         () => actionFromPlayedCard
                     ));
@@ -1434,7 +1434,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             const foundCard = foundCards[0];
             const action = foundCard.action!(this, game);
             if (action !== undefined) {
-                game.defer(new SimpleDeferredAction(
+                game.defer(new DeferredAction(
                     this,
                     () => action
                 ));
@@ -2106,7 +2106,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       ) {
         const input = this.corporationCard.initialAction(this, game);
         if (input !== undefined) {
-          game.defer(new SimpleDeferredAction(
+          game.defer(new DeferredAction(
             this,
             () => input
           ));
