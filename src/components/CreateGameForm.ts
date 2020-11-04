@@ -144,6 +144,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
     methods: {
         downloadCurrentSettings: function () {
             const serializedData = this.serializeSettings();
+            
             if (serializedData) {
                 let a = document.createElement("a");
                 const blob = new Blob([serializedData], {'type': "application/json"});
@@ -341,6 +342,7 @@ export const CreateGameForm = Vue.component("create-game-form", {
             const startingCorporations = component.startingCorporations;
             const soloTR = component.soloTR;
             const beginnerOption = component.beginnerOption;
+            const randomFirstPlayer = component.randomFirstPlayer;
             let clonedGamedId: undefined | string = undefined;
 
             if (customColoniesList.length > 0) {
@@ -398,9 +400,10 @@ export const CreateGameForm = Vue.component("create-game-form", {
                 initialDraft,
                 randomMA,
                 shuffleMapOption,
-                beginnerOption,
                 morePreludeOption,
                 exSoloOption,
+                beginnerOption,
+                randomFirstPlayer,
             }, undefined, 4);
 
             return dataToSend;
