@@ -505,11 +505,11 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           if (removingPlayer !== this) this.resolveMonsInsurance(game);
 
           if (shouldLogAction) {
-            game.log("${0} loses ${1} resource(s) on ${2} by ${3}", b =>
-                  b.player(this)
-                  .number(count)
-                  .card(card)
-                  .player(removingPlayer));
+              game.log("${0} removed ${1} resource(s) from ${2}'s ${3}", b =>
+              b.player(removingPlayer)
+              .number(count)
+              .player(this)
+              .card(card));
           }
         }
         // Lawsuit hook
@@ -534,23 +534,20 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       }
     }
 
-    public getCardsWithResources(): Array<ICard> {
-      const result: Array<ICard> = [];
-
-      this.playedCards.forEach((card) => {
-        if (card.resourceType !== undefined && card.resourceCount && card.resourceCount > 0) {
-          result.push(card);
+    public getCardsWithResources(resource?: ResourceType): Array<ICard> {
+        let result: Array<ICard> = this.playedCards.filter((card) => card.resourceType !== undefined && card.resourceCount && card.resourceCount > 0);
+        if (this.corporationCard !== undefined 
+            && this.corporationCard.resourceType !== undefined 
+            && this.corporationCard.resourceCount !== undefined 
+            && this.corporationCard.resourceCount > 0) {
+                result.push(this.corporationCard);
         }
-      });
 
-      if (this.corporationCard !== undefined 
-          && this.corporationCard.resourceType !== undefined 
-          && this.corporationCard.resourceCount !== undefined 
-          && this.corporationCard.resourceCount > 0) {
-        result.push(this.corporationCard);
-      }
-      
-      return result;      
+        if (resource !== undefined) {
+            result = result.filter((card) => card.resourceType === resource)
+        }
+
+        return result;      
     }
 
     public getResourceCards(resource: ResourceType | undefined): Array<ICard> {
@@ -568,11 +565,11 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
     }  
 
     public getResourceCount(resource: ResourceType): number {
-      let count: number = 0;
-      this.getCardsWithResources().filter(card => card.resourceType === resource).forEach((card) => {
-        count += this.getResourcesOnCard(card)!;
-      });
-      return count;
+        let count: number = 0;
+        this.getCardsWithResources(resource).forEach((card) => {
+            count += this.getResourcesOnCard(card)!;
+        });
+        return count;
     }
 
     public getCardsByCardType(cardType: CardType) {
@@ -1233,8 +1230,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
       );
     }
 
-    public playProjectCard(game: Game): PlayerInput {
-      const cb = (selectedCard: IProjectCard, howToPay: HowToPay) => {
+    public checkHowToPayAndPlayCard(selectedCard: IProjectCard, howToPay: HowToPay, game: Game) {
         const cardCost: number = this.getCardCost(game, selectedCard);
         let totalToPay: number = 0;
 
@@ -1265,7 +1261,7 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
 
         if (howToPay.floaters !== undefined && howToPay.floaters > 0) {
           if (selectedCard.name === CardName.STRATOSPHERIC_BIRDS && howToPay.floaters === this.getFloatersCanSpend()) {
-            const cardsWithFloater = this.getCardsWithResources().filter(card => card.resourceType === ResourceType.FLOATER);
+            const cardsWithFloater = this.getCardsWithResources(ResourceType.FLOATER);
             if (cardsWithFloater.length === 1) {
               throw new Error("Cannot spend all floaters to play Stratospheric Birds");
             }
@@ -1283,9 +1279,16 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
           throw new Error("Did not spend enough to pay for card");
         }
         return this.playCard(game, selectedCard, howToPay);
-      };
+    }
 
-      return new SelectHowToPayForCard(this.getPlayableCards(game), this.getMicrobesCanSpend(), this.getFloatersCanSpend(), this.canUseHeatAsMegaCredits, cb);
+    public playProjectCard(game: Game): PlayerInput {
+        return new SelectHowToPayForCard(
+            this.getPlayableCards(game),
+            this.getMicrobesCanSpend(),
+            this.getFloatersCanSpend(),
+            this.canUseHeatAsMegaCredits,
+            (selectedCard, howToPay) => this.checkHowToPayAndPlayCard(selectedCard, howToPay, game)
+        );
     }
 
     public getMicrobesCanSpend(): number {
@@ -1662,8 +1665,10 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
 
     private tradeWithColony(openColonies: Array<IColony>, game: Game): PlayerInput {
       const opts: Array<OrOptions | SelectColony> = [];
-      let payWith: Resources | undefined = undefined; 
+      let payWith: Resources | ResourceType | undefined = undefined;
       const coloniesModel: Array<ColonyModel> = game.getColoniesModel(openColonies);
+      const titanFloatingLaunchPad = this.playedCards.find(card => card.name === CardName.TITAN_FLOATER_LAUNCHPAD);
+
       const selectColony = new SelectColony("Select colony for trade", "trade", coloniesModel, (colonyName: ColonyName) => {
         openColonies.forEach(colony => {
           if (colony.name === colonyName) {
@@ -1685,6 +1690,10 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             } else if (payWith === Resources.TITANIUM) {
               this.titanium -= (3 - this.colonyTradeDiscount);
               colony.trade(this, game);
+            } else if (payWith === ResourceType.FLOATER && titanFloatingLaunchPad !== undefined && titanFloatingLaunchPad.resourceCount) {
+                titanFloatingLaunchPad.resourceCount--;
+                this.actionsThisGeneration.add(titanFloatingLaunchPad.name);
+                colony.trade(this, game);
             }
             return undefined;
           }
@@ -1709,6 +1718,13 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
         payWith = Resources.TITANIUM;
         return undefined;
       });
+
+      if (titanFloatingLaunchPad !== undefined && titanFloatingLaunchPad.resourceCount !== undefined && titanFloatingLaunchPad.resourceCount > 0) {
+        howToPayForTrade.options.push(new SelectOption("Pay 1 Floater (use Titan Floating Launch-pad action)", "", () => {
+            payWith = ResourceType.FLOATER;
+            return undefined;
+          }));
+      }
 
       if (this.energy >= (3 - this.colonyTradeDiscount)) howToPayForTrade.options.push(payWithEnergy);
       if (this.titanium >= (3 - this.colonyTradeDiscount)) howToPayForTrade.options.push(payWithTitanium);
