@@ -1417,10 +1417,6 @@ export class Player implements ILoadable<SerializedPlayer, Player>{
             }
         }
 
-        if (selectedCard.addPlayCardDeferredAction !== undefined) {
-            selectedCard.addPlayCardDeferredAction(this, game);
-        }
-
         return undefined;
     }
 
