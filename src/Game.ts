@@ -62,6 +62,7 @@ import {IAresData} from './ares/IAresData';
 import {Multiset} from './utils/Multiset';
 import {AmazonisBoard} from './AmazonisBoard';
 import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
+import {ArabiaTerraBoard} from './ArabiaTerraBoard';
 
 export interface Score {
   corporation: String;
@@ -454,6 +455,9 @@ export class Game implements ISerializable<SerializedGame, Game> {
       } else if (boardName === BoardName.AMAZONIS) {
         chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
         return new AmazonisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (boardName === BoardName.ARABIA_TERRA) {
+        chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
+        return new ArabiaTerraBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else {
         chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
         return new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
@@ -1383,7 +1387,7 @@ export class Game implements ISerializable<SerializedGame, Game> {
         throw new Error('This space is land claimed by ' + space.player.name);
       }
 
-      if (space.spaceType !== spaceType) {
+      if (space.spaceType !== spaceType && !space.bonus.includes(SpaceBonus.COVE)) {
         throw new Error(
           `Select a valid location ${space.spaceType} is not ${spaceType}`,
         );
@@ -1760,6 +1764,8 @@ export class Game implements ISerializable<SerializedGame, Game> {
         this.board = new HellasBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else if (this.gameOptions.boardName === BoardName.AMAZONIS) {
         this.board = new AmazonisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (this.gameOptions.boardName === BoardName.ARABIA_TERRA) {
+        this.board = new ArabiaTerraBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else {
         this.board = new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       }
