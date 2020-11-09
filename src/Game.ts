@@ -76,7 +76,7 @@ export interface GameOptions {
   // Configuration
   undoOption: boolean;
   fastModeOption: boolean;
-  
+
   // Extensions
   corporateEra: boolean;
   venusNextExtension: boolean;
@@ -88,7 +88,7 @@ export interface GameOptions {
   aresExtension: boolean;
   aresHazards: boolean;
   solarPhaseOption: boolean;
-  
+
   // Variants
   draftVariant: boolean;
   initialDraftVariant: boolean;
@@ -478,8 +478,8 @@ export class Game implements ISerializable<SerializedGame, Game> {
     // Add Venus Next board colonies and milestone / award
     public setVenusElements(randomMA: RandomMAOptionType) {
       if (randomMA !== RandomMAOptionType.NONE) {
-        this.milestones = []
-        this.awards = []
+        this.milestones = [];
+        this.awards = [];
         this.setRandomMilestonesAndAwards(true, 6, randomMA);
       } else {
         this.milestones.push(...VENUS_MILESTONES);

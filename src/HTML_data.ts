@@ -5094,7 +5094,7 @@ export const HTML_DATA: Map<string, string> =
         (You start with 120 MC. Lower your TR 7 steps.)
       </div>
 `],
-    [CardName.COLONIAL_ONE,`
+    [CardName.COLONIAL_ONE, `
       <div class="community-icon corporation-icon"></div>
 
       <div class="contentCorporation">
@@ -5127,7 +5127,7 @@ export const HTML_DATA: Map<string, string> =
         (You start with 35 MC and 1 extra trade fleet.<br>Add 3 fighter resources to this card.)
       </div>
 `],
-    [CardName.ERIS,`
+    [CardName.ERIS, `
       <div class="community-icon corporation-icon"></div>
       <div class="contentCorporation">
         <div class="corporationEffectBox">
@@ -5231,7 +5231,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-    [CardName.HYDROGEN_BOMBARDMENT,`
+    [CardName.HYDROGEN_BOMBARDMENT, `
       <div class="content">
         <div class="production-box"><div class="production titanium"></div></div><br>
         <div class="tile venus-tile"></div>
@@ -5240,7 +5240,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-    [CardName.VITAL_COLONY,`
+    [CardName.VITAL_COLONY, `
       <div class="content">
       <div class="tile colony"></div><br>
       <div class="resource money">5</div>
@@ -5249,7 +5249,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-    [CardName.STRATEGIC_BASE_PLANNING,`
+    [CardName.STRATEGIC_BASE_PLANNING, `
       <div class="content">
       <div class="tile colony"></div>
       <div class="tile city-tile"></div><br>
@@ -5259,7 +5259,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-    [CardName.NITRATE_REDUCERS,`
+    [CardName.NITRATE_REDUCERS, `
       <div class="content">
         <div class="resource card"><div class="card-icon tag-microbe"></div></div>
         <div class="resource card"><div class="card-icon tag-microbe"></div></div>
@@ -5272,7 +5272,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
       </div>
 `],
-    [CardName.EXPERIENCED_MARTIANS,`
+    [CardName.EXPERIENCED_MARTIANS, `
     <div class="content">
         <div class="delegate"></div>
         <div class="delegate"></div>
@@ -5286,7 +5286,7 @@ export const HTML_DATA: Map<string, string> =
         </div>
     </div>
 `],
-    [CardName.TRADE_INFRASTRUCTURE,`
+    [CardName.TRADE_INFRASTRUCTURE, `
     <div class="content">
         <div class="production-box "><div class="energy production"></div></div>
         <br>
