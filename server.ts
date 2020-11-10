@@ -456,7 +456,7 @@ function createGame(req: http.IncomingMessage, res: http.ServerResponse): void {
         customColoniesList: gameReq.customColoniesList,
         morePreludeOption: gameReq.morePreludeOption,
         exSoloOption: gameReq.exSoloOption,
-      } as GameOptions;
+      };
 
       const game = new Game(gameId, players, firstPlayer, gameOptions);
       gameLoader.addGame(game);
