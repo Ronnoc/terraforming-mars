@@ -59,6 +59,7 @@ export const setCustomGameOptions = function(options: object = {}): GameOptions 
         exSoloOption: false,
         morePreludeOption: false,
     customColoniesList: [],
+    requiresVenusTrackCompletion: false,
   };
 
   return Object.assign(defaultOptions, options);

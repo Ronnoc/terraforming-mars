@@ -13,6 +13,7 @@ import {playerColorClass} from '../utils/utils';
 import {RandomMAOptionType} from '../RandomMAOptionType';
 
 export interface CreateGameModel {
+    allOfficialExpansions: boolean;
     firstIndex: number;
     playersCount: number;
     players: Array<NewPlayerModel>;
@@ -35,6 +36,7 @@ export interface CreateGameModel {
     showCardsBlackList: boolean;
     isSoloModePage: boolean;
     board: BoardName | 'random';
+    boards: Array<BoardName | 'random'>;
     seed: number;
     solarPhaseOption: boolean;
     shuffleMapOption: boolean;
@@ -51,6 +53,7 @@ export interface CreateGameModel {
     soloTR: boolean;
     clonedGameData: IGameData | undefined;
     cloneGameData: Array<IGameData>;
+    requiresVenusTrackCompletion: boolean;
     seededGame: boolean;
 }
 
@@ -64,7 +67,7 @@ export interface NewPlayerModel {
 }
 
 export const CreateGameForm = Vue.component('create-game-form', {
-  data: function() {
+  data: function(): CreateGameModel {
     return {
       firstIndex: 1,
       playersCount: 1,
@@ -119,7 +122,8 @@ export const CreateGameForm = Vue.component('create-game-form', {
       clonedGameData: undefined,
       cloneGameData: [],
       allOfficialExpansions: false,
-    } as CreateGameModel;
+      requiresVenusTrackCompletion: false,
+    };
   },
   components: {
     'corporations-filter': CorporationsFilter,
@@ -248,8 +252,11 @@ export const CreateGameForm = Vue.component('create-game-form', {
       this.promoCardsOption = this.$data.allOfficialExpansions;
       this.solarPhaseOption = this.$data.allOfficialExpansions;
     },
-    selectWGTwhenVenus: function() {
+    toggleVenusNext: function() {
       this.solarPhaseOption = this.$data.venusNext;
+      if (this.$data.venusNext === false) {
+        this.requiresVenusTrackCompletion = false;
+      }
     },
     getBoardColorClass: function(boardName: string): string {
       if (boardName === BoardName.ORIGINAL) {
@@ -342,6 +349,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
       const soloTR = component.soloTR;
       const beginnerOption = component.beginnerOption;
       const randomFirstPlayer = component.randomFirstPlayer;
+      const requiresVenusTrackCompletion = component.requiresVenusTrackCompletion;
       let clonedGamedId: undefined | string = undefined;
 
       if (customColoniesList.length > 0) {
@@ -403,15 +411,14 @@ export const CreateGameForm = Vue.component('create-game-form', {
         exSoloOption,
         beginnerOption,
         randomFirstPlayer,
+        requiresVenusTrackCompletion,
       }, undefined, 4);
-
       return dataToSend;
     },
     createGame: function() {
       const dataToSend = this.serializeSettings();
 
       if (dataToSend === undefined) return;
-
       const onSucces = (response: any) => {
         if (response.players.length === 1) {
           window.location.href = '/player?id=' + response.players[0].id;
@@ -490,7 +497,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <span v-i18n>Prelude</span>
                             </label>
 
-                            <input type="checkbox" name="venusNext" id="venusNext-checkbox" v-model="venusNext" v-on:change="selectWGTwhenVenus()">
+                            <input type="checkbox" name="venusNext" id="venusNext-checkbox" v-model="venusNext" v-on:change="toggleVenusNext()">
                             <label for="venusNext-checkbox" class="expansion-button">
                             <div class="create-game-expansion-icon expansion-icon-venus"></div>
                                 <span v-i18n>Venus Next</span>
@@ -674,6 +681,10 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <label for="venusMA-checkbox">
                                     <span v-i18n>Venus Milestone/Award</span>
                                 </label>
+                                <input type="checkbox" v-model="requiresVenusTrackCompletion" id="requiresVenusTrackCompletion-checkbox">
+                                <label for="requiresVenusTrackCompletion-checkbox">
+                                    <span v-i18n>Venus Terraforming</span>
+                                </label>
                             </template>
 
                             <input type="checkbox" name="showOtherPlayersVP" v-model="showOtherPlayersVP" id="realTimeVP-checkbox">
@@ -778,4 +789,3 @@ export const CreateGameForm = Vue.component('create-game-form', {
         </div>
     `,
 });
-
