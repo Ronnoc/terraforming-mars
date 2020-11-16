@@ -221,7 +221,7 @@ export class Player implements ILoadable<SerializedPlayer, Player> {
     }
 
     public increaseTerraformRatingSteps(value: number, game: Game) {
-      if(value < 0){
+      if (value < 0) {
         for (let i = 0; i < -value; i++) {
           this.decreaseTerraformRating();
         }
@@ -1080,38 +1080,39 @@ export class Player implements ILoadable<SerializedPlayer, Player> {
         const dealCardCount = 4;
         if (game.gameOptions.exSoloOption) {
           const dif = dealCardCount - this.draftedCards.length;
-          if (dif >1 ){
+          if (dif >1 ) {
             const cards: Array<IProjectCard> = [];
-            for(let i=0;i<dif;++i){
+            for (let i=0; i<dif; ++i) {
               cards.push(game.dealer.dealCard(true));
             }
             this.setWaitingFor(
-              new SelectCard(
-                "Select cards", undefined,
-                cards,
-                (foundCards: Array<IProjectCard>) => {
-                  cards.filter(
-                    (card) => foundCards.find(
-                      (foundCard) => foundCard.name === card.name
-                    ) === undefined
-                  ).forEach(
-                    (card)=>{game.dealer.discard(card);}
-                  );
-                  this.draftedCards.push(...foundCards);
-                  this.runResearchPhase(game, draftVariant);
-                  return undefined;
-                }, dif, 1
-              ), () => { }
+                new SelectCard(
+                    'Select cards', undefined,
+                    cards,
+                    (foundCards: Array<IProjectCard>) => {
+                      cards.filter(
+                          (card) => foundCards.find(
+                              (foundCard) => foundCard.name === card.name,
+                          ) === undefined,
+                      ).forEach(
+                          (card)=>{
+                            game.dealer.discard(card);
+                          },
+                      );
+                      this.draftedCards.push(...foundCards);
+                      this.runResearchPhase(game, draftVariant);
+                      return undefined;
+                    }, dif, 1,
+                ), () => { },
             );
             return undefined;
-          }else{
+          } else {
             dealtCards = this.draftedCards;
             this.draftedCards = [];
             dealtCards.push(game.dealer.dealCard(true));
           }
-        }
-        else{
-          for (let i = 0; i< dealCardCount; ++i){
+        } else {
+          for (let i = 0; i< dealCardCount; ++i) {
             dealtCards.push(game.dealer.dealCard(true));
           }
         }
@@ -1390,25 +1391,25 @@ export class Player implements ILoadable<SerializedPlayer, Player> {
       if (selectedCard.cardType !== CardType.PROXY) {
         this.addPlayedCard(game, selectedCard);
       }
-        
-      if (game.gameOptions.exSoloOption){
-          const sortValue = (card: IProjectCard) =>
-            (card.cardType === CardType.ACTIVE ? -300 : 0) +
+
+      if (game.gameOptions.exSoloOption) {
+        const sortValue = (card: IProjectCard) =>
+          (card.cardType === CardType.ACTIVE ? -300 : 0) +
             (card.cardType === CardType.AUTOMATED ? -200 : 0) +
             (card.cardType === CardType.EVENT ? -100 : 0) +
             (card.cost) +
             0;
 
-          this.cardsInHand = this.cardsInHand.sort(
+        this.cardsInHand = this.cardsInHand.sort(
             (c1, c2) => {
               const n1 = sortValue(c1);
               const n2 = sortValue(c2);
               if (n1 > n2) return 1;
               if (n1 < n2) return -1;
               return 0;
-            }
-          );
-        }
+            },
+        );
+      }
 
       for (const playedCard of this.playedCards) {
         if (playedCard.onCardPlayed !== undefined) {
@@ -1828,8 +1829,8 @@ export class Player implements ILoadable<SerializedPlayer, Player> {
         });
         game.defer(new SelectHowToPayDeferred(this, 8, false, false, 'Select how to pay for milestone'));
         game.log('${0} claimed ${1} milestone', (b) => b.player(this).milestone(milestone));
-        if(game.gameOptions.exSoloOption){
-            this.addProduction(Resources.MEGACREDITS,3);
+        if (game.gameOptions.exSoloOption) {
+          this.addProduction(Resources.MEGACREDITS, 3);
         }
         return undefined;
       });
@@ -2141,7 +2142,7 @@ export class Player implements ILoadable<SerializedPlayer, Player> {
         }
 
         this.setWaitingFor(this.playPreludeCard(game), () => {
-          if (this.preludeCardsInHand.length === 1) {
+          if (this.preludeCardsInHand.length >= 1) {
             this.takeAction(game);
           } else {
             game.playerIsFinishedTakingActions();

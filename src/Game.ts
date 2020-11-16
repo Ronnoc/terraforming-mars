@@ -238,8 +238,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
         gameOptions.randomMA = RandomMAOptionType.NONE;
         gameOptions.draftVariant = false;
         this.setupSolo();
-      }
-      else{
+      } else {
         this.gameOptions.exSoloOption=false;
       }
 
@@ -255,13 +254,16 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
         this.colonyDealer = new ColonyDealer();
         let pl = players.length;
-        if (this.gameOptions.exSoloOption)
+        if (this.gameOptions.exSoloOption) {
           pl = 7;
+        }
         this.colonies = this.colonyDealer.drawColonies(pl, this.gameOptions.customColoniesList, this.gameOptions.venusNextExtension, allowCommunityColonies);
         if (this.players.length === 1) {
           players[0].addProduction(Resources.MEGACREDITS, -2);
-          if (this.gameOptions.exSoloOption)
-            players[0].fleetSize += 2;
+          if (this.gameOptions.exSoloOption) {
+            players[0].increaseFleetSize();
+            players[0].increaseFleetSize();
+          }
           this.defer(new RemoveColonyFromGame(players[0], this));
         }
       }
@@ -321,16 +323,18 @@ export class Game implements ILoadable<SerializedGame, Game> {
           }
           if (!gameOptions.initialDraftVariant) {
             let initDealtCards = 10;
-            if (this.gameOptions.exSoloOption)
+            if (this.gameOptions.exSoloOption) {
               initDealtCards = 15;
+            }
             for (let i = 0; i < initDealtCards; i++) {
               player.dealtProjectCards.push(this.dealer.dealCard());
             }
           }
           if (gameOptions.preludeExtension) {
             let preludeCount = 4;
-            if(gameOptions.morePreludeOption)
+            if (gameOptions.morePreludeOption) {
               preludeCount = 5;
+            }
             for (let i = 0; i < preludeCount; i++) {
               player.dealtPreludeCards.push(this.dealer.dealPreludeCard());
             }
@@ -736,13 +740,14 @@ export class Game implements ILoadable<SerializedGame, Game> {
 
       if (this.gameOptions.preludeExtension) {
         let preludeCount = 2;
-        if (this.gameOptions.morePreludeOption) 
+        if (this.gameOptions.morePreludeOption) {
           preludeCount = 3;
+        }
         result.options.push(
             new SelectCard(
                 'Select ' + String(preludeCount) + ' Prelude cards', undefined, player.dealtPreludeCards,
                 (preludeCards: Array<IProjectCard>) => {
-                  player.preludeCardsInHand.push(preludeCards[0], preludeCards[1]);
+                  player.preludeCardsInHand.push(...preludeCards);
                   return undefined;
                 }, preludeCount, preludeCount,
             ),

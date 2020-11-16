@@ -56,8 +56,8 @@ export const setCustomGameOptions = function(options: object = {}): GameOptions 
     aresHazards: false,
     fastModeOption: false,
     removeNegativeGlobalEventsOption: false,
-        exSoloOption: false,
-        morePreludeOption: false,
+    exSoloOption: false,
+    morePreludeOption: false,
     customColoniesList: [],
     requiresVenusTrackCompletion: false,
   };
