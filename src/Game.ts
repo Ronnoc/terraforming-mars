@@ -189,7 +189,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
           shuffleMapOption: false,
           exSoloOption: false,
           morePreludeOption: false,
-          randomMA: RandomMAOptionType.NONE,
+          randomMA: RandomMAOptionType.LIMITED,
           soloTR: false,
           customCorporationsList: [],
           cardsBlackList: [],
@@ -235,7 +235,7 @@ export class Game implements ILoadable<SerializedGame, Game> {
       if (players.length === 1) {
         gameOptions.draftVariant = false;
         gameOptions.initialDraftVariant = false;
-        gameOptions.randomMA = RandomMAOptionType.NONE;
+        gameOptions.randomMA = RandomMAOptionType.LIMITED;
         gameOptions.draftVariant = false;
         this.setupSolo();
       } else {
