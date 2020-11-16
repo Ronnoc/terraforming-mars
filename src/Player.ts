@@ -1795,7 +1795,9 @@ export class Player implements ILoadable<SerializedPlayer, Player> {
           'Pay',
           () => {
             game.defer(new SelectHowToPayDeferred(this, 10, false, false, 'Select how to pay for Turmoil Scientists draw'));
-            this.turmoilScientistsActionUsed = true;
+            if (!game.gameOptions.exSoloOption) {
+              this.turmoilScientistsActionUsed = true;
+            }
             this.cardsInHand.push(
                 game.dealer.dealCard(),
                 game.dealer.dealCard(),
