@@ -29,7 +29,9 @@ export const PlayersOverview = Vue.component('players-overview', {
     'other-player': OtherPlayer,
   },
   data: function() {
-    return {};
+    return {
+      componentKey: 0,
+    };
   },
   methods: {
     hasPlayers: function(): boolean {
@@ -69,8 +71,13 @@ export const PlayersOverview = Vue.component('players-overview', {
       return ActionLabel.NONE;
     },
   },
+  created: function(): void {
+    this.$root.$on('updatePlayersOverview', (_e: any) => {
+      this.componentKey += 1;
+    });
+  },
   template: `
-        <div class="players-overview" v-if="hasPlayers()">
+        <div class="players-overview" v-if="hasPlayers()" :key="componentKey">
             <div class="other_player" v-if="player.players.length > 1">
                 <div v-for="(otherPlayer, index) in getPlayersInOrder()" :key="otherPlayer.id">
                     <other-player v-if="otherPlayer.id !== player.id" :player="otherPlayer" :playerIndex="index"/>
