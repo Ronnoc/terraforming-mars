@@ -47,7 +47,7 @@
     "fix": "eslint --fix src server.ts script.ts tests --ext ts",
     "lint": "eslint src server.ts script.ts tests --ext ts",
     "precover": "tsc --build tsconfig-test.json",
-    "prebuild": "node run clean && node make_static_json.js && lessc src/styles/common.less styles.css",
+    "prebuild": "npm run clean && node make_static_json.js && lessc src/styles/common.less styles.css",
     "pretest": "tsc --build tsconfig-test.json",
     "start": "node build/server.js",
     "templates": "node compile-vue-templates.js && tsc --build tsconfig-vue.json",
