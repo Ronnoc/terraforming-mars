@@ -358,6 +358,7 @@ export class Game implements ISerializable<SerializedGame, Game> {
         initialDraftIteration: this.initialDraftIteration,
         lastSaveId: this.lastSaveId,
         milestones: this.milestones,
+        erodedSpaces: this.erodedSpaces,
         monsInsuranceOwner: this.monsInsuranceOwner,
         oxygenLevel: this.oxygenLevel,
         passedPlayers: Array.from(this.passedPlayers),

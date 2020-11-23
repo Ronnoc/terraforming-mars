@@ -2400,6 +2400,7 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
         color: this.color,
         beginner: this.beginner,
         handicap: this.handicap,
+        totalSpend: this.totalSpend,
       };
       if (this.lastCardPlayed !== undefined) {
         result.lastCardPlayed = this.lastCardPlayed.name;
