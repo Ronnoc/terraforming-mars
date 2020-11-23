@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Color} from '../../../src/Color';
 import {Player} from '../../../src/Player';
-import {TradeAdvance} from '../../../src/cards/community/TradeAdvance';
+import {TradeAdvance} from '../../../src/cards/community/preludes/TradeAdvance';
 import {ColonyName} from '../../../src/colonies/ColonyName';
 import {Game, GameOptions} from '../../../src/Game';
 import {setCustomGameOptions} from '../../TestingUtils';

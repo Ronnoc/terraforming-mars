@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Color} from '../../../src/Color';
 import {Player} from '../../../src/Player';
-import {VenusFirst} from '../../../src/cards/community/VenusFirst';
+import {VenusFirst} from '../../../src/cards/community/preludes/VenusFirst';
 import {Game, GameOptions} from '../../../src/Game';
 import {setCustomGameOptions} from '../../TestingUtils';
 import {Tags} from '../../../src/cards/Tags';

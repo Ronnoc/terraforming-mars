@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Color} from '../../../src/Color';
 import {Player} from '../../../src/Player';
-import {AerospaceMission} from '../../../src/cards/community/AerospaceMission';
+import {AerospaceMission} from '../../../src/cards/community/preludes/AerospaceMission';
 import {setCustomGameOptions} from '../../TestingUtils';
 import {Game, GameOptions} from '../../../src/Game';
 import {ColonyName} from '../../../src/colonies/ColonyName';

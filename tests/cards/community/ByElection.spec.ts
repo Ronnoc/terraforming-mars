@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Color} from '../../../src/Color';
 import {Player} from '../../../src/Player';
-import {ByElection} from '../../../src/cards/community/ByElection';
+import {ByElection} from '../../../src/cards/community/preludes/ByElection';
 import {setCustomGameOptions} from '../../TestingUtils';
 import {Game, GameOptions} from '../../../src/Game';
 import {OrOptions} from '../../../src/inputs/OrOptions';

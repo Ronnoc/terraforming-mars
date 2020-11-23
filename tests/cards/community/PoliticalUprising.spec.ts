@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {Color} from '../../../src/Color';
 import {Player} from '../../../src/Player';
-import {PoliticalUprising} from '../../../src/cards/community/PoliticalUprising';
+import {PoliticalUprising} from '../../../src/cards/community/preludes/PoliticalUprising';
 import {setCustomGameOptions} from '../../TestingUtils';
 import {Game, GameOptions} from '../../../src/Game';
 import {OrOptions} from '../../../src/inputs/OrOptions';
