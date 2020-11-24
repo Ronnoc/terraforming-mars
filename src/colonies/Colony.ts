@@ -28,10 +28,10 @@ import {StealResources} from '../deferredActions/StealResources';
 import {Tags} from '../cards/Tags';
 import {SendDelegateToArea} from '../deferredActions/SendDelegateToArea';
 import {PlaceHazardTile} from '../deferredActions/PlaceHazardTile';
-import { AresHandler } from '../ares/AresHandler';
-import { SelectSpace } from '../inputs/SelectSpace';
-import { ISpace } from '../ISpace';
-import { SpaceBonus } from '../SpaceBonus';
+import {AresHandler} from '../ares/AresHandler';
+import {SelectSpace} from '../inputs/SelectSpace';
+import {ISpace} from '../ISpace';
+import {SpaceBonus} from '../SpaceBonus';
 
 export enum ShouldIncreaseTrack { YES, NO, ASK }
 
@@ -251,7 +251,7 @@ export abstract class Colony implements SerializedColony {
           game.log('${0} gained 1 influence', (b) => b.player(player));
         }
         break;
-  
+
       case ColonyBenefit.PLACE_DELEGATES:
         if (game.turmoil) {
           const qty = Math.min(quantity, game.turmoil.getDelegates(player.id));
@@ -261,13 +261,13 @@ export abstract class Colony implements SerializedColony {
           }
         }
         break;
-          
+
       case ColonyBenefit.GAIN_MC_PER_DELEGATE:
         if (game.turmoil) {
           let partyDelegateCount = PLAYER_DELEGATES_COUNT - game.turmoil.getDelegates(player.id);
           if (game.turmoil.lobby.has(player.id)) partyDelegateCount--;
           if (game.turmoil.chairman === player.id) partyDelegateCount--;
-              
+
           player.megaCredits += partyDelegateCount;
           return undefined;
         }
@@ -275,7 +275,7 @@ export abstract class Colony implements SerializedColony {
 
       case ColonyBenefit.PLACE_HAZARD_TILE:
         const availableSpaces = game.board.getAvailableSpacesOnLand(player)
-          .filter((space => space.tile === undefined))
+          .filter(((space) => space.tile === undefined))
           .filter((space) => {
             const adjacentSpaces = game.board.getAdjacentSpaces(space);
             return adjacentSpaces.filter((space) => space.tile !== undefined).length === 0;
@@ -287,12 +287,12 @@ export abstract class Colony implements SerializedColony {
       case ColonyBenefit.ERODE_SPACES_ADJACENT_TO_HAZARDS:
         for (let i = 0; i < quantity; i++) {
           const availableSpaces = AresHandler.getAllLandSpacesAdjacentToHazards(game);
-    
+
           if (availableSpaces.length > 0) {
             game.defer(new DeferredAction(
               player,
               () => new SelectSpace(
-                "Select space adjacent to hazard tile to erode",
+                'Select space adjacent to hazard tile to erode',
                 availableSpaces,
                 (foundSpace: ISpace) => {
                   foundSpace.bonus.forEach((spaceBonus) => game.grantSpaceBonus(player, spaceBonus));
@@ -300,15 +300,15 @@ export abstract class Colony implements SerializedColony {
                   const reservedBonuses = [SpaceBonus.VOLCANIC, SpaceBonus.RESTRICTED];
                   foundSpace.bonus = foundSpace.bonus.filter((bonus) => reservedBonuses.includes(bonus));
                   game.erodedSpaces.push(foundSpace.id);
-    
+
                   const offset: number = Math.abs(foundSpace.y - 4);
                   const row: number = foundSpace.y + 1;
                   const position: number = foundSpace.x - offset + 1;
-                  game.log("${0} eroded space on row ${1} position ${2}", b => b.player(player).number(row).number(position));
-    
+                  game.log('${0} eroded space on row ${1} position ${2}', (b) => b.player(player).number(row).number(position));
+
                   return undefined;
-                }
-              )
+                },
+              ),
             ));
           }
         }

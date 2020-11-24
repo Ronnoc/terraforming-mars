@@ -8,7 +8,7 @@ import {DrawCards} from '../../../deferredActions/DrawCards';
 import {OrOptions} from '../../../inputs/OrOptions';
 import {SelectCard} from '../../../inputs/SelectCard';
 import {SelectOption} from '../../../inputs/SelectOption';
-import { DeferredAction } from '../../../deferredActions/DeferredAction';
+import {DeferredAction} from '../../../deferredActions/DeferredAction';
 
 export class AccumulatedKnowledge extends PreludeCard implements IProjectCard {
     public tags = [Tags.SCIENCE];

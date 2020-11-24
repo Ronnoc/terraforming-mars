@@ -150,9 +150,9 @@ export const Colony = Vue.component('colony', {
       return ColonyName.DEIMOS;
     },
     getClassForColonyPlacementBonus: (colony: ColonyModel, index: number): string => {
-        if (colony.colonies.length > index) return 'filter: grayscale(1) opacity(0.5)';
-        return '';
-    }
+      if (colony.colonies.length > index) return 'filter: grayscale(1) opacity(0.5)';
+      return '';
+    },
   },
   template: `
     <div class="filterDiv colony-card colonies" :class="colony.name + '-background'" v-i18n>

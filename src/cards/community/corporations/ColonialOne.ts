@@ -42,35 +42,35 @@ export class ColonialOne implements CorporationCard {
         const coloniesModel: Array<ColonyModel> = game.getColoniesModel(activeColonies);
 
         game.defer(new DeferredAction(
-            player,
-            () => new SelectColony('Select colony tile to increase or decrease track', 'Select', coloniesModel, (colonyName: ColonyName) => {
-              activeColonies.forEach((colony) => {
-                if (colony.name === colonyName) {
-                  game.defer(new DeferredAction(player, () => new OrOptions(
-                      new SelectOption('Increase track for ' + colony.name, 'Increase', () => {
-                        if (colony.trackPosition < MAX_COLONY_TRACK_POSITION) {
-                          colony.increaseTrack();
-                          game.log('${0} increased ${1} colony track 1 step', (b) => b.player(player).colony(colony));
-                        }
+          player,
+          () => new SelectColony('Select colony tile to increase or decrease track', 'Select', coloniesModel, (colonyName: ColonyName) => {
+            activeColonies.forEach((colony) => {
+              if (colony.name === colonyName) {
+                game.defer(new DeferredAction(player, () => new OrOptions(
+                  new SelectOption('Increase track for ' + colony.name, 'Increase', () => {
+                    if (colony.trackPosition < MAX_COLONY_TRACK_POSITION) {
+                      colony.increaseTrack();
+                      game.log('${0} increased ${1} colony track 1 step', (b) => b.player(player).colony(colony));
+                    }
 
-                        return undefined;
-                      }),
-                      new SelectOption('Decrease track for ' + colony.name, 'Decrease', () => {
-                        if (colony.trackPosition > 0) {
-                          colony.decreaseTrack();
-                          game.log('${0} decreased ${1} colony track 1 step', (b) => b.player(player).colony(colony));
-                        }
+                    return undefined;
+                  }),
+                  new SelectOption('Decrease track for ' + colony.name, 'Decrease', () => {
+                    if (colony.trackPosition > 0) {
+                      colony.decreaseTrack();
+                      game.log('${0} decreased ${1} colony track 1 step', (b) => b.player(player).colony(colony));
+                    }
 
-                        return undefined;
-                      }),
-                  )));
-                }
-
-                return undefined;
-              });
+                    return undefined;
+                  }),
+                )));
+              }
 
               return undefined;
-            }),
+            });
+
+            return undefined;
+          }),
         ));
 
         return undefined;
@@ -80,21 +80,21 @@ export class ColonialOne implements CorporationCard {
         const coloniesModel: Array<ColonyModel> = game.getColoniesModel(openColonies);
 
         game.defer(new DeferredAction(
-            player,
-            () => new SelectColony('Select colony to trade with for free', 'Select', coloniesModel, (colonyName: ColonyName) => {
-              openColonies.forEach((colony) => {
-                if (colony.name === colonyName) {
-                  this.resourceCount--;
-                  game.log('${0} traded with ${1}', (b) => b.player(player).colony(colony));
-                  colony.trade(player, game);
-                  return undefined;
-                }
-
+          player,
+          () => new SelectColony('Select colony to trade with for free', 'Select', coloniesModel, (colonyName: ColonyName) => {
+            openColonies.forEach((colony) => {
+              if (colony.name === colonyName) {
+                this.resourceCount--;
+                game.log('${0} traded with ${1}', (b) => b.player(player).colony(colony));
+                colony.trade(player, game);
                 return undefined;
-              });
+              }
 
               return undefined;
-            }),
+            });
+
+            return undefined;
+          }),
         ));
 
         return undefined;
