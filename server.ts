@@ -691,6 +691,7 @@ function getWaitingFor(
     canUseHeat: undefined,
     players: undefined,
     availableSpaces: undefined,
+    min: undefined,
     max: undefined,
     microbes: undefined,
     floaters: undefined,
@@ -750,6 +751,7 @@ function getWaitingFor(
     );
     break;
   case PlayerInputTypes.SELECT_AMOUNT:
+    result.min = (waitingFor as SelectAmount).min;
     result.max = (waitingFor as SelectAmount).max;
     break;
   case PlayerInputTypes.SELECT_DELEGATE:
@@ -918,13 +920,13 @@ function getTurmoil(game: Game): TurmoilModel | undefined {
       };
     }
 
-    let comming;
-    if (game.turmoil.commingGlobalEvent) {
-      comming = {
-        name: game.turmoil.commingGlobalEvent.name,
-        description: game.turmoil.commingGlobalEvent.description,
-        revealed: game.turmoil.commingGlobalEvent.revealedDelegate,
-        current: game.turmoil.commingGlobalEvent.currentDelegate,
+    let coming;
+    if (game.turmoil.comingGlobalEvent) {
+      coming = {
+        name: game.turmoil.comingGlobalEvent.name,
+        description: game.turmoil.comingGlobalEvent.description,
+        revealed: game.turmoil.comingGlobalEvent.revealedDelegate,
+        current: game.turmoil.comingGlobalEvent.currentDelegate,
       };
     }
 
@@ -946,7 +948,7 @@ function getTurmoil(game: Game): TurmoilModel | undefined {
       lobby: lobby,
       reserve: reserve,
       distant: distant,
-      comming: comming,
+      comming: coming,
       current: current,
     };
   } else {

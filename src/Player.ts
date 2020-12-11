@@ -21,6 +21,7 @@ import {IMilestone} from './milestones/IMilestone';
 import {IProjectCard} from './cards/IProjectCard';
 import {ISpace} from './ISpace';
 import {ITagCount} from './ITagCount';
+import {LogMessageDataType} from './LogMessageDataType';
 import {MAX_FLEET_SIZE, REDS_RULING_POLICY_COST} from './constants';
 import {MiningCard} from './cards/base/MiningCard';
 import {OrOptions} from './inputs/OrOptions';
@@ -61,7 +62,7 @@ import {ShiftAresGlobalParameters, IAresGlobalParametersResponse} from './inputs
 
 export type PlayerId = string;
 
-export class Player implements ISerializable<SerializedPlayer, Player> {
+export class Player implements ISerializable<SerializedPlayer> {
     public readonly id: PlayerId;
     private waitingFor?: PlayerInput;
     private waitingForCb?: () => void;
@@ -125,7 +126,7 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
     public colonyVictoryPoints: number = 0;
 
     // Turmoil
-    private turmoilScientistsActionUsed: boolean = false;
+    public turmoilScientistsActionUsed: boolean = false;
 
     // Controlled by cards with effects that might be called a second time recursively, I think.
     // They set this to false in order to prevent card effects from triggering twice.
@@ -145,13 +146,23 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
     public removingPlayers: Array<PlayerId> = [];
 
     constructor(
-        public name: string,
-        public color: Color,
-        public beginner: boolean,
-        public handicap: number = 0,
-        id: PlayerId | undefined = undefined) {
+      public name: string,
+      public color: Color,
+      public beginner: boolean,
+      public handicap: number = 0,
+      id: PlayerId | undefined = undefined) {
       // TODO(kberg): Take ID generation outside of this constructor, and leave it up to callers.
       this.id = id === undefined ? this.generateId() : id;
+    }
+
+    public static initialize(
+      name: string,
+      color: Color,
+      beginner: boolean,
+      handicap: number = 0,
+      id: PlayerId | undefined = undefined): Player {
+      const player = new Player(name, color, beginner, handicap, id);
+      return player;
     }
 
     public isCorporation(corporationName: CardName): boolean {
@@ -622,7 +633,7 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
 
       if (tag === Tags.WILDCARD) {
         return tagCount;
-      };
+      }
       if (includeWildcardTags) {
         return tagCount + this.getTagCount(Tags.WILDCARD);
       } else {
@@ -739,10 +750,10 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
           throw new Error('Number not provided for amount');
         }
         if (amount > pi.max) {
-          throw new Error('Amount provided too high');
+          throw new Error('Amount provided too high (max ' + String(pi.max) + ')');
         }
-        if (amount < 0) {
-          throw new Error('Amount provided too low');
+        if (amount < pi.min) {
+          throw new Error('Amount provided too low (min ' + String(pi.min) + ')');
         }
         this.runInputCb(game, pi.cb(amount));
       } else if (pi instanceof SelectOption) {
@@ -822,13 +833,11 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
         this.runInputCb(game, pi.cb(howToPay));
       } else if (pi instanceof SelectProductionToLose) {
         // TODO(kberg): I'm sure there's some input validation required.
-        const parsedInput = JSON.parse(input[0][0]);
-        const units: IProductionUnits = parsedInput;
+        const units: IProductionUnits = JSON.parse(input[0][0]);
         pi.cb(units);
       } else if (pi instanceof ShiftAresGlobalParameters) {
         // TODO(kberg): I'm sure there's some input validation required.
-        const parsedInput = JSON.parse(input[0][0]);
-        const response: IAresGlobalParametersResponse = parsedInput;
+        const response: IAresGlobalParametersResponse = JSON.parse(input[0][0]);
         pi.cb(response);
       } else {
         throw new Error('Unsupported waitingFor');
@@ -935,7 +944,7 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
       }
     }
 
-    public runDraftPhase(initialDraft: boolean, game: Game, playerName: String, passedCards?: Array<IProjectCard>): void {
+    public runDraftPhase(initialDraft: boolean, game: Game, playerName: string, passedCards?: Array<IProjectCard>): void {
       let cards: Array<IProjectCard> = [];
       if (passedCards === undefined) {
         if (!initialDraft) {
@@ -948,16 +957,21 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
       }
 
       this.setWaitingFor(
-        new SelectCard(
-          'Select a card to keep and pass the rest to ' + playerName,
-          'Keep',
-          cards,
-          (foundCards: Array<IProjectCard>) => {
-            this.draftedCards.push(foundCards[0]);
-            cards = cards.filter((card) => card !== foundCards[0]);
-            game.playerIsFinishedWithDraftingPhase(initialDraft, this, cards);
-            return undefined;
-          }, 1, 1,
+        new SelectCard({
+          message: 'Select a card to keep and pass the rest to ${0}',
+          data: [{
+            type: LogMessageDataType.RAW_STRING,
+            value: playerName,
+          }],
+        },
+        'Keep',
+        cards,
+        (foundCards: Array<IProjectCard>) => {
+          this.draftedCards.push(foundCards[0]);
+          cards = cards.filter((card) => card !== foundCards[0]);
+          game.playerIsFinishedWithDraftingPhase(initialDraft, this, cards);
+          return undefined;
+        }, 1, 1,
         ), () => { },
       );
     }
@@ -2054,17 +2068,26 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
             corporationCard.initialActionText !== undefined &&
             this.corporationInitialActionDone === false
       ) {
-        const initialActionOption = new SelectOption('Take ' + corporationCard.name + '\'s first action', corporationCard.initialActionText, () => {
-          game.defer(new DeferredAction(this, () => {
-            if (corporationCard.initialAction) {
-              return corporationCard.initialAction(this, game);
-            } else {
-              return undefined;
-            }
-          }));
-          this.corporationInitialActionDone = true;
-          return undefined;
-        });
+        const initialActionOption = new SelectOption(
+          {
+            message: 'Take first action of ${0} corporation',
+            data: [{
+              type: LogMessageDataType.RAW_STRING,
+              value: corporationCard.name,
+            }],
+          },
+          corporationCard.initialActionText, () => {
+            game.defer(new DeferredAction(this, () => {
+              if (corporationCard.initialAction) {
+                return corporationCard.initialAction(this, game);
+              } else {
+                return undefined;
+              }
+            }));
+            this.corporationInitialActionDone = true;
+            return undefined;
+          },
+        );
         const initialActionOrPass = new OrOptions(
           initialActionOption,
           this.passOption(game),
@@ -2361,62 +2384,63 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
     }
 
     // Function used to rebuild each objects
-    public loadFromJSON(d: SerializedPlayer): Player {
+    public static deserialize(d: SerializedPlayer): Player {
+      const player = new Player(d.name, d.color, d.beginner, d.handicap, d.id);
       // Assign each attributes
-      const o = Object.assign(this, d);
+      Object.assign(player, d);
       const cardFinder = new CardFinder();
       // Rebuild generation played map
-      this.generationPlayed = new Map<string, number>(d.generationPlayed);
+      player.generationPlayed = new Map<string, number>(d.generationPlayed);
 
       // action this generation set
-      this.actionsThisGeneration = new Set<string>(d.actionsThisGeneration);
+      player.actionsThisGeneration = new Set<string>(d.actionsThisGeneration);
 
       if (d.pickedCorporationCard !== undefined) {
-        this.pickedCorporationCard = cardFinder.getCorporationCardByName(typeof d.pickedCorporationCard === 'string' ? d.pickedCorporationCard : d.pickedCorporationCard.name);
+        player.pickedCorporationCard = cardFinder.getCorporationCardByName(typeof d.pickedCorporationCard === 'string' ? d.pickedCorporationCard : d.pickedCorporationCard.name);
       }
 
       // Rebuild corporation card
       if (d.corporationCard !== undefined) {
-        this.corporationCard = cardFinder.getCorporationCardByName(d.corporationCard.name);
-        if (this.corporationCard !== undefined) {
+        player.corporationCard = cardFinder.getCorporationCardByName(d.corporationCard.name);
+        if (player.corporationCard !== undefined) {
           if (d.corporationCard.resourceCount !== undefined) {
-            this.corporationCard.resourceCount = d.corporationCard.resourceCount;
+            player.corporationCard.resourceCount = d.corporationCard.resourceCount;
           }
         }
-        if (this.corporationCard instanceof Aridor) {
+        if (player.corporationCard instanceof Aridor) {
           if (d.corporationCard.allTags !== undefined) {
-            this.corporationCard.allTags = new Set(d.corporationCard.allTags);
+            player.corporationCard.allTags = new Set(d.corporationCard.allTags);
           } else {
             console.warn('did not find allTags for ARIDOR');
           }
         }
-        if (this.corporationCard instanceof PharmacyUnion) {
+        if (player.corporationCard instanceof PharmacyUnion) {
           if (d.corporationCard.isDisabled === true) {
-            this.corporationCard.tags = [];
-            this.corporationCard.isDisabled = true;
+            player.corporationCard.tags = [];
+            player.corporationCard.isDisabled = true;
           }
         }
       } else {
-        this.corporationCard = undefined;
+        player.corporationCard = undefined;
       }
 
       // Rebuild dealt corporation array
-      this.dealtCorporationCards = cardFinder.corporationCardsFromJSON(d.dealtCorporationCards);
+      player.dealtCorporationCards = cardFinder.corporationCardsFromJSON(d.dealtCorporationCards);
 
       // Rebuild dealt prelude array
-      this.dealtPreludeCards = cardFinder.cardsFromJSON(d.dealtPreludeCards);
+      player.dealtPreludeCards = cardFinder.cardsFromJSON(d.dealtPreludeCards);
 
       // Rebuild dealt cards array
-      this.dealtProjectCards = cardFinder.cardsFromJSON(d.dealtProjectCards);
+      player.dealtProjectCards = cardFinder.cardsFromJSON(d.dealtProjectCards);
 
       // Rebuild each cards in hand
-      this.cardsInHand = cardFinder.cardsFromJSON(d.cardsInHand);
+      player.cardsInHand = cardFinder.cardsFromJSON(d.cardsInHand);
 
       // Rebuild each prelude in hand
-      this.preludeCardsInHand = cardFinder.cardsFromJSON(d.preludeCardsInHand);
+      player.preludeCardsInHand = cardFinder.cardsFromJSON(d.preludeCardsInHand);
 
       // Rebuild each played card
-      this.playedCards = d.playedCards.map((element: SerializedCard) => {
+      player.playedCards = d.playedCards.map((element: SerializedCard) => {
         const card = cardFinder.getProjectCardByName(element.name)!;
         if (element.resourceCount !== undefined) {
           card.resourceCount = element.resourceCount;
@@ -2442,9 +2466,9 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
       });
 
       // Rebuild each drafted cards
-      this.draftedCards = cardFinder.cardsFromJSON(d.draftedCards);
+      player.draftedCards = cardFinder.cardsFromJSON(d.draftedCards);
 
-      return o;
+      return player;
     }
 
     public getFleetSize(): number {
@@ -2469,4 +2493,3 @@ export class Player implements ISerializable<SerializedPlayer, Player> {
       return colonyTilesAlreadyBuiltOn < game.colonies.length;
     }
 }
-
