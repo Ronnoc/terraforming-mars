@@ -40,6 +40,13 @@ export class LavaFlows implements IProjectCard {
                                space.id === SpaceName.ELYSIUM_MONS ||
                                space.id === SpaceName.ARSIA_MONS_ELYSIUM ||
                                space.id === SpaceName.OLYMPUS_MONS);
+      } else if (game.gameOptions.boardName === BoardName.AMAZONIS) {
+        return game.board.getSpaces(SpaceType.LAND, player)
+          .filter((space) => space.tile === undefined && (space.player === undefined || space.player === player))
+          .filter((space) => space.id === SpaceName.ALBOR_THOLUS ||
+                               space.id === SpaceName.ANSERIS_MONS ||
+                               space.id === SpaceName.PINDUS_MONS ||
+                               space.id === SpaceName.ULYSSES_THOLUS);
       } else {
         return game.board.getSpaces(SpaceType.LAND, player)
           .filter((space) => space.tile === undefined && (space.player === undefined || space.player === player));
@@ -57,7 +64,7 @@ export class LavaFlows implements IProjectCard {
       return canPlaceTile;
     }
     public play(player: Player, game: Game) {
-      return new SelectSpace('Select either Tharsis Tholus, Ascraeus Mons, Pavonis Mons or Arsia Mons', LavaFlows.getVolcanicSpaces(player, game), (space: ISpace) => {
+      return new SelectSpace('Select volcanic area for Lava Flows tile', LavaFlows.getVolcanicSpaces(player, game), (space: ISpace) => {
         game.addTile(player, SpaceType.LAND, space, {tileType: TileType.LAVA_FLOWS});
         space.adjacency = this.adjacencyBonus;
         return game.increaseTemperature(player, 2);
@@ -69,6 +76,6 @@ export class LavaFlows implements IProjectCard {
         b.temperature(2).br;
         b.tile(TileType.LAVA_FLOWS, true, false).asterix();
       }),
-      description: 'Raise temperature 2 steps and place this tile ON EITHER THARSIS THOLUS, ASCRAEUS MONS, PAVONIS MONS OR ARSIA MONS.',
+      description: 'Raise temperature 2 steps and place this tile ON A VOLCANIC AREA.',
     }
 }

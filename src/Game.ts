@@ -59,6 +59,9 @@ import {RandomMAOptionType} from './RandomMAOptionType';
 import {AresHandler} from './ares/AresHandler';
 import {IAresData} from './ares/IAresData';
 import {Multiset} from './utils/Multiset';
+import {AmazonisBoard} from './AmazonisBoard';
+import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
+import {ArabiaTerraBoard} from './ArabiaTerraBoard';
 
 export interface Score {
   corporation: String;
@@ -173,6 +176,7 @@ export class Game implements ISerializable<SerializedGame> {
     public colonyDealer: ColonyDealer | undefined = undefined;
     public turmoil: Turmoil | undefined;
     public aresData: IAresData | undefined;
+    public erodedSpaces: Array<string> = [];
 
     // Card-specific data
     // Mons Insurance promo corp
@@ -236,7 +240,7 @@ export class Game implements ISerializable<SerializedGame> {
         const allowCommunityColonies = gameOptions.communityCardsOption || communityColoniesSelected;
 
         this.colonyDealer = new ColonyDealer();
-        this.colonies = this.colonyDealer.drawColonies(players.length, this.gameOptions.customColoniesList, this.gameOptions.venusNextExtension, allowCommunityColonies);
+        this.colonies = this.colonyDealer.drawColonies(players.length, this.gameOptions, allowCommunityColonies);
         if (this.players.length === 1) {
           players[0].addProduction(Resources.MEGACREDITS, -2);
           this.defer(new RemoveColonyFromGame(players[0], this));
@@ -397,6 +401,8 @@ export class Game implements ISerializable<SerializedGame> {
       if (gameOptions.customColoniesList.includes(ColonyName.TITANIA)) return true;
       if (gameOptions.customColoniesList.includes(ColonyName.VENUS)) return true;
       if (gameOptions.customColoniesList.includes(ColonyName.LEAVITT)) return true;
+      if (gameOptions.customColoniesList.includes(ColonyName.PALLAS)) return true;
+      if (gameOptions.customColoniesList.includes(ColonyName.DEIMOS)) return true;
 
       return false;
     }
@@ -447,13 +453,19 @@ export class Game implements ISerializable<SerializedGame> {
 
       if (boardName === BoardName.ELYSIUM) {
         chooseMilestonesAndAwards(this, ELYSIUM_MILESTONES, ELYSIUM_AWARDS);
-        return new ElysiumBoard(this.gameOptions.shuffleMapOption, this.seed);
+        return new ElysiumBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else if (boardName === BoardName.HELLAS) {
         chooseMilestonesAndAwards(this, HELLAS_MILESTONES, HELLAS_AWARDS);
-        return new HellasBoard(this.gameOptions.shuffleMapOption, this.seed);
+        return new HellasBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (boardName === BoardName.AMAZONIS) {
+        chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
+        return new AmazonisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (boardName === BoardName.ARABIA_TERRA) {
+        chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
+        return new ArabiaTerraBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else {
         chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
-        return new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed);
+        return new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       }
     }
 
@@ -1367,7 +1379,7 @@ export class Game implements ISerializable<SerializedGame> {
         throw new Error('This space is land claimed by ' + space.player.name);
       }
 
-      if (space.spaceType !== spaceType) {
+      if (space.spaceType !== spaceType && !space.bonus.includes(SpaceBonus.COVE)) {
         throw new Error(
           `Select a valid location ${space.spaceType} is not ${spaceType}`,
         );
@@ -1480,6 +1492,24 @@ export class Game implements ISerializable<SerializedGame> {
         player.titanium++;
       } else if (spaceBonus === SpaceBonus.HEAT) {
         player.heat++;
+      } else if (spaceBonus === SpaceBonus.ANIMAL) {
+        const animalCards = player.getResourceCards(ResourceType.ANIMAL);
+
+        if (animalCards.length === 1) {
+          player.addResourceTo(animalCards[0], 1);
+          LogHelper.logAddResource(this, player, animalCards[0]);
+        } else if (animalCards.length > 1) {
+          this.defer(new AddResourcesToCard(player, this, ResourceType.ANIMAL, 1));
+        }
+      } else if (spaceBonus === SpaceBonus.MICROBE) {
+        const microbeCards = player.getResourceCards(ResourceType.MICROBE);
+
+        if (microbeCards.length === 1) {
+          player.addResourceTo(microbeCards[0], 1);
+          LogHelper.logAddResource(this, player, microbeCards[0]);
+        } else if (microbeCards.length > 1) {
+          this.defer(new AddResourcesToCard(player, this, ResourceType.MICROBE, 1));
+        }
       }
     }
 
@@ -1711,14 +1741,23 @@ export class Game implements ISerializable<SerializedGame> {
         return Player.deserialize(element);
       });
 
+      // Setup Ares
+      if (this.gameOptions.aresExtension) {
+        this.aresData = d.aresData;
+        this.erodedSpaces = d.erodedSpaces;
+      }
 
       // Rebuild milestones, awards and board elements
       if (this.gameOptions.boardName === BoardName.ELYSIUM) {
-        this.board = new ElysiumBoard(this.gameOptions.shuffleMapOption, this.seed);
+        this.board = new ElysiumBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else if (this.gameOptions.boardName === BoardName.HELLAS) {
-        this.board = new HellasBoard(this.gameOptions.shuffleMapOption, this.seed);
+        this.board = new HellasBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (this.gameOptions.boardName === BoardName.AMAZONIS) {
+        this.board = new AmazonisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (this.gameOptions.boardName === BoardName.ARABIA_TERRA) {
+        this.board = new ArabiaTerraBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else {
-        this.board = new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed);
+        this.board = new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       }
 
       this.milestones = [];
@@ -1772,9 +1811,6 @@ export class Game implements ISerializable<SerializedGame> {
         space.adjacency = element.adjacency;
       });
 
-      if (this.gameOptions.aresExtension) {
-        this.aresData = d.aresData;
-      }
       // Reload colonies elements if needed
       if (this.gameOptions.coloniesExtension) {
         this.colonyDealer = new ColonyDealer();
