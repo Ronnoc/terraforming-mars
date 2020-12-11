@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {ByElection} from '../../../src/cards/community/ByElection';
-import {Game} from '../../../src/Game';
+import {ByElection} from '../../../src/cards/community/preludes/ByElection';
+import {Game, GameOptions} from '../../../src/Game';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 import {Player} from '../../../src/Player';
 import {PartyName} from '../../../src/turmoil/parties/PartyName';
