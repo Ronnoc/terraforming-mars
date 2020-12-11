@@ -32,6 +32,7 @@ import {AresHandler} from '../ares/AresHandler';
 import {SelectSpace} from '../inputs/SelectSpace';
 import {ISpace} from '../ISpace';
 import {SpaceBonus} from '../SpaceBonus';
+import {Phase} from '../Phase';
 
 export enum ShouldIncreaseTrack { YES, NO, ASK }
 
@@ -246,14 +247,14 @@ export abstract class Colony implements SerializedColony {
         break;
 
       case ColonyBenefit.GAIN_INFLUENCE:
-        if (game.turmoil) {
+        if (game.turmoil !== undefined) {
           game.turmoil.addInfluenceBonus(player);
           game.log('${0} gained 1 influence', (b) => b.player(player));
         }
         break;
 
       case ColonyBenefit.PLACE_DELEGATES:
-        if (game.turmoil) {
+        if (game.turmoil !== undefined) {
           const qty = Math.min(quantity, game.turmoil.getDelegates(player.id));
 
           for (let i = 0; i < qty; i++) {
@@ -263,13 +264,13 @@ export abstract class Colony implements SerializedColony {
         break;
 
       case ColonyBenefit.GAIN_MC_PER_DELEGATE:
-        if (game.turmoil) {
+        if (game.turmoil !== undefined) {
           let partyDelegateCount = PLAYER_DELEGATES_COUNT - game.turmoil.getDelegates(player.id);
           if (game.turmoil.lobby.has(player.id)) partyDelegateCount--;
           if (game.turmoil.chairman === player.id) partyDelegateCount--;
 
-          player.megaCredits += partyDelegateCount;
-          return undefined;
+          player.setResource(Resources.MEGACREDITS, partyDelegateCount);
+          LogHelper.logGainStandardResource(game, player, Resources.MEGACREDITS, partyDelegateCount);
         }
         break;
 
@@ -369,6 +370,48 @@ export abstract class Colony implements SerializedColony {
       case ColonyBenefit.STEAL_RESOURCES:
         if (resource === undefined) throw new Error('Resource cannot be undefined');
         action = new StealResources(player, game, resource, quantity);
+        break;
+
+      case ColonyBenefit.DRAW_EARTH_CARD:
+        action = new DrawCards(player, game, quantity, Tags.EARTH);
+        break;
+
+      case ColonyBenefit.WGT_RAISE_GLOBAL_PARAMETER:
+        game.defer(new DeferredAction(player, () => {
+          game.phase = Phase.SOLAR;
+          return undefined;
+        }));
+
+        if (quantity === 0) {
+          game.defer(new DeferredAction(player, () => {
+            game.log('${0} acted as World Government and increased temperature', (b) => b.player(player));
+            game.increaseTemperature(player, 1);
+            return undefined;
+          }));
+        } else if (quantity === 1) {
+          game.log('${0} acted as World Government and placed an ocean', (b) => b.player(player));
+          game.defer(new PlaceOceanTile(player, game, 'Select ocean space for ' + this.name + ' colony'));
+        } else if (quantity === 2) {
+          game.defer(new DeferredAction(player, () => {
+            game.log('${0} acted as World Government and increased oxygen level', (b) => b.player(player));
+            game.increaseOxygenLevel(player, 1);
+            return undefined;
+          }));
+        }
+
+        game.defer(new DeferredAction(player, () => {
+          game.phase = Phase.ACTION;
+          return undefined;
+        }));
+
+        break;
+
+      case ColonyBenefit.GAIN_MC_FOR_EARTH_TAGS:
+        const amount = game.getPlayers()
+          .map((p) => p.getTagCount(Tags.EARTH, false, p.id === player.id))
+          .reduce((a, c) => a + c, 0);
+
+        player.megaCredits += Math.floor(amount / 3);
         break;
 
       default:

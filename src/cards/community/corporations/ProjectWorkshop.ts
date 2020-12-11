@@ -34,7 +34,7 @@ export class ProjectWorkshop implements CorporationCard {
 
     public canAct(player: Player): boolean {
       const activeCards = player.getCardsByCardType(CardType.ACTIVE);
-      return activeCards.length > 0 || player.megaCredits >= 3;
+      return activeCards.length > 0 || player.megaCredits >= 4;
     }
 
     public action(player: Player, game: Game) {
@@ -69,8 +69,8 @@ export class ProjectWorkshop implements CorporationCard {
         },
       );
 
-      const drawBlueCard = new SelectOption('Spend 3 MC to draw a blue card', 'Draw card', () => {
-        player.megaCredits -= 3;
+      const drawBlueCard = new SelectOption('Spend 4 MC to draw a blue card', 'Draw card', () => {
+        player.megaCredits -= 4;
         player.cardsInHand.push(game.drawCardsByType(CardType.ACTIVE, 1)[0]);
 
         const drawnCard = game.getCardsInHandByType(player, CardType.ACTIVE).slice(-1)[0];
@@ -80,7 +80,7 @@ export class ProjectWorkshop implements CorporationCard {
       });
 
       if (activeCards.length === 0) return drawBlueCard;
-      if (!player.canAfford(3)) return flipBlueCard;
+      if (!player.canAfford(4)) return flipBlueCard;
 
       return new OrOptions(drawBlueCard, flipBlueCard);
     }

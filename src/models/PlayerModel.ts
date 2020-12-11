@@ -82,4 +82,9 @@ export interface PlayerModel {
     deckSize: number;
     preludeExtension: boolean;
     waitingFor: PlayerInputModel | undefined;
+    silverCubeVariant: boolean;
+    temperatureSilverCubeBonusMC: number;
+    oceansSilverCubeBonusMC: number;
+    oxygenSilverCubeBonusMC: number;
+    venusSilverCubeBonusMC: number;
 }

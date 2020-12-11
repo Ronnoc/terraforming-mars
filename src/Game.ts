@@ -62,6 +62,7 @@ import {Multiset} from './utils/Multiset';
 import {AmazonisBoard} from './AmazonisBoard';
 import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
 import {ArabiaTerraBoard} from './ArabiaTerraBoard';
+import {VastitasBorealisBoard} from './VastitasBorealisBoard';
 
 export interface Score {
   corporation: String;
@@ -102,6 +103,7 @@ export interface GameOptions {
   cardsBlackList: Array<CardName>;
   customColoniesList: Array<ColonyName>;
   requiresVenusTrackCompletion: boolean; // Venus must be completed to end the game
+  silverCubeVariant: boolean; // modified WGT phase
 }
 
 const DEFAULT_GAME_OPTIONS: GameOptions = {
@@ -121,12 +123,13 @@ const DEFAULT_GAME_OPTIONS: GameOptions = {
   initialDraftVariant: false,
   preludeExtension: false,
   promoCardsOption: false,
-  randomMA: RandomMAOptionType.NONE,
   removeNegativeGlobalEventsOption: false,
+  randomMA: RandomMAOptionType.NONE,
   requiresVenusTrackCompletion: false,
   showOtherPlayersVP: false,
   shuffleMapOption: false,
   solarPhaseOption: false,
+  silverCubeVariant: false,
   soloTR: false,
   startingCorporations: 2,
   turmoilExtension: false,
@@ -177,6 +180,10 @@ export class Game implements ISerializable<SerializedGame> {
     public turmoil: Turmoil | undefined;
     public aresData: IAresData | undefined;
     public erodedSpaces: Array<string> = [];
+    public temperatureSilverCubeBonusMC: number = 0;
+    public oceansSilverCubeBonusMC: number = 0;
+    public oxygenSilverCubeBonusMC: number = 0;
+    public venusSilverCubeBonusMC: number = 0;
 
     // Card-specific data
     // Mons Insurance promo corp
@@ -381,6 +388,10 @@ export class Game implements ISerializable<SerializedGame> {
           ];
         }),
         venusScaleLevel: this.venusScaleLevel,
+        temperatureSilverCubeBonusMC: this.temperatureSilverCubeBonusMC,
+        oceansSilverCubeBonusMC: this.oceansSilverCubeBonusMC,
+        oxygenSilverCubeBonusMC: this.oxygenSilverCubeBonusMC,
+        venusSilverCubeBonusMC: this.venusSilverCubeBonusMC,
       };
       if (this.aresData !== undefined) {
         result.aresData = this.aresData;
@@ -404,6 +415,7 @@ export class Game implements ISerializable<SerializedGame> {
       if (gameOptions.customColoniesList.includes(ColonyName.LEAVITT)) return true;
       if (gameOptions.customColoniesList.includes(ColonyName.PALLAS)) return true;
       if (gameOptions.customColoniesList.includes(ColonyName.DEIMOS)) return true;
+      if (gameOptions.customColoniesList.includes(ColonyName.TERRA)) return true;
 
       return false;
     }
@@ -464,6 +476,9 @@ export class Game implements ISerializable<SerializedGame> {
       } else if (boardName === BoardName.ARABIA_TERRA) {
         chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
         return new ArabiaTerraBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (boardName === BoardName.VASTITAS_BOREALIS) {
+        chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
+        return new VastitasBorealisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else {
         chooseMilestonesAndAwards(this, ORIGINAL_MILESTONES, ORIGINAL_AWARDS);
         return new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
@@ -1236,6 +1251,11 @@ export class Game implements ISerializable<SerializedGame> {
         AresHandler.onOxygenChange(this, aresData);
       });
 
+      if (this.oxygenSilverCubeBonusMC > 0) {
+        player.setResource(Resources.MEGACREDITS, this.oxygenSilverCubeBonusMC);
+        this.oxygenSilverCubeBonusMC = 0;
+      }
+
       return undefined;
     }
 
@@ -1268,6 +1288,11 @@ export class Game implements ISerializable<SerializedGame> {
       }
 
       this.venusScaleLevel += steps * 2;
+
+      if (this.venusSilverCubeBonusMC > 0) {
+        player.setResource(Resources.MEGACREDITS, this.venusSilverCubeBonusMC);
+        this.venusSilverCubeBonusMC = 0;
+      }
 
       return undefined;
     }
@@ -1311,6 +1336,11 @@ export class Game implements ISerializable<SerializedGame> {
       AresHandler.ifAres(this, (aresData) => {
         AresHandler.onTemperatureChange(this, aresData);
       });
+
+      if (this.temperatureSilverCubeBonusMC > 0) {
+        player.setResource(Resources.MEGACREDITS, this.temperatureSilverCubeBonusMC);
+        this.temperatureSilverCubeBonusMC = 0;
+      }
 
       return undefined;
     }
@@ -1414,6 +1444,15 @@ export class Game implements ISerializable<SerializedGame> {
         }
       }
 
+      // Vastitas Borealis special requirements temperature tile
+      if (space.id === SpaceName.VASTITAS_BOREALIS_NORTH_POLE &&
+          this.temperature < constants.MAX_TEMPERATURE &&
+          this.gameOptions.boardName === BoardName.VASTITAS_BOREALIS) {
+        if (player.color !== Color.NEUTRAL) {
+          this.defer(new DeferredAction(player, () => this.increaseTemperature(player, 1)));
+          this.defer(new SelectHowToPayDeferred(player, 3, false, false, 'Select how to pay for placement bonus temperature'));
+        }
+      }
 
       // Part 3. Setup for bonuses
       const arcadianCommunityBonus = space.player === player && player.isCorporation(CardName.ARCADIAN_COMMUNITIES);
@@ -1551,6 +1590,11 @@ export class Game implements ISerializable<SerializedGame> {
       AresHandler.ifAres(this, (aresData) => {
         AresHandler.onOceanPlaced(this, aresData, player);
       });
+
+      if (this.oceansSilverCubeBonusMC > 0) {
+        player.setResource(Resources.MEGACREDITS, this.oceansSilverCubeBonusMC);
+        this.oceansSilverCubeBonusMC = 0;
+      }
     }
 
     public removeTile(spaceId: string): void {
@@ -1757,6 +1801,8 @@ export class Game implements ISerializable<SerializedGame> {
         this.board = new AmazonisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else if (this.gameOptions.boardName === BoardName.ARABIA_TERRA) {
         this.board = new ArabiaTerraBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
+      } else if (this.gameOptions.boardName === BoardName.VASTITAS_BOREALIS) {
+        this.board = new VastitasBorealisBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       } else {
         this.board = new OriginalBoard(this.gameOptions.shuffleMapOption, this.seed, this.erodedSpaces);
       }

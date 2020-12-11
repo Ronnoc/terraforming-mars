@@ -14,7 +14,7 @@ describe('ByElection', function() {
     card = new ByElection();
     player = TestPlayers.BLUE.newPlayer();
 
-    const gameOptions = setCustomGameOptions();
+    const gameOptions = setCustomGameOptions() as GameOptions;
     game = new Game('foobar', [player, player], player, gameOptions);
   });
 

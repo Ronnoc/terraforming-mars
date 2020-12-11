@@ -453,7 +453,7 @@ function createGame(req: http.IncomingMessage, res: http.ServerResponse): void {
 
       if (gameReq.board === 'random') {
         let boards = Object.values(BoardName);
-        const communityBoards = [BoardName.AMAZONIS, BoardName.ARABIA_TERRA];
+        const communityBoards = [BoardName.AMAZONIS, BoardName.ARABIA_TERRA, BoardName.VASTITAS_BOREALIS];
         if (!gameReq.communityCardsOption) boards = boards.filter((b) => !communityBoards.includes(b));
 
         gameReq.board = boards[Math.floor(Math.random() * boards.length)];
@@ -480,6 +480,7 @@ function createGame(req: http.IncomingMessage, res: http.ServerResponse): void {
         removeNegativeGlobalEventsOption:
           gameReq.removeNegativeGlobalEventsOption,
         includeVenusMA: gameReq.includeVenusMA,
+        silverCubeVariant: gameReq.silverCubeVariant,
 
         draftVariant: gameReq.draftVariant,
         initialDraftVariant: gameReq.initialDraft,
@@ -646,6 +647,11 @@ function getPlayer(player: Player, game: Game): string {
     aresExtension: game.gameOptions.aresExtension,
     aresData: game.aresData,
     preludeExtension: game.gameOptions.preludeExtension,
+    silverCubeVariant: game.gameOptions.silverCubeVariant,
+    temperatureSilverCubeBonusMC: game.temperatureSilverCubeBonusMC,
+    oceansSilverCubeBonusMC: game.oceansSilverCubeBonusMC,
+    oxygenSilverCubeBonusMC: game.oxygenSilverCubeBonusMC,
+    venusSilverCubeBonusMC: game.venusSilverCubeBonusMC,
   };
   return JSON.stringify(output);
 }
@@ -855,6 +861,11 @@ function getPlayers(players: Array<Player>, game: Game): Array<PlayerModel> {
       deckSize: game.dealer.getDeckSize(),
       actionsTakenThisRound: player.actionsTakenThisRound,
       preludeExtension: game.gameOptions.preludeExtension,
+      silverCubeVariant: game.gameOptions.silverCubeVariant,
+      temperatureSilverCubeBonusMC: game.temperatureSilverCubeBonusMC,
+      oceansSilverCubeBonusMC: game.oceansSilverCubeBonusMC,
+      oxygenSilverCubeBonusMC: game.oxygenSilverCubeBonusMC,
+      venusSilverCubeBonusMC: game.venusSilverCubeBonusMC,
     } as PlayerModel;
   });
 }

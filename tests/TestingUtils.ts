@@ -44,6 +44,7 @@ export const setCustomGameOptions = function(options: object = {}): GameOptions 
     showOtherPlayersVP: false,
     customCorporationsList: [],
     solarPhaseOption: false,
+    silverCubeVariant: false,
     shuffleMapOption: false,
     promoCardsOption: false,
     communityCardsOption: false,

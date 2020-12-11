@@ -19,6 +19,7 @@ import {Venus} from '../cards/community/colonies/Venus';
 import {Leavitt} from '../cards/community/colonies/Leavitt';
 import {Pallas} from '../cards/community/colonies/Pallas';
 import {Deimos} from '../cards/community/colonies/Deimos';
+import {Terra} from '../cards/community/colonies/Terra';
 import {GameOptions} from '../Game';
 
 export interface IColonyFactory<T> {
@@ -50,6 +51,7 @@ export const COMMUNITY_COLONIES_TILES: Array<IColonyFactory<Colony>> = [
   {colonyName: ColonyName.LEAVITT, Factory: Leavitt},
   {colonyName: ColonyName.PALLAS, Factory: Pallas},
   {colonyName: ColonyName.DEIMOS, Factory: Deimos},
+  {colonyName: ColonyName.TERRA, Factory: Terra},
 ];
 
 // Function to return a card object by its name

@@ -2800,13 +2800,13 @@ export const HTML_DATA: Map<string, string> =
           </div>
 
           <div>
-            OR <div class="money production">3</div>
+            OR <div class="money production">4</div>
             <div class="red-arrow "></div>
             <div class="resource card card-small"><div class="card-icon card-icon-blue"></div></div>
           </div>
 
           <div class="effect description">
-            (Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 3 MC to draw a blue card.)
+            (Action: Flip and discard a played blue card to convert any VP on it into TR and draw 2 cards, or spend 4 MC to draw a blue card.)
           </div>
         </div>
       </div>
