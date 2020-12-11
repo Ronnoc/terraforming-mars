@@ -48,6 +48,7 @@ export interface CreateGameModel {
     undoOption: boolean;
     fastModeOption: boolean;
     removeNegativeGlobalEventsOption: boolean;
+    breakthrough: boolean;
     includeVenusMA: boolean;
     startingCorporations: number;
     soloTR: boolean;
@@ -118,6 +119,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
       undoOption: false,
       fastModeOption: false,
       removeNegativeGlobalEventsOption: false,
+      breakthrough: false,
       includeVenusMA: true,
       startingCorporations: 2,
       soloTR: false,
@@ -362,6 +364,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
       const undoOption = component.undoOption;
       const fastModeOption = component.fastModeOption;
       const removeNegativeGlobalEventsOption = this.removeNegativeGlobalEventsOption;
+      const breakthrough = component.breakthrough;
       const includeVenusMA = component.includeVenusMA;
       const startingCorporations = component.startingCorporations;
       const soloTR = component.soloTR;
@@ -419,6 +422,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
         undoOption,
         fastModeOption,
         removeNegativeGlobalEventsOption,
+        breakthrough,
         includeVenusMA,
         startingCorporations,
         soloTR,
@@ -539,6 +543,10 @@ export const CreateGameForm = Vue.component('create-game-form', {
                             </label>
 
                             <div class="create-game-subsection-label" v-i18n>Fan-made</div>
+                            <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough">
+                            <label for="breakthrough-checkbox" class="expansion-button">
+                                <span v-i18n>BreakThrough</span>
+                            </label>
 
                             <input type="checkbox" name="ares" id="ares-checkbox" v-model="aresExtension">
                             <label for="ares-checkbox" class="expansion-button">

@@ -12,6 +12,7 @@ import {
 } from './StandardCardManifests';
 import {TURMOIL_CARD_MANIFEST} from './turmoil/TurmoilCardManifest';
 import {VENUS_CARD_MANIFEST} from './venusNext/VenusCardManifest';
+import {BREAKTHROUGH_CARD_MANIFEST} from './breakthrough/BreakthroughCardManifest';
 
 export const ALL_CARD_MANIFESTS: Array<CardManifest> = [
   BASE_CARD_MANIFEST,
@@ -21,6 +22,7 @@ export const ALL_CARD_MANIFESTS: Array<CardManifest> = [
   COLONIES_CARD_MANIFEST,
   PRELUDE_CARD_MANIFEST,
   TURMOIL_CARD_MANIFEST,
+  BREAKTHROUGH_CARD_MANIFEST,
   COMMUNITY_CARD_MANIFEST,
   ARES_CARD_MANIFEST,
 ];

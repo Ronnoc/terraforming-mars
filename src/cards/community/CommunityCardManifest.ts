@@ -14,6 +14,7 @@ import {PoliticalUprising} from './preludes/PoliticalUprising';
 import {ByElection} from './preludes/ByElection';
 import {Midas} from './corporations/Midas';
 import {ColonialOne} from './corporations/ColonialOne';
+import {IdFront} from './corporations/IdFront';
 import {HydrogenBombardment} from './preludes/HydrogenBombardment';
 import {VitalColony} from './preludes/VitalColony';
 import {StrategicBasePlanning} from './preludes/StrategicBasePlanning';
@@ -35,6 +36,7 @@ export const COMMUNITY_CARD_MANIFEST = new CardManifest({
     {cardName: CardName.INCITE, Factory: Incite},
     {cardName: CardName.PLAYWRIGHTS, Factory: Playwrights},
     {cardName: CardName.MIDAS, Factory: Midas},
+    {cardName: CardName.ID_FRONT, Factory: IdFront},
     {cardName: CardName.COLONIAL_ONE, Factory: ColonialOne},
   ],
   preludeCards: [

@@ -4,6 +4,7 @@ import {IProjectCard} from './cards/IProjectCard';
 import {BeginnerCorporation} from './cards/corporation/BeginnerCorporation';
 import {CardManifest} from './cards/CardManifest';
 import {CardName} from './CardName';
+import {BREAKTHROUGH_CARD_MANIFEST} from './cards/breakthrough/BreakthroughCardManifest';
 import {CorporationCard} from './cards/corporation/CorporationCard';
 import {COLONIES_CARD_MANIFEST} from './cards/colonies/ColoniesCardManifest';
 import {PRELUDE_CARD_MANIFEST} from './cards/prelude/PreludeCardManifest';
@@ -27,6 +28,7 @@ export class CardFinder {
           PRELUDE_CARD_MANIFEST,
           TURMOIL_CARD_MANIFEST,
           ARES_CARD_MANIFEST,
+          BREAKTHROUGH_CARD_MANIFEST,
           COMMUNITY_CARD_MANIFEST,
         ];
       }

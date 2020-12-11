@@ -15,6 +15,7 @@ import {Game} from './Game';
 import {HowToPay} from './inputs/HowToPay';
 import {IAward} from './awards/IAward';
 import {ICard} from './cards/ICard';
+import {IdFront} from './cards/community/corporations/IdFront';
 import {Colony} from './colonies/Colony';
 import {ISerializable} from './ISerializable';
 import {IMilestone} from './milestones/IMilestone';
@@ -166,7 +167,13 @@ export class Player implements ISerializable<SerializedPlayer> {
     }
 
     public isCorporation(corporationName: CardName): boolean {
-      return this.corporationCard !== undefined && this.corporationCard.name === corporationName;
+      if (this.corporationCard === undefined) {
+        return false;
+      }
+      if (String(this.corporationCard.name.replace(' (breakthrough)', '')) === String(corporationName.toString())) {
+        return true;
+      }
+      return this.corporationCard.name === corporationName;
     }
 
     public getTitaniumValue(game: Game): number {
@@ -207,6 +214,11 @@ export class Player implements ISerializable<SerializedPlayer> {
     }
 
     public increaseTerraformRating(game: Game) {
+      // 改造度公司突破：改造回2
+      if (this.isCorporation(CardName._UNITED_NATIONS_MARS_INITIATIVE_) &&
+          (game.phase === Phase.PRELUDES || game.phase === Phase.ACTION)) {
+        this.megaCredits += 2;
+      }
       if (!game.gameOptions.turmoilExtension) {
         this.terraformRating++;
         this.hasIncreasedTerraformRatingThisGeneration = true;
@@ -554,6 +566,15 @@ export class Player implements ISerializable<SerializedPlayer> {
       // Meat industry hook
       if (card.resourceType === ResourceType.ANIMAL && this.playedCards.map((card) => card.name).includes(CardName.MEAT_INDUSTRY)) {
         this.megaCredits += count * 2;
+      }
+
+      // _Celestic_ hook
+      if (card.resourceType === ResourceType.FLOATER && this.isCorporation(CardName._CELESTIC_)) {
+        this.megaCredits += count;
+      }
+      // _Arklight_ hook
+      if (card.resourceType === ResourceType.ANIMAL && this.isCorporation(CardName._ARKLIGHT_)) {
+        this.megaCredits += count;
       }
     }
 
@@ -1586,6 +1607,7 @@ export class Player implements ISerializable<SerializedPlayer> {
     }
 
     private addCity(game: Game): PlayerInput {
+      const canUseSteel = this.isCorporation(CardName._MINING_GUILD_);
       return new SelectOption(
         'City (' + constants.CITY_COST + ' MC)',
         'Confirm',
@@ -1593,7 +1615,7 @@ export class Player implements ISerializable<SerializedPlayer> {
           game.defer(new SelectHowToPayDeferred(
             this,
             constants.CITY_COST,
-            false,
+            canUseSteel,
             false,
             'Select how to pay for City project',
             () => {
@@ -1663,6 +1685,11 @@ export class Player implements ISerializable<SerializedPlayer> {
         payWith = Resources.TITANIUM;
         return undefined;
       });
+      /* 矿业公司突破：可以4铁贸易*/
+      const payWithSteel = new SelectOption('Pay ' + (4 - this.colonyTradeDiscount) + ' Steel', '', () => {
+        payWith = Resources.STEEL;
+        return undefined;
+      });
 
       if (titanFloatingLaunchPad !== undefined &&
         titanFloatingLaunchPad.resourceCount !== undefined &&
@@ -1674,6 +1701,9 @@ export class Player implements ISerializable<SerializedPlayer> {
         }));
       }
 
+      if (this.isCorporation(CardName._MINING_GUILD_) && this.steel >= (4 - this.colonyTradeDiscount)) {
+        howToPayForTrade.options.push(payWithSteel);
+      }
       if (this.energy >= (3 - this.colonyTradeDiscount)) howToPayForTrade.options.push(payWithEnergy);
       if (this.titanium >= (3 - this.colonyTradeDiscount)) howToPayForTrade.options.push(payWithTitanium);
       if (this.canAfford((9 - this.colonyTradeDiscount))) howToPayForTrade.options.push(payWithMC);
@@ -2004,8 +2034,10 @@ export class Player implements ISerializable<SerializedPlayer> {
       }
 
       if (
-        this.canAfford(constants.CITY_COST) &&
-            game.board.getAvailableSpacesForCity(this).length > 0) {
+        (this.canAfford(constants.CITY_COST) ||
+          (this.isCorporation(CardName._MINING_GUILD_) &&
+            this.canAfford(constants.CITY_COST - this.steelValue * this.steel))
+        ) && game.board.getAvailableSpacesForCity(this).length > 0) {
         standardProjects.options.push(
           this.addCity(game),
         );
@@ -2147,6 +2179,7 @@ export class Player implements ISerializable<SerializedPlayer> {
         if (openColonies.length > 0 &&
           this.fleetSize > this.tradesThisTurn &&
           (this.canAfford(9 - this.colonyTradeDiscount) ||
+            ((this.isCorporation(CardName._MINING_GUILD_) && this.steel >= (4 - this.colonyTradeDiscount) )) ||
             this.energy >= (3 - this.colonyTradeDiscount) ||
             this.titanium >= (3 - this.colonyTradeDiscount))
         ) {
@@ -2439,6 +2472,9 @@ export class Player implements ISerializable<SerializedPlayer> {
           } else {
             console.warn('did not find allTags for ARIDOR');
           }
+        }
+        if (d.corporationCard.name === CardName.ID_FRONT) {
+          (player.corporationCard as IdFront).allTags = new Set(d.corporationCard.allTags);
         }
         if (player.corporationCard instanceof PharmacyUnion) {
           if (d.corporationCard.isDisabled === true) {

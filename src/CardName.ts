@@ -443,6 +443,30 @@ export enum CardName {
     STANFORD_TORUS = 'Stanford Torus',
     SATURN_SURFING = 'Saturn Surfing',
 
+
+    // /// breakthrough
+    ID_FRONT = 'Id Front',
+    _INVENTRIX_ = 'Inventrix (breakthrough)',
+    _PHOBOLOG_ = 'PhoboLog (breakthrough)', // Phobolog
+    _THORGATE_ = 'Thorgate (breakthrough)',
+    _ECOLINE_ = 'EcoLine (breakthrough)',
+    _TERACTOR_ = 'Teractor (breakthrough)',
+    _HELION_ = 'Helion (breakthrough)',
+    _APHRODITE_ = 'Aphrodite (breakthrough)',
+    _FACTORUM_ = 'Factorum (breakthrough)',
+    _MINING_GUILD_ = 'Mining Guild (breakthrough)',
+    _RECYCLON_ = 'Recyclon (breakthrough)',
+    _ROBINSON_INDUSTRIES_ = 'Robinson Industries (breakthrough)',
+    _SPLICE_ = 'Splice (breakthrough)',
+    _TERRALABS_RESEARCH_ = 'Terralabs Research (breakthrough)',
+    _UNITED_NATIONS_MARS_INITIATIVE_ = 'United Nations Mars Initiative (breakthrough)',
+    _VALLEY_TRUST_ = 'Valley Trust (breakthrough)',
+    _VIRON_ = 'Viron (breakthrough)',
+    _CELESTIC_ = 'Celestic (breakthrough)',
+    _ARKLIGHT_ = 'Arklight (breakthrough)',
+    _STORMCRAFT_INCORPORATED_ = 'Stormcraft Incorporated (breakthrough)',
+
+
     // Community corps
     AGRICOLA_INC = 'Agricola Inc',
     PROJECT_WORKSHOP = 'Project Workshop',

@@ -63,7 +63,7 @@ import {AmazonisBoard} from './AmazonisBoard';
 import {AddResourcesToCard} from './deferredActions/AddResourcesToCard';
 import {ArabiaTerraBoard} from './ArabiaTerraBoard';
 import {VastitasBorealisBoard} from './VastitasBorealisBoard';
-
+import {BREAKTHROUGH_CARD_MANIFEST} from './cards/breakthrough/BreakthroughCardManifest';
 export interface Score {
   corporation: String;
   playerScore: number;
@@ -104,12 +104,14 @@ export interface GameOptions {
   customColoniesList: Array<ColonyName>;
   requiresVenusTrackCompletion: boolean; // Venus must be completed to end the game
   silverCubeVariant: boolean; // modified WGT phase
+  breakthrough?: boolean;
 }
 
 const DEFAULT_GAME_OPTIONS: GameOptions = {
   aresExtension: false,
   aresHazards: true,
   boardName: BoardName.ORIGINAL,
+  breakthrough: false,
   cardsBlackList: [],
   clonedGamedId: undefined,
   coloniesExtension: false,
@@ -275,6 +277,14 @@ export class Game implements ISerializable<SerializedGame> {
           if (customCorp) customCorporationCards.push(customCorp);
         }
         corporationCards = customCorporationCards;
+      }
+      if (this.gameOptions.breakthrough) {
+        corporationCards.forEach((card, index) => {
+          const cardFactory = BREAKTHROUGH_CARD_MANIFEST.corporationCards.cards.find((cardFactory) => cardFactory.cardName_ori === card.name);
+          if (cardFactory !== undefined) {
+            corporationCards.splice(index, 1, new cardFactory.Factory() as CorporationCard);
+          }
+        });
       }
 
       corporationCards = this.dealer.shuffleCards(corporationCards);

@@ -8,5 +8,6 @@ export enum GameModule {
     Prelude = 'prelude',
     Turmoil = 'turmoil',
     Community = 'community',
+    Breakthrough = 'breakthrough',
     Ares = 'ares',
 }
