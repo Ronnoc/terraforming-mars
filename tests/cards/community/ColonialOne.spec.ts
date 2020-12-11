@@ -1,9 +1,8 @@
 import {expect} from 'chai';
 import {ColonialOne} from '../../../src/cards/community/ColonialOne';
-import {Color} from '../../../src/Color';
 import {Player} from '../../../src/Player';
 import {Game, GameOptions} from '../../../src/Game';
-import {setCustomGameOptions} from '../../TestingUtils';
+import {setCustomGameOptions, TestPlayers} from '../../TestingUtils';
 import {OrOptions} from '../../../src/inputs/OrOptions';
 import {SelectColony} from '../../../src/inputs/SelectColony';
 import {ColonyName} from '../../../src/colonies/ColonyName';
@@ -13,7 +12,7 @@ describe('ColonialOne', function() {
 
   beforeEach(function() {
     card = new ColonialOne();
-    player = new Player('test', Color.BLUE, false);
+    player = TestPlayers.BLUE.newPlayer();
 
     const gameOptions = setCustomGameOptions({coloniesExtension: true}) as GameOptions;
     game = new Game('foobar', [player, player], player, gameOptions);
@@ -32,9 +31,8 @@ describe('ColonialOne', function() {
     expect(action!.options.length).to.eq(2);
 
         action!.options[0].cb();
-
         expect(game.deferredActions.length).to.eq(1);
-        const selectColony = game.deferredActions[0].execute() as SelectColony;
+        const selectColony = game.deferredActions.next()!.execute() as SelectColony;
         selectColony.cb((<any>ColonyName)[selectColony.coloniesModel[0].name.toUpperCase()]);
 
         expect(card.resourceCount).to.eq(2);
@@ -45,7 +43,7 @@ describe('ColonialOne', function() {
         action!.options[1].cb();
         expect(game.deferredActions.length).to.eq(1);
 
-        const selectColony = game.deferredActions.splice(0, 1)[0];
+        const selectColony = game.deferredActions.next()!;
         expect(selectColony.execute() instanceof SelectColony).to.eq(true);
   });
 });

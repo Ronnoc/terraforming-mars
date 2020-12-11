@@ -354,6 +354,7 @@ export class Game implements ISerializable<SerializedGame> {
         donePlayers: Array.from(this.donePlayers),
         draftedPlayers: Array.from(this.draftedPlayers),
         draftRound: this.draftRound,
+        erodedSpaces: this.erodedSpaces,
         first: this.first.id,
         fundedAwards: this.fundedAwards,
         gameAge: this.gameAge,
