@@ -573,7 +573,10 @@ function serveAsset(req: http.IncomingMessage, res: http.ServerResponse): void {
     } else {
       file = '/main.js';
     }
-
+    if (Route.supportsEncoding(req, 'gzip')) {
+      contentEncoding = 'gzip';
+      file += '.gz';
+    }
     file = `build${file}`;
   } else if (req.url === '/assets/Prototype.ttf' || req.url === '/assets/futureforces.ttf' || req.url === '/assets/BattleStar.ttf') {
     contentType = 'font/ttf';

@@ -80,7 +80,7 @@ export interface NewPlayerModel {
 export const CreateGameForm = Vue.component('create-game-form', {
   data: function(): CreateGameModel {
     return {
-      isvip: false,
+      isvip: true,
       constants,
       firstIndex: 1,
       playersCount: 1,
@@ -122,18 +122,18 @@ export const CreateGameForm = Vue.component('create-game-form', {
       seed: Math.random(),
       seededGame: false,
       solarPhaseOption: true,
-      shuffleMapOption: false,
+      shuffleMapOption: true,
       promoCardsOption: true,
       communityCardsOption: false,
-      aresExtension: false,
+      aresExtension: true,
       politicalAgendasExtension: AgendaStyle.STANDARD,
       moonExpansion: false,
       undoOption: true,
       showTimers: true,
       fastModeOption: true,
-      removeNegativeGlobalEventsOption: false,
+      removeNegativeGlobalEventsOption: true,
       heatFor: false,
-      breakthrough: false,
+      breakthrough: true,
       includeVenusMA: true,
       startingCorporations: 4,
       soloTR: false,
@@ -154,8 +154,7 @@ export const CreateGameForm = Vue.component('create-game-form', {
       this.isSoloModePage = true;
     }
 
-    const root = this.$root as any;
-    this.isvip = root.isvip;
+    this.isvip = true;
   },
   methods: {
     downloadCurrentSettings: function() {
@@ -593,24 +592,24 @@ export const CreateGameForm = Vue.component('create-game-form', {
 
                             <div class="create-game-subsection-label" v-i18n>Fan-made</div>
 
-                            <input type="checkbox" name="heatFor" id="heatFor-checkbox" v-model="heatFor"  v-if="isvip">
-                            <label for="heatFor-checkbox"  :class="{forbidden:!isvip}">
+                            <input type="checkbox" name="heatFor" id="heatFor-checkbox" v-model="heatFor"  >
+                            <label for="heatFor-checkbox"  >
                                 <span v-i18n>7 Heat Into Temperature</span> 
                             </label>
                 
-                            <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"  v-if="isvip">
-                            <label for="breakthrough-checkbox"  :class="{forbidden:!isvip}">
+                            <input type="checkbox" name="breakthrough" id="breakthrough-checkbox" v-model="breakthrough"  >
+                            <label for="breakthrough-checkbox"  >
                                 <span v-i18n>BreakThrough</span>&nbsp;<a href="https://docs.qq.com/pdf/DS29QWFZLeUhWWlRR" class="tooltip" target="_blank">&#9432;</a>
                             </label>
 
-                            <input type="checkbox" name="ares" id="ares-checkbox" v-model="aresExtension"  v-if="isvip">
-                            <label for="ares-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                            <input type="checkbox" name="ares" id="ares-checkbox" v-model="aresExtension"  >
+                            <label for="ares-checkbox" class="expansion-button" >
                                 <div class="create-game-expansion-icon expansion-icon-ares"></div>
                                 <span v-i18n>Ares</span>&nbsp;<a href="https://docs.qq.com/pdf/DQVZqWU5BZURyUkZp" class="tooltip" target="_blank">&#9432;</a>
                             </label>
                 
-                            <input type="checkbox" name="community" id="communityCards-checkbox" v-model="communityCardsOption"  v-if="isvip">
-                            <label for="communityCards-checkbox" class="expansion-button" :class="{forbidden:!isvip}">
+                            <input type="checkbox" name="community" id="communityCards-checkbox" v-model="communityCardsOption"  >
+                            <label for="communityCards-checkbox" class="expansion-button" >
                                 <div class="create-game-expansion-icon expansion-icon-community"></div>
                                 <span v-i18n>Community</span>&nbsp;<a href="https://docs.qq.com/pdf/DQUFZaHdMWHl2V21M" class="tooltip" target="_blank">&#9432;</a>
                             </label>
@@ -688,8 +687,8 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <span v-i18n>Show timers</span>
                             </label>
 
-                            <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox"  v-if="isvip">
-                            <label for="shuffleMap-checkbox"  :class="{forbidden:!isvip}">
+                            <input type="checkbox" v-model="shuffleMapOption" id="shuffleMap-checkbox"  >
+                            <label for="shuffleMap-checkbox"  >
                                 <span v-i18n>Randomize board tiles</span>&nbsp;
                             </label>
 
@@ -709,21 +708,21 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <span v-i18n>Custom Corporation list</span>
                             </label>
 
-                            <input type="checkbox" v-model="showCardsBlackList" id="blackList-checkbox"  v-if="isvip">
-                            <label for="blackList-checkbox" :class="{forbidden:!isvip}">
+                            <input type="checkbox" v-model="showCardsBlackList" id="blackList-checkbox"  >
+                            <label for="blackList-checkbox" >
                                 <span v-i18n>Exclude some cards</span>
                             </label>
 
                             <template v-if="colonies">
-                                <input type="checkbox" v-model="showColoniesList" id="customColonies-checkbox" v-if="isvip">
-                                <label for="customColonies-checkbox" :class="{forbidden:!isvip}">
+                                <input type="checkbox" v-model="showColoniesList" id="customColonies-checkbox" >
+                                <label for="customColonies-checkbox" >
                                     <span v-i18n>Custom Colonies list</span>
                                 </label>
                             </template>
 
                             <template v-if="turmoil">
-                                <input type="checkbox" v-model="removeNegativeGlobalEventsOption" id="removeNegativeEvent-checkbox" v-if="isvip">
-                                <label for="removeNegativeEvent-checkbox" :class="{forbidden:!isvip}">
+                                <input type="checkbox" v-model="removeNegativeGlobalEventsOption" id="removeNegativeEvent-checkbox" >
+                                <label for="removeNegativeEvent-checkbox" >
                                     <span v-i18n>Remove negative Global Events</span>&nbsp;
                                 </label>
                             </template>
@@ -755,8 +754,8 @@ export const CreateGameForm = Vue.component('create-game-form', {
                                 <span v-i18n>Random first player</span>
                             </label>
 
-                            <input type="checkbox" name="randomMAToggle" id="randomMA-checkbox" v-on:change="randomMAToggle()"  v-if="isvip">
-                            <label for="randomMA-checkbox"  :class="{forbidden:!isvip}">
+                            <input type="checkbox" name="randomMAToggle" id="randomMA-checkbox" v-on:change="randomMAToggle()"  >
+                            <label for="randomMA-checkbox"  >
                                 <span v-i18n>Random Milestones/Awards</span>&nbsp;
                             </label>
 

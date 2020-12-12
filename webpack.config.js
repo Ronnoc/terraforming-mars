@@ -1,7 +1,7 @@
 'use strict';
 
 const process = require('process');
-// const CompressionPlugin = require('compression-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 // const zlib = require("zlib");
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
   entry: [
     './build/src/script.js',
   ],
-  // plugins: [new CompressionPlugin()],
+  plugins: [new CompressionPlugin()],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js', // 'vue/dist/vue.common.js' for webpack 1

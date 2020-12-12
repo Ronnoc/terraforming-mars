@@ -45,7 +45,7 @@ export class User {
     }
 
     public isvip() : boolean {
-      return this.vip && this.vipDate >= getDay() || this.vipDate > getDay();
+      return true;
     }
 }
 

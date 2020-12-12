@@ -20,9 +20,6 @@ import {MyGames} from './MyGames';
 import {Donate} from './Donate';
 import {PreferencesManager} from './PreferencesManager';
 
-function getDay() {
-  return new Date(new Date().getTime()+8*60*60*1000).toISOString().slice(0, 10).replace('T', ' ');
-}
 
 interface MainAppData {
     screen: string;
@@ -59,7 +56,7 @@ export const mainAppSettings = {
       'turmoil_parties': false,
     } as {[x: string]: boolean},
     game: undefined as GameHomeModel | undefined,
-    isvip: false, // 页面加载时刷新isvip, 之后都可以根据这个值判断是否vip
+    isvip: true, // 页面加载时刷新isvip, 之后都可以根据这个值判断是否vip
     oscreen: 'empty', // 跳转赞助页面前的页面
     logPaused: false,
   } as MainAppData,
@@ -133,39 +130,9 @@ export const mainAppSettings = {
       xhr.responseType = 'json';
       xhr.send();
     },
-    udpatevip: function(userId : string) {
+    udpatevip: function() {
       const app = (this as any);
-      const vip = PreferencesManager.loadValue('vip');
-      // let vipupdate = PreferencesManager.loadValue("vipupdate");
-      // 每天更新一次vip
-      // if(vipupdate < getDay()){
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/api/isvip?userId='+ userId );
-      xhr.onerror = function() {
-        alert('Error getting game data');
-      };
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const resp = xhr.response;
-          if (resp === 'success') {
-            app.isvip = true;
-            PreferencesManager.saveValue('vip', 'true');
-          } else {
-            app.isvip = false;
-            PreferencesManager.saveValue('vip', 'false');
-            app.showdonate();// 根据用户id获取到vip到期，调用赞助页面方法
-          }
-        } else {
-          app.isvip = false;
-          PreferencesManager.saveValue('vip', 'false');
-        }
-        PreferencesManager.saveValue('vipupdate', getDay());
-      };
-      xhr.send();
-      // }
-      if (vip && vip === 'true') {
-        app.isvip = true;
-      }
+      app.isvip = true;
     },
     showdonate: function() {
       const app = (this as any);
@@ -188,7 +155,7 @@ export const mainAppSettings = {
       if (currentPathname === '/') {// 首页强制更新vip
         PreferencesManager.saveValue('vipupdate', '');
       }
-      app.udpatevip(userId);
+      app.udpatevip();
     }
 
     if (currentPathname === '/player' || currentPathname === '/the-end') {
