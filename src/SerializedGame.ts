@@ -40,6 +40,7 @@ export interface SerializedGame {
     initialDraftIteration: number;
     lastSaveId: number;
     milestones: Array<IMilestone>;
+    erodedSpaces: Array<string>;
     monsInsuranceOwner: PlayerId | undefined;
     oxygenLevel: number;
     passedPlayers: Array<PlayerId>;
@@ -52,5 +53,9 @@ export interface SerializedGame {
     turmoil?: SerializedTurmoil;
     unDraftedCards: Array<[PlayerId, Array<CardName>]>;
     venusScaleLevel: number;
+    temperatureSilverCubeBonusMC: number;
+    oceansSilverCubeBonusMC: number;
+    oxygenSilverCubeBonusMC: number;
+    venusSilverCubeBonusMC: number;
 }
 

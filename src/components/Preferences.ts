@@ -32,6 +32,21 @@ export const Preferences = Vue.component('preferences', {
     venusNextExtension: {
       type: Boolean,
     },
+    silverCubeVariant: {
+      type: Boolean,
+    },
+    temperatureSilverCubeBonusMC: {
+      type: Number,
+    },
+    oceansSilverCubeBonusMC: {
+      type: Number,
+    },
+    oxygenSilverCubeBonusMC: {
+      type: Number,
+    },
+    venusSilverCubeBonusMC: {
+      type: Number,
+    },
   },
   data: function() {
     return {
@@ -147,6 +162,18 @@ export const Preferences = Vue.component('preferences', {
         return `${this.venus}`;
       }
     },
+    getSilverCubeDiscountForTemperature: function(): string {
+      return `${this.temperatureSilverCubeBonusMC}`;
+    },
+    getSilverCubeDiscountForOceans: function(): string {
+      return `${this.oceansSilverCubeBonusMC}`;
+    },
+    getSilverCubeDiscountForOxygen: function(): string {
+      return `${this.oxygenSilverCubeBonusMC}`;
+    },
+    getSilverCubeDiscountForVenus: function(): string {
+      return `${this.venusSilverCubeBonusMC}`;
+    },
   },
   mounted: function() {
     this.updatePreferencesFromStorage();
@@ -160,13 +187,17 @@ export const Preferences = Vue.component('preferences', {
                 <div class="preferences_global_params">
                   <div class="preferences_temperature-tile"></div>
                   <div class="preferences_global_params_value" v-html="getTemperatureCount()"></div>
+                  <div v-if="silverCubeVariant" class="resource money silver_cube_mc" v-html="getSilverCubeDiscountForTemperature()"></div>
                   <div class="preferences_oxygen-tile"></div>
                   <div class="preferences_global_params_value" v-html="getOxygenCount()"></div>
+                  <div v-if="silverCubeVariant" class="resource money silver_cube_mc" v-html="getSilverCubeDiscountForOxygen()"></div>
                   <div class="preferences_ocean-tile"></div>
                   <div class="preferences_global_params_value" v-html="getOceanCount()"></div>
+                  <div v-if="silverCubeVariant" class="resource money silver_cube_mc" v-html="getSilverCubeDiscountForOceans()"></div>
                   <div v-if="venusNextExtension">
                     <div class="preferences_venus-tile"></div>
                     <div class="preferences_global_params_value" v-html="getVenusCount()"></div>
+                    <div v-if="silverCubeVariant" class="resource money silver_cube_mc" v-html="getSilverCubeDiscountForVenus()"></div>
                   </div>
                 </div>
                 <div class="preferences_item preferences_player">

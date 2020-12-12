@@ -124,6 +124,11 @@ export class Server {
       aresExtension: game.gameOptions.aresExtension,
       aresData: game.aresData,
       preludeExtension: game.gameOptions.preludeExtension,
+      silverCubeVariant: game.gameOptions.silverCubeVariant,
+      temperatureSilverCubeBonusMC: game.temperatureSilverCubeBonusMC,
+      oceansSilverCubeBonusMC: game.oceansSilverCubeBonusMC,
+      oxygenSilverCubeBonusMC: game.oxygenSilverCubeBonusMC,
+      venusSilverCubeBonusMC: game.venusSilverCubeBonusMC,
     };
   }
 }

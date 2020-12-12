@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import {AdvancedAlloys} from '../../../src/cards/base/AdvancedAlloys';
 import {SmallAnimals} from '../../../src/cards/base/SmallAnimals';
 import {CardType} from '../../../src/cards/CardType';
-import {ProjectWorkshop} from '../../../src/cards/community/ProjectWorkshop';
+import {ProjectWorkshop} from '../../../src/cards/community/corporations/ProjectWorkshop';
 import {ICard} from '../../../src/cards/ICard';
 import {Extremophiles} from '../../../src/cards/venusNext/Extremophiles';
 import {Game} from '../../../src/Game';
@@ -35,12 +35,12 @@ describe('ProjectWorkshop', function() {
   });
 
   it('Can\'t act', function() {
-    player.megaCredits = 2;
+    player.megaCredits = 3;
     expect(card.canAct(player)).is.not.true;
   });
 
-  it('Can spend 3 MC to draw a blue card', function() {
-    player.megaCredits = 3;
+  it('Can spend 4 MC to draw a blue card', function() {
+    player.megaCredits = 4;
 
     expect(card.canAct(player)).is.true;
     card.action(player, game).cb();
@@ -90,7 +90,7 @@ describe('ProjectWorkshop', function() {
 
   it('Can select option if able to do both actions', function() {
     player.playedCards.push(advancedAlloys);
-    player.megaCredits = 3;
+    player.megaCredits = 4;
     const result = card.action(player, game);
     expect(result instanceof OrOptions).is.true;
   });
