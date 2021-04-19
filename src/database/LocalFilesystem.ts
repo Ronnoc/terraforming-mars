@@ -3,7 +3,6 @@ import {Game, GameId, GameOptions, Score} from '../Game';
 import {IGameData} from './IDatabase';
 import {SerializedGame} from '../SerializedGame';
 import {Dirent} from 'fs';
-import {User} from '../User';
 
 const path = require('path');
 const fs = require('fs');
@@ -104,9 +103,6 @@ export class Localfilesystem implements IDatabase {
     throw new Error('Rollback not yet implemented');
   }
   saveUser(_id: string, _name: string, _password: string, _prop: string): void {
-    throw new Error('Method not implemented.');
-  }
-  updateUser(_user: User): void {
     throw new Error('Method not implemented.');
   }
   getUsers(_cb: (err: any, allUsers: import('../User').User[]) => void): void {
