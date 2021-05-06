@@ -56,7 +56,7 @@ export class GameHandler extends Handler {
           gameReq.board = boards[Math.floor(Math.random() * boards.length)];
         }
 
-        let gameOptions = {
+        const gameOptions = {
           boardName: gameReq.board,
           clonedGamedId: gameReq.clonedGamedId,
 
@@ -95,32 +95,6 @@ export class GameHandler extends Handler {
           requiresVenusTrackCompletion: gameReq.requiresVenusTrackCompletion,
           requiresMoonTrackCompletion: gameReq.requiresMoonTrackCompletion,
         };
-        const userId = gameReq.userId;
-        let isvip = false;
-        if (userId !== undefined && userId !== '') {
-          const user = GameLoader.getInstance().userIdMap.get(userId);
-          if (user !== undefined && user.isvip()) {
-            isvip = true;
-          }
-        }
-        if (!isvip ) {
-          const vipOptions = {
-            heatFor: false,
-            breakthrough: false,
-            erosCardsOption: false,
-            aresExtension: false,
-            communityCardsOption: false,
-            moonExpansion: false,
-            politicalAgendasExtensionToggle: false,
-            shuffleMapOption: false,
-            showCardsBlackList: false,
-            showColoniesList: false,
-            removeNegativeGlobalEventsOption: false,
-            randomMAToggle: false,
-          };
-          gameOptions = Object.assign(gameOptions, vipOptions);
-        }
-
         const seed = Math.random();
         const game = Game.newInstance(gameId, players, players[firstPlayerIdx], gameOptions, seed, spectatorId, false);
         game.loadState = LoadState.LOADED;

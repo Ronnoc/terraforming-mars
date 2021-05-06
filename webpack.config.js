@@ -2,7 +2,7 @@
 // const path = require('path');
 const process = require('process');
 const CompressionPlugin = require('compression-webpack-plugin');
-// const zlib = require("zlib");
+const zlib = require("zlib");
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin');
@@ -15,11 +15,16 @@ module.exports = {
   entry: [
     './build/src/script.js',
   ],
-  plugins: [new CompressionPlugin()],
   plugins: [
     // new webpack.HotModuleReplacementPlugin(),
     // new webpack.NoEmitOnErrorsPlugin(),
     // new ReloadPlugin(),
+    new CompressionPlugin(),
+    new CompressionPlugin({
+        algorithm: 'brotliCompress',
+        filename: '[path][base].br',
+        compressionOptions: {params: {[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY}},
+    }),
     new HtmlWebpackPlugin({
       title: 'Foo',
       filename: 'assets/index_ca.html',

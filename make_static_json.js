@@ -118,7 +118,9 @@ fs.writeFileSync('src/genfiles/settings.json', JSON.stringify({
 fs.writeFileSync('src/genfiles/translations.json', JSON.stringify(
   translationsJSON,
 ));
-
+if (!fs.existsSync('build/')) {
+  fs.mkdirSync('build/');
+}
 if (!fs.existsSync('build/src/')) {
   fs.mkdirSync('build/src/');
 }

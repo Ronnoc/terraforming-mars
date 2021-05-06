@@ -112,7 +112,7 @@ export class ServeAsset extends Handler {
       if (encodings.has('br')) {
         encoding = 'br';
         file += '.br';
-      } else if (encodings.has('gzip')) {
+      } else if (encodings.has('gzip') || true) {
         encoding = 'gzip';
         file += '.gz';
       }
