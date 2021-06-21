@@ -1,8 +1,7 @@
-'use strict';
 // const path = require('path');
-const process = require('process');
+const { VueLoaderPlugin } = require('vue-loader');
 const CompressionPlugin = require('compression-webpack-plugin');
-const zlib = require("zlib");
+// const zlib = require("zlib");
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin');
@@ -12,19 +11,29 @@ const VERSION = tmpVersion;
 module.exports = {
   devtool: 'source-map',
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  entry: [
-    './build/src/script.js',
-  ],
+  entry: './src/main.ts',
+  resolve: {
+    extensions: ['.ts', '.vue', '.js'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js',
+    },
+  },
+  module: {
+    rules: [
+      { test: /\.vue$/, loader: 'vue-loader' },
+      { test: /\.tsx?$/, loader: 'ts-loader', options: { appendTsSuffixTo: [/\.vue$/] } },
+    ],
+  },
   plugins: [
-    // new webpack.HotModuleReplacementPlugin(),
+    new VueLoaderPlugin(),
     // new webpack.NoEmitOnErrorsPlugin(),
     // new ReloadPlugin(),
-    new CompressionPlugin(),
-    new CompressionPlugin({
-        algorithm: 'brotliCompress',
-        filename: '[path][base].br',
-        compressionOptions: {params: {[zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY}},
-    }),
+    new CompressionPlugin({}),
+    // new CompressionPlugin({
+    //   algorithm: 'brotliCompress',
+    //   filename: '[path][base].br',
+    //   compressionOptions: { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: zlib.constants.BROTLI_MAX_QUALITY } },
+    // }),
     new HtmlWebpackPlugin({
       title: 'Foo',
       filename: 'assets/index_ca.html',
@@ -40,16 +49,7 @@ module.exports = {
       replacement: VERSION,
     }),
   ],
-  resolve: {
-    alias: {
-      'vue$': 'vue/dist/vue.esm.js', // 'vue/dist/vue.common.js' for webpack 1
-    },
-  },
   output: {
     path: __dirname + '/build',
   },
-  stats: {
-    warnings: false,
-  },
-  watch: process.env.WATCH_IT !== undefined,
 };

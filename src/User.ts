@@ -1,12 +1,14 @@
 
-import {getDate, getDay, myId} from './UserUtil';
+import {getDay, myId} from './UserUtil';
 
 export class User {
-    public createdTime: string = getDate();
+    public createtime: string = '';
     public rollbackNum: number = 5;
     public rollbackDate: string = getDay();
     public vip : boolean = false;
-    public vipDate : string = getDay();
+    public vipDate : string = '2021-01-01';
+    public accessDate : string = '2021-01-01';
+    public showhandcards : boolean = false;
 
     constructor(
         public name: string,
@@ -21,12 +23,21 @@ export class User {
         rollbackDate: this.rollbackDate,
         vip: this.vip,
         vipDate: this.vipDate,
+        accessDate: this.accessDate,
+        showhandcards: this.showhandcards,
       });
     }
 
     public getRollbackNum() {
+      if (!this.isvip()) {
+        return 0;
+      }
       if (getDay() !== this.rollbackDate) {
-        this.rollbackNum = 5;
+        if (this.vipDate > '3000-01-01') {
+          this.rollbackNum = 5;
+        } else {
+          this.rollbackNum = 5;
+        }
       }
       return this.rollbackNum;
     }
